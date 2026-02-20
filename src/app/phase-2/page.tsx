@@ -8,8 +8,10 @@ import BriefOverlay from "@/components/panel/BriefOverlay";
 import { useParcelClick } from "@/hooks/useParcelClick";
 import { useResponsive } from "@/hooks/useResponsive";
 import type { MapHandle } from "@/components/map/ParcelMap";
+import { useAppStore } from "@/store/useAppStore";
+import { useEffect } from "react";
 
-export default function Phase1Dashboard() {
+export default function Phase2Dashboard() {
   useParcelClick();
   const { isMobile } = useResponsive();
   const [activeNav, setActiveNav] = useState("map");

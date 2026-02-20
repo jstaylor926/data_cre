@@ -52,3 +52,66 @@ export interface SearchResult {
 export type BaseMapStyle = "streets" | "satellite" | "hybrid";
 
 export type PanelTab = "data" | "score" | "zoning" | "comps";
+
+export interface SiteScore {
+  composite: number;
+  tier: string;
+  zoning: number;
+  access: number;
+  demographics: number;
+  market: number;
+  infrastructure: number;
+}
+
+export interface ZoningFlag {
+  label: string;
+  type: "permitted" | "conditional" | "prohibited";
+}
+
+export interface ZoningStandard {
+  label: string;
+  value: string;
+}
+
+export interface ZoningSummary {
+  code: string;
+  name: string;
+  flags: ZoningFlag[];
+  standards: ZoningStandard[];
+}
+
+export interface Comp {
+  id: string;
+  address: string;
+  distance: number;
+  acres: number;
+  date: string;
+  price: number;
+  psf: number;
+  coordinates: [number, number];
+}
+
+export interface FirmHistoryMatch {
+  id: string;
+  deal_name: string;
+  year: number;
+  outcome: "closed" | "passed" | "loi";
+  similarity: number;
+  excerpt: string;
+}
+
+export interface ChatMessage {
+  role: "user" | "ai";
+  content: string;
+  warning?: string;
+}
+
+export type BriefStatus = "idle" | "generating" | "generated";
+
+export interface BriefSection {
+  id: string;
+  label: string;
+  status: "pending" | "current" | "done";
+  description?: string;
+  time?: string;
+}

@@ -44,9 +44,9 @@ export default function Home() {
           </Card>
 
           {/* Phase 2 */}
-          <Card className="flex flex-col opacity-90">
+          <Card className="flex flex-col border-violet/20 shadow-md">
             <CardHeader>
-              <div className="text-muted-foreground text-sm font-semibold mb-2">UPCOMING</div>
+              <div className="text-violet text-sm font-semibold mb-2">ACTIVE</div>
               <CardTitle>Phase 2<br />AI Site Analysis</CardTitle>
               <CardDescription>Development Intelligence & RAG</CardDescription>
             </CardHeader>
@@ -63,8 +63,8 @@ export default function Home() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button variant="outline" className="w-full" disabled>
-                Coming Soon
+              <Button asChild className="w-full bg-violet hover:bg-violet/90 text-zinc-950">
+                <Link href="/phase-2">Launch Phase 2</Link>
               </Button>
             </CardFooter>
           </Card>

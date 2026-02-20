@@ -11,12 +11,18 @@ interface SavedPinsProps {
 
 export default function SavedPins({ savedParcels }: SavedPinsProps) {
   const selectParcel = useAppStore((s) => s.selectParcel);
+  const siteScore = useAppStore((s) => s.siteScore);
+  const selectedAPN = useAppStore((s) => s.selectedAPN);
 
   return (
     <>
       {savedParcels.map((sp) => {
         const centroid = getParcelCentroid(sp.apn);
         if (!centroid) return null;
+
+        // Simulate a score for saved pins in Phase 2
+        const hasScore = siteScore && sp.apn === selectedAPN;
+        const scoreValue = hasScore ? siteScore.composite : (sp.apn.endsWith('1') ? 74 : null);
 
         return (
           <Marker
@@ -29,10 +35,15 @@ export default function SavedPins({ savedParcels }: SavedPinsProps) {
             }}
           >
             <div className="flex cursor-pointer flex-col items-center">
+              {scoreValue && (
+                <div className="mb-0.5 rounded border border-green/40 bg-ink/90 px-1.5 py-0.5 font-mono text-[9px] font-medium text-green shadow-sm">
+                  {scoreValue}
+                </div>
+              )}
               {/* Pin head */}
-              <div className="h-3 w-3 rounded-full border-2 border-ink bg-amber" />
+              <div className="h-3 w-3 rounded-full border-2 border-ink bg-amber shadow-sm" />
               {/* Pin stem */}
-              <div className="-mt-px h-2 w-[1.5px] bg-amber" />
+              <div className="-mt-px h-2 w-[1.5px] bg-amber shadow-sm" />
             </div>
           </Marker>
         );

@@ -1,15 +1,19 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Heart, Building2, Columns3, FileText, Check, Plus } from "lucide-react";
+import { Heart, Building2, FileText, Check, Plus } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import { useSavedParcels } from "@/hooks/useSavedParcels";
 import { useCollections } from "@/hooks/useCollections";
 
 export default function PanelActionBar() {
   const selectedAPN = useAppStore((s) => s.selectedAPN);
+  const activeTab = useAppStore((s) => s.activeTab);
+  const setBriefOverlayOpen = useAppStore((s) => s.setBriefOverlayOpen);
+  const setBriefStatus = useAppStore((s) => s.setBriefStatus);
   const { savedParcels, isSaved, save, unsave } = useSavedParcels();
   const { collections, create } = useCollections();
+  
   const [showCollPopup, setShowCollPopup] = useState(false);
   const [creatingNew, setCreatingNew] = useState(false);
   const [newName, setNewName] = useState("");
@@ -37,10 +41,8 @@ export default function PanelActionBar() {
       await unsave(selectedAPN);
       setShowCollPopup(false);
     } else if (collections.length > 0) {
-      // Show collection picker
       setShowCollPopup(true);
     } else {
-      // No collections, just save without a collection
       await save(selectedAPN);
     }
   };
@@ -68,8 +70,15 @@ export default function PanelActionBar() {
     ? savedParcels.find((sp) => sp.apn === selectedAPN)
     : null;
 
+  const isPhase2 = ["score", "zoning", "comps"].includes(activeTab);
+
+  const handleBriefClick = () => {
+    setBriefOverlayOpen(true);
+    setBriefStatus("generating");
+  };
+
   return (
-    <div className="relative flex gap-1.5 border-t border-line px-3.5 py-2.5">
+    <div className="relative flex gap-1.5 border-t border-line px-3.5 py-2.5 flex-shrink-0">
       {/* Save button */}
       <button
         onClick={handleSaveClick}
@@ -89,20 +98,17 @@ export default function PanelActionBar() {
         LLC →
       </button>
 
-      {/* Compare */}
-      <button
-        disabled
-        className="flex h-[30px] flex-1 items-center justify-center rounded border border-line font-mono text-[8px] uppercase tracking-wider text-pd-muted opacity-40"
-      >
-        Compare
-      </button>
-
       {/* Brief */}
       <button
-        disabled
-        className="flex h-[30px] flex-1 items-center justify-center rounded border border-line font-mono text-[8px] uppercase tracking-wider text-pd-muted opacity-40"
+        onClick={handleBriefClick}
+        className={`flex h-[30px] flex-[1.5] items-center justify-center gap-1.5 rounded font-mono text-[8px] uppercase tracking-wider transition-colors ${
+          isPhase2
+            ? "bg-violet text-ink font-semibold"
+            : "bg-ink4 border border-line text-pd-muted opacity-40 cursor-not-allowed"
+        }`}
       >
-        Brief
+        <FileText size={10} />
+        {isPhase2 ? "Generate Brief" : "Brief"}
       </button>
 
       {/* Collection popup */}
@@ -115,7 +121,6 @@ export default function PanelActionBar() {
             Save to Collection
           </p>
 
-          {/* No collection option */}
           <CollectionRow
             name="No collection"
             count={null}
@@ -123,7 +128,6 @@ export default function PanelActionBar() {
             onClick={() => handleSaveToCollection(null)}
           />
 
-          {/* Collection list */}
           {collections.map((col) => (
             <CollectionRow
               key={col.id}
@@ -134,7 +138,6 @@ export default function PanelActionBar() {
             />
           ))}
 
-          {/* Create new */}
           {creatingNew ? (
             <div className="mt-1.5 flex items-center gap-1 border-t border-line pt-1.5">
               <input

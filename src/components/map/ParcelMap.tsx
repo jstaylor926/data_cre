@@ -8,7 +8,9 @@ import { useAppStore } from '@/store/useAppStore';
 import { MOCK_PARCELS_GEOJSON } from '@/lib/mock-geojson';
 import { useSavedParcels } from '@/hooks/useSavedParcels';
 import SavedPins from './SavedPins';
+import CompMarkers from './CompMarkers';
 import ZoningLayer from './ZoningLayer';
+import { getParcelCentroid } from '@/lib/mock-geojson';
 import {
   MAP_DEFAULT_CENTER,
   MAP_DEFAULT_ZOOM,
@@ -22,6 +24,7 @@ import {
   PANEL_WIDTH,
 } from '@/lib/constants';
 import { useResponsive } from '@/hooks/useResponsive';
+import { Marker } from 'react-map-gl/mapbox';
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || '';
 
@@ -44,11 +47,15 @@ export default function ParcelMap({ mapRef }: ParcelMapProps) {
   const showSavedPins = useAppStore((s) => s.showSavedPins);
   const showRoadLabels = useAppStore((s) => s.showRoadLabels);
   const panelOpen = useAppStore((s) => s.panelOpen);
+  const activeTab = useAppStore((s) => s.activeTab);
   const selectParcel = useAppStore((s) => s.selectParcel);
   const { isMobile } = useResponsive();
   const { savedParcels } = useSavedParcels();
 
   const internalMapRef = useRef<MapboxMap | null>(null);
+
+  // Calculate centroid for radius circle
+  const selectedCentroid = selectedAPN ? getParcelCentroid(selectedAPN) : null;
 
   // Expose map controls via parent ref
   useEffect(() => {
@@ -170,6 +177,13 @@ export default function ParcelMap({ mapRef }: ParcelMapProps) {
         {/* Zoning overlay (render below parcels) */}
         {showZoning && <ZoningLayer />}
 
+        {/* Comp radius circle */}
+        {activeTab === "comps" && selectedCentroid && (
+          <Marker longitude={selectedCentroid[0]} latitude={selectedCentroid[1]}>
+            <div className="h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-violet/30 bg-violet/5" />
+          </Marker>
+        )}
+
         {showParcels && (
           <Source id={PARCEL_SOURCE} type="geojson" data={MOCK_PARCELS_GEOJSON}>
             <Layer
@@ -189,6 +203,9 @@ export default function ParcelMap({ mapRef }: ParcelMapProps) {
 
         {/* Saved parcel pins */}
         {showSavedPins && <SavedPins savedParcels={savedParcels} />}
+
+        {/* Comp Markers */}
+        <CompMarkers />
       </Map>
     </div>
   );

@@ -1,5 +1,15 @@
 import { create } from "zustand";
-import type { Parcel, BaseMapStyle, PanelTab } from "@/lib/types";
+import type { 
+  Parcel, 
+  BaseMapStyle, 
+  PanelTab, 
+  SiteScore, 
+  ZoningSummary, 
+  Comp, 
+  FirmHistoryMatch, 
+  ChatMessage, 
+  BriefStatus 
+} from "@/lib/types";
 
 interface AppState {
   // Map
@@ -17,6 +27,15 @@ interface AppState {
   showSavedPins: boolean;
   showRoadLabels: boolean;
 
+  // Phase 2: Site Intelligence
+  siteScore: SiteScore | null;
+  zoningSummary: ZoningSummary | null;
+  comps: Comp[];
+  firmHistory: FirmHistoryMatch[];
+  chatHistory: ChatMessage[];
+  briefStatus: BriefStatus;
+  isBriefOverlayOpen: boolean;
+
   // Entity lookup
   entityLoading: boolean;
 
@@ -33,6 +52,15 @@ interface AppState {
   toggleSavedPins: () => void;
   toggleRoadLabels: () => void;
   setEntityLoading: (loading: boolean) => void;
+
+  // Phase 2 Actions
+  setSiteScore: (score: SiteScore | null) => void;
+  setZoningSummary: (summary: ZoningSummary | null) => void;
+  setComps: (comps: Comp[]) => void;
+  setFirmHistory: (matches: FirmHistoryMatch[]) => void;
+  addChatMessage: (msg: ChatMessage) => void;
+  setBriefStatus: (status: BriefStatus) => void;
+  setBriefOverlayOpen: (open: boolean) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -50,6 +78,15 @@ export const useAppStore = create<AppState>((set) => ({
   showSavedPins: true,
   showRoadLabels: true,
 
+  // Phase 2 Initial state
+  siteScore: null,
+  zoningSummary: null,
+  comps: [],
+  firmHistory: [],
+  chatHistory: [],
+  briefStatus: "idle",
+  isBriefOverlayOpen: false,
+
   entityLoading: false,
 
   // Actions
@@ -58,7 +95,7 @@ export const useAppStore = create<AppState>((set) => ({
       selectedAPN: apn,
       panelOpen: true,
       parcelLoading: true,
-      activeTab: "data",
+      activeTab: "score", // Phase 2: default to score tab
     }),
 
   setSelectedParcel: (parcel) =>
@@ -72,6 +109,11 @@ export const useAppStore = create<AppState>((set) => ({
       selectedParcel: null,
       panelOpen: false,
       parcelLoading: false,
+      siteScore: null,
+      zoningSummary: null,
+      comps: [],
+      firmHistory: [],
+      chatHistory: [],
     }),
 
   setActiveTab: (tab) => set({ activeTab: tab }),
@@ -89,4 +131,13 @@ export const useAppStore = create<AppState>((set) => ({
   toggleRoadLabels: () => set((s) => ({ showRoadLabels: !s.showRoadLabels })),
 
   setEntityLoading: (loading) => set({ entityLoading: loading }),
+
+  // Phase 2 Actions
+  setSiteScore: (score) => set({ siteScore: score }),
+  setZoningSummary: (summary) => set({ zoningSummary: summary }),
+  setComps: (comps) => set({ comps }),
+  setFirmHistory: (firmHistory) => set({ firmHistory }),
+  addChatMessage: (msg) => set((s) => ({ chatHistory: [...s.chatHistory, msg] })),
+  setBriefStatus: (briefStatus) => set({ briefStatus }),
+  setBriefOverlayOpen: (isBriefOverlayOpen) => set({ isBriefOverlayOpen }),
 }));
