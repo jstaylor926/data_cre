@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pocket Developer — Phase 1 Wireframes</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500&family=Barlow:wght@300;400;500;600;700&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0d0f12;--ink2:#141720;--ink3:#1b1f2a;--ink4:#232838;
+  --line:#252b3b;--line2:#2e3547;--muted:#3d4760;--mid:#6b7898;
+  --text:#c8d0e0;--bright:#e8edf8;
+  --accent:#00d4c8;--accent-dim:rgba(0,212,200,0.1);--accent-glow:rgba(0,212,200,0.2);
+  --amber:#f5a623;--amber-dim:rgba(245,166,35,0.12);
+  --red:#ef4444;--green:#22c55e;--green-dim:rgba(34,197,94,0.1);
+  --mono:'IBM Plex Mono',monospace;--head:'Bebas Neue',sans-serif;--body:'Barlow',sans-serif;
+}
+body{background:#080a0d;font-family:var(--body);color:var(--text);min-height:100vh}
+.page{max-width:1600px;margin:0 auto;padding:48px 48px 80px}
+
+/* DOC HEADER */
+.doc-header{margin-bottom:64px;padding-bottom:32px;border-bottom:1px solid var(--line);display:flex;align-items:flex-end;justify-content:space-between;gap:24px}
+.doc-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.doc-title{font-family:var(--head);font-size:52px;letter-spacing:.04em;color:var(--bright);line-height:1}
+.doc-title span{color:var(--accent)}
+.doc-meta{display:flex;gap:12px}
+.meta-pill{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border:1px solid var(--line2);border-radius:3px;color:var(--mid)}
+
+/* SECTION */
+.sec{margin-bottom:72px}
+.sec-head{margin-bottom:28px}
+.sec-label{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:10px}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--line);max-width:80px}
+.sec-title{font-family:var(--head);font-size:28px;letter-spacing:.04em;color:var(--bright)}
+.sec-desc{font-size:13px;color:var(--mid);margin-top:4px;max-width:560px;line-height:1.6}
+
+/* STATE LABEL */
+.state-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(245,166,35,.06);border:1px solid rgba(245,166,35,.25);border-radius:4px;padding:8px 14px;margin-bottom:18px}
+.state-dot{width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0}
+.state-text{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--amber)}
+
+/* SCREEN FRAME */
+.frame{background:var(--ink2);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.frame-bar{padding:10px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;background:var(--ink)}
+.chrome-dots{display:flex;gap:5px}
+.chrome-dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.frame-name{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-left:6px}
+.frame-tag{margin-left:auto;font-family:var(--mono);font-size:9px;letter-spacing:.08em;padding:3px 8px;border-radius:3px;text-transform:uppercase}
+.tag-d{background:rgba(99,102,241,.15);color:#a5b4fc}
+.tag-m{background:rgba(0,212,200,.1);color:var(--accent)}
+.tag-s{background:var(--amber-dim);color:var(--amber)}
+
+/* CANVAS */
+.canvas{position:relative;overflow:hidden}
+
+/* MAP */
+.map-bg{position:absolute;inset:0;background:var(--ink3);background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:32px 32px}
+.road-h{position:absolute;left:0;right:0;background:var(--ink4)}
+.road-v{position:absolute;top:0;bottom:0;background:var(--ink4)}
+.road-maj{background:#252c3d}
+.parcel{position:absolute;border:1px solid rgba(0,212,200,.22);border-radius:2px}
+.p-sel{border-color:var(--accent);background:var(--accent-dim);box-shadow:0 0 0 2px var(--accent-glow)}
+.p-save{border-color:var(--amber);background:var(--amber-dim)}
+
+/* TOPBAR */
+.topbar{position:absolute;top:0;left:0;right:0;height:48px;background:rgba(13,15,18,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 14px;gap:10px;z-index:10}
+.logo{font-family:var(--head);font-size:16px;letter-spacing:.06em;color:var(--bright);white-space:nowrap}
+.logo span{color:var(--accent)}
+.searchbar{flex:1;max-width:360px;height:32px;background:var(--ink3);border:1px solid var(--line2);border-radius:4px;display:flex;align-items:center;padding:0 10px;gap:6px}
+.search-icon{width:11px;height:11px;border:1.5px solid var(--muted);border-radius:50%;position:relative;flex-shrink:0}
+.search-icon::after{content:'';position:absolute;bottom:-3px;right:-3px;width:4px;height:1.5px;background:var(--muted);transform:rotate(45deg)}
+.search-ph{font-family:var(--mono);font-size:10px;color:var(--muted)}
+.nav-pills{display:flex;gap:4px;margin-left:auto}
+.npill{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:3px;color:var(--mid);border:1px solid var(--line);white-space:nowrap;position:relative}
+.npill.on{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}
+.avatar{width:28px;height:28px;border-radius:50%;background:var(--ink4);border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;color:var(--accent);flex-shrink:0}
+
+/* MAP CONTROLS */
+.map-ctrls{position:absolute;display:flex;flex-direction:column;gap:6px;z-index:10}
+.mc{width:32px;height:32px;background:rgba(13,15,18,.9);border:1px solid var(--line2);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:14px;color:var(--mid)}
+
+/* PIN */
+.pin{position:absolute;display:flex;flex-direction:column;align-items:center;z-index:5}
+.pin-h{width:12px;height:12px;border-radius:50%;border:2px solid var(--ink)}
+.pin-s{width:1.5px;height:8px;margin-top:-1px}
+.pin-amber .pin-h{background:var(--amber)}.pin-amber .pin-s{background:var(--amber)}
+.pin-teal .pin-h{background:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}.pin-teal .pin-s{background:var(--accent)}
+.gps{position:absolute;width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid var(--ink);box-shadow:0 0 0 4px var(--accent-glow);z-index:5}
+
+/* COORD / ZOOM HUD */
+.hud-tl{position:absolute;top:56px;left:14px;background:rgba(13,15,18,.85);border:1px solid var(--line);border-radius:3px;padding:4px 8px;font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.06em;z-index:10}
+.hud-bl{position:absolute;bottom:14px;left:14px;background:rgba(13,15,18,.85);border:1px solid var(--line);border-radius:3px;padding:4px 8px;font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:.06em;z-index:10}
+.hud-br{position:absolute;bottom:14px;right:14px;background:rgba(13,15,18,.85);border:1px solid var(--line);border-radius:3px;padding:4px 8px;font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:.06em;z-index:10}
+
+/* PANEL */
+.panel{position:absolute;right:0;top:0;bottom:0;background:rgba(13,15,18,.97);border-left:1px solid var(--line);display:flex;flex-direction:column;z-index:10}
+.panel-hdr{padding:14px 16px 0;border-bottom:1px solid var(--line);flex-shrink:0}
+.panel-addr{font-family:var(--body);font-size:13px;font-weight:600;color:var(--bright);line-height:1.3}
+.panel-sub{font-family:var(--mono);font-size:9px;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;margin-top:1px}
+.panel-tabs{display:flex;border-top:1px solid var(--line);margin-top:8px}
+.ptab{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;padding:8px 12px;color:var(--muted);border-bottom:2px solid transparent;flex:1;text-align:center}
+.ptab.on{color:var(--accent);border-bottom-color:var(--accent)}
+.panel-body{flex:1;overflow:hidden;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.ds{margin-bottom:2px}
+.ds-label{font-family:var(--mono);font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--line)}
+.dr{display:flex;justify-content:space-between;align-items:baseline;padding:4px 0;border-bottom:1px solid var(--line)}
+.dr:last-child{border-bottom:none}
+.dk{font-family:var(--mono);font-size:9px;letter-spacing:.05em;color:var(--mid);text-transform:uppercase}
+.dv{font-family:var(--mono);font-size:10px;color:var(--bright);font-weight:500;text-align:right}
+.dv.hl{color:var(--amber)}.dv.ac{color:var(--accent)}
+.action-bar{padding:10px 14px;border-top:1px solid var(--line);display:flex;gap:6px;flex-shrink:0}
+.btn{flex:1;height:30px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:8px;letter-spacing:.08em;text-transform:uppercase}
+.btn-p{background:var(--accent);color:var(--ink);font-weight:600}
+.btn-s{background:var(--ink4);border:1px solid var(--line2);color:var(--mid)}
+.btn-g{border:1px solid var(--line);color:var(--muted)}
+
+/* NOTIF DOT */
+.ndot{width:7px;height:7px;border-radius:50%;background:var(--red);position:absolute;top:-2px;right:-2px;border:1.5px solid var(--ink)}
+
+/* ENTITY CARD */
+.entity-card{background:var(--ink3);border:1px solid var(--line2);border-radius:5px;padding:10px;margin-top:4px}
+.entity-badge{font-family:var(--mono);font-size:8px;padding:2px 6px;border-radius:2px;background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,.2)}
+.rel-row{display:flex;align-items:center;justify-content:space-between;padding:4px 6px;background:var(--ink4);border-radius:3px;margin-bottom:2px}
+.rel-addr{font-family:var(--mono);font-size:9px;color:var(--text)}
+.rel-link{font-family:var(--mono);font-size:8px;color:var(--accent)}
+
+/* LAYER POPUP */
+.layer-popup{position:absolute;background:rgba(13,15,18,.97);border:1px solid var(--line2);border-radius:6px;width:170px;padding:10px;z-index:25}
+.lp-title{font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.lp-row{display:flex;align-items:center;justify-content:space-between;padding:4px 0}
+.lp-name{font-family:var(--mono);font-size:9px;color:var(--mid)}
+.tog{width:24px;height:13px;border-radius:7px;border:1px solid;position:relative}
+.tog-on{background:var(--accent-dim);border-color:var(--accent)}
+.tog-on::after{content:'';position:absolute;right:2px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.tog-off{background:transparent;border-color:var(--line2)}
+.tog-off::after{content:'';position:absolute;left:2px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.base-opts{display:flex;gap:4px;margin-top:8px}
+.base-opt{flex:1;padding:4px;border-radius:3px;border:1px solid var(--line);font-family:var(--mono);font-size:8px;text-align:center;color:var(--muted)}
+.base-opt.sel{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+
+/* SAVE COLLECTION POPUP */
+.coll-popup{position:absolute;background:rgba(13,15,18,.97);border:1px solid var(--line2);border-radius:6px;width:190px;padding:10px;z-index:25}
+.coll-title{font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.coll-row{display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid var(--line)}
+.coll-row:last-child{border-bottom:none}
+.chk{width:12px;height:12px;border:1.5px solid var(--line2);border-radius:2px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:8px}
+.chk-on{background:var(--accent);border-color:var(--accent);color:var(--ink)}
+.coll-name{font-family:var(--mono);font-size:9px;color:var(--text)}
+.coll-count{margin-left:auto;font-family:var(--mono);font-size:8px;color:var(--muted)}
+
+/* SEARCH DROPDOWN */
+.search-dd{position:absolute;background:rgba(13,15,18,.99);border:1px solid var(--line2);border-top:none;border-radius:0 0 8px 8px;z-index:20;overflow:hidden}
+.sr{padding:8px 12px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px}
+.sr:last-child{border-bottom:none}
+.sr.focus{background:var(--ink3)}
+.sr-icon{width:20px;height:20px;border-radius:3px;background:var(--ink4);border:1px solid var(--line);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px}
+.sr-addr{font-size:11px;color:var(--bright);margin-bottom:1px}
+.sr-county{font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+
+/* ANN CHIPS */
+.ann-strip{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.chip{display:flex;align-items:center;gap:5px;background:rgba(13,15,18,.8);border:1px solid var(--line);border-radius:4px;padding:4px 10px}
+.chip-dot{width:5px;height:5px;border-radius:50%}
+.chip-text{font-family:var(--mono);font-size:9px;color:var(--mid);letter-spacing:.04em}
+
+/* GRIDS */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;align-items:start}
+
+/* MOBILE GRID */
+.mob-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;justify-items:center;align-items:start}
+
+/* PHONE */
+.phone-wrap{display:flex;flex-direction:column;align-items:center;gap:14px}
+.phone-cap{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center}
+.device{background:#000;border-radius:38px;padding:10px;border:2px solid #222;box-shadow:0 0 0 1px #333,0 20px 50px rgba(0,0,0,.6);display:inline-block;width:290px}
+.screen{border-radius:30px;overflow:hidden;position:relative;background:var(--ink2)}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:80px;height:22px;background:#000;border-radius:0 0 14px 14px;z-index:100}
+.status-bar{height:30px;background:var(--ink);display:flex;align-items:flex-end;padding:0 14px 4px;position:relative;z-index:10}
+.stime{font-family:var(--mono);font-size:10px;font-weight:500;color:var(--bright);letter-spacing:.05em}
+.sicons{margin-left:auto;display:flex;gap:5px;align-items:center}
+.sbatt{width:14px;height:7px;border:1.5px solid var(--bright);border-radius:2px;position:relative}
+.sbatt::after{content:'';position:absolute;inset:1px;right:2px;background:var(--bright)}
+.swifi{display:flex;align-items:flex-end;gap:1.5px;width:12px;height:9px}
+.swifi div{background:var(--bright);border-radius:1px;width:2px}
+
+/* MOBILE TOP */
+.mob-top{background:rgba(13,15,18,.95);padding:8px 12px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line);position:relative;z-index:10}
+.mob-logo{font-family:var(--head);font-size:14px;letter-spacing:.05em;color:var(--bright)}
+.mob-logo span{color:var(--accent)}
+.mob-search{flex:1;height:27px;background:var(--ink3);border:1px solid var(--line2);border-radius:4px;display:flex;align-items:center;padding:0 8px;gap:5px}
+.mob-ph{font-family:var(--mono);font-size:8px;color:var(--muted)}
+
+/* MOBILE MAP */
+.mob-map{position:relative;background:var(--ink3);background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:24px 24px}
+
+/* BOTTOM SHEET */
+.mob-sheet{background:rgba(13,15,18,.98);border-top:1px solid var(--line)}
+.sheet-handle{width:30px;height:3px;background:var(--line2);border-radius:2px;margin:7px auto 0}
+.sheet-hdr{padding:8px 14px 0}
+.sheet-addr{font-size:12px;font-weight:600;color:var(--bright);margin-bottom:1px}
+.sheet-meta{font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px}
+.mob-tabs{display:flex;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.mtab{flex:1;padding:6px 0;text-align:center;font-family:var(--mono);font-size:7px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:2px solid transparent}
+.mtab.on{color:var(--accent);border-bottom-color:var(--accent)}
+.sheet-body{padding:8px 14px}
+.mob-dr{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--line)}
+.mob-dr:last-child{border-bottom:none}
+.mob-dk{font-family:var(--mono);font-size:8px;color:var(--mid);text-transform:uppercase;letter-spacing:.04em}
+.mob-dv{font-family:var(--mono);font-size:9px;color:var(--bright);font-weight:500}
+.mob-dv.hl{color:var(--amber)}.mob-dv.ac{color:var(--accent)}
+.mob-actions{padding:7px 14px 10px;display:flex;gap:5px;border-top:1px solid var(--line)}
+.mbtn{flex:1;height:27px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:7px;letter-spacing:.06em;text-transform:uppercase}
+.mbtn-p{background:var(--accent);color:var(--ink);font-weight:600}
+.mbtn-s{background:var(--ink4);border:1px solid var(--line2);color:var(--mid)}
+
+/* TAB BAR */
+.tabbar{background:rgba(13,15,18,.98);border-top:1px solid var(--line);display:flex;padding:5px 0 10px}
+.tbi{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px}
+.tbi-icon{width:18px;height:18px;border:1.5px solid var(--muted);border-radius:3px}
+.tbi-icon.on{border-color:var(--accent);background:var(--accent-dim)}
+.tbi-icon.circ{border-radius:50%}
+.tbi-label{font-family:var(--mono);font-size:7px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.tbi-label.on{color:var(--accent)}
+
+/* SAVED LIST */
+.saved-hdr{background:var(--ink);padding:12px 14px 8px;border-bottom:1px solid var(--line)}
+.saved-title{font-family:var(--head);font-size:18px;letter-spacing:.04em;color:var(--bright);margin-bottom:6px}
+.coll-tabs{display:flex;gap:5px;overflow-x:auto;padding-bottom:2px}
+.ct{font-family:var(--mono);font-size:8px;letter-spacing:.06em;text-transform:uppercase;padding:4px 9px;border-radius:3px;white-space:nowrap}
+.ct.on{background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent)}
+.ct.off{border:1px solid var(--line2);color:var(--muted)}
+.ct.new{border:1px dashed var(--line2);color:var(--muted)}
+.saved-list{background:var(--ink2);overflow-y:auto}
+.saved-item{padding:10px 14px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;gap:8px}
+.saved-thumb{width:32px;height:32px;background:var(--ink3);border:1px solid var(--line2);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.saved-thumb-inner{width:18px;height:13px;background:var(--amber-dim);border:1px solid rgba(245,166,35,.4);border-radius:2px}
+.saved-info{flex:1;min-width:0}
+.saved-addr{font-size:11px;font-weight:600;color:var(--bright);margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.saved-zoning{font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;margin-bottom:2px}
+.saved-price{font-family:var(--mono);font-size:8px;color:var(--mid)}
+.saved-note{font-size:10px;color:var(--mid);font-style:italic;margin-top:2px}
+.saved-arr{font-family:var(--mono);font-size:8px;color:var(--accent);flex-shrink:0;margin-top:2px}
+
+/* TOKEN GRID */
+.token-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+.token-card{background:var(--ink2);border:1px solid var(--line);border-radius:8px;padding:18px}
+.token-label{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.color-swatch{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.swatch{width:22px;height:22px;border-radius:3px;flex-shrink:0;border:1px solid var(--line2)}
+.swatch-name{font-family:var(--mono);font-size:9px;color:var(--text)}
+.swatch-desc{font-family:var(--mono);font-size:8px;color:var(--muted);margin-top:1px}
+.dim-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--line)}
+.dim-row:last-child{border-bottom:none}
+.dim-k{font-family:var(--mono);font-size:9px;color:var(--mid)}
+.dim-v{font-family:var(--mono);font-size:9px;color:var(--bright)}
+
+@media(max-width:1200px){.mob-grid{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.token-grid{grid-template-columns:1fr 1fr}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- HEADER -->
+<div class="doc-header">
+  <div>
+    <div class="doc-eyebrow">Pocket Developer · Design Ref</div>
+    <div class="doc-title">Phase 1<span>.</span> Wireframes</div>
+  </div>
+  <div class="doc-meta">
+    <div class="meta-pill">Desktop + Mobile</div>
+    <div class="meta-pill">9 Screens</div>
+    <div class="meta-pill">v0.1 · Phase 1</div>
+  </div>
+</div>
+
+<!-- ============================= -->
+<!-- DESKTOP 01: DEFAULT MAP -->
+<!-- ============================= -->
+<div class="sec">
+  <div class="sec-head">
+    <div class="sec-label">Desktop · 01</div>
+    <div class="sec-title">Map Default — Empty State</div>
+    <div class="sec-desc">The zero-state landing. Map fills viewport, top bar anchored, layer/zoom controls floating right. Parcel vector tiles render at zoom 15+. Saved properties show amber pins. GPS dot marks device location.</div>
+  </div>
+  <div class="state-pill"><div class="state-dot"></div><div class="state-text">selectedParcel = null · panelOpen = false · zoom ≈ 15</div></div>
+  <div class="frame">
+    <div class="frame-bar"><div class="chrome-dots"><div class="chrome-dot"></div><div class="chrome-dot"></div><div class="chrome-dot"></div></div><span class="frame-name">Desktop · Map Default</span><span class="frame-tag tag-d">Desktop 1440px</span></div>
+    <div class="canvas" style="height:520px">
+      <div class="map-bg"></div>
+      <!-- roads -->
+      <div class="road-h road-maj" style="top:36%;height:8px"></div>
+      <div class="road-h" style="top:56%;height:5px"></div>
+      <div class="road-h" style="top:72%;height:4px"></div>
+      <div class="road-v road-maj" style="left:26%;width:8px"></div>
+      <div class="road-v" style="left:57%;width:5px"></div>
+      <div class="road-v" style="left:74%;width:4px"></div>
+      <!-- parcels -->
+      <div class="parcel" style="left:5%;top:12%;width:8%;height:16%"></div>
+      <div class="parcel" style="left:13%;top:12%;width:6%;height:16%"></div>
+      <div class="parcel" style="left:5%;top:28%;width:14%;height:6%"></div>
+      <div class="parcel" style="left:28%;top:8%;width:9%;height:20%"></div>
+      <div class="parcel" style="left:37%;top:8%;width:7%;height:10%"></div>
+      <div class="parcel" style="left:37%;top:18%;width:7%;height:10%"></div>
+      <div class="parcel" style="left:44%;top:8%;width:10%;height:20%"></div>
+      <div class="parcel" style="left:58%;top:8%;width:12%;height:20%"></div>
+      <div class="parcel" style="left:58%;top:58%;width:10%;height:12%"></div>
+      <div class="parcel" style="left:68%;top:58%;width:7%;height:12%"></div>
+      <div class="parcel" style="left:75%;top:58%;width:9%;height:12%"></div>
+      <div class="parcel" style="left:58%;top:70%;width:26%;height:10%"></div>
+      <div class="parcel" style="left:5%;top:58%;width:16%;height:14%"></div>
+      <div class="parcel" style="left:5%;top:72%;width:9%;height:12%"></div>
+      <div class="parcel" style="left:14%;top:72%;width:7%;height:12%"></div>
+      <!-- saved pins -->
+      <div class="pin pin-amber" style="left:9%;top:9%"><div class="pin-h"></div><div class="pin-s"></div></div>
+      <div class="pin pin-amber" style="left:31%;top:5%"><div class="pin-h"></div><div class="pin-s"></div></div>
+      <!-- gps -->
+      <div class="gps" style="left:50%;top:46%"></div>
+      <!-- topbar -->
+      <div class="topbar">
+        <div class="logo">Pocket<span>Dev</span></div>
+        <div class="searchbar"><div class="search-icon"></div><span class="search-ph">Search address or APN…</span></div>
+        <div class="nav-pills">
+          <div class="npill on">Map</div>
+          <div class="npill">Saved</div>
+          <div class="npill" style="position:relative">Alerts<div class="ndot"></div></div>
+        </div>
+        <div class="avatar">JT</div>
+      </div>
+      <!-- breadcrumb -->
+      <div class="hud-tl">Gwinnett County › All Parcels</div>
+      <!-- map controls -->
+      <div class="map-ctrls" style="right:14px;top:60px">
+        <div class="mc">+</div><div class="mc">−</div>
+        <div class="mc" style="margin-top:4px;border-color:var(--accent)">
+          <div style="width:10px;height:10px;border:1.5px solid var(--mid);border-radius:50%;position:relative"><div style="position:absolute;inset:2px;background:var(--accent);border-radius:50%"></div></div>
+        </div>
+        <div class="mc">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;width:12px;height:12px"><div style="background:var(--line2);border-radius:1px"></div><div style="background:var(--muted);border-radius:1px"></div><div style="background:var(--muted);border-radius:1px"></div><div style="background:var(--line2);border-radius:1px"></div></div>
+        </div>
+      </div>
+      <div class="hud-bl">33.9519° N · 84.1142° W</div>
+      <div class="hud-br">z15.2</div>
+    </div>
+  </div>
+  <div class="ann-strip">
+    <div class="chip"><div class="chip-dot" style="background:var(--accent)"></div><div class="chip-text">Parcels from Regrid vector tiles — render at zoom 15+</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--amber)"></div><div class="chip-text">Amber pins = saved properties (from Supabase)</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--accent)"></div><div class="chip-text">Teal GPS dot = device location via navigator.geolocation</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">Layer icon (grid) opens floating popup — not a modal</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--red)"></div><div class="chip-text">Red dot on Alerts = unread watch alerts</div></div>
+  </div>
+</div>
+
+<!-- ============================= -->
+<!-- DESKTOP 02: PANEL OPEN -->
+<!-- ============================= -->
+<div class="sec">
+  <div class="sec-head">
+    <div class="sec-label">Desktop · 02</div>
+    <div class="sec-title">Parcel Selected — Data Panel</div>
+    <div class="sec-desc">User clicks a parcel. 380px right panel slides in (200ms ease-out). Map pans left. Selected parcel highlights teal. Panel: owner, zoning, assessed value, last sale. Tabs placeholder Phase 2+ features. Actions always pinned to bottom.</div>
+  </div>
+  <div class="state-pill"><div class="state-dot"></div><div class="state-text">selectedParcel = '099-1-0234' · panelOpen = true · activeTab = 'data'</div></div>
+  <div class="frame">
+    <div class="frame-bar"><div class="chrome-dots"><div class="chrome-dot"></div><div class="chrome-dot"></div><div class="chrome-dot"></div></div><span class="frame-name">Desktop · Parcel Panel</span><span class="frame-tag tag-d">Desktop</span></div>
+    <div class="canvas" style="height:560px">
+      <!-- map — shrunk -->
+      <div class="map-bg" style="right:380px"></div>
+      <!-- roads -->
+      <div class="road-h road-maj" style="top:36%;height:8px;right:380px"></div>
+      <div class="road-h" style="top:58%;right:380px"></div>
+      <div class="road-v road-maj" style="left:22%;width:8px"></div>
+      <div class="road-v" style="left:48%"></div>
+      <!-- parcels -->
+      <div class="parcel" style="left:5%;top:12%;width:8%;height:16%"></div>
+      <div class="parcel" style="left:13%;top:12%;width:6%;height:16%"></div>
+      <div class="parcel" style="left:24%;top:8%;width:9%;height:22%"></div>
+      <div class="parcel" style="left:33%;top:8%;width:7%;height:11%"></div>
+      <div class="parcel p-sel" style="left:33%;top:19%;width:7%;height:11%"></div>
+      <div class="parcel" style="left:40%;top:8%;width:7%;height:22%"></div>
+      <div class="parcel" style="left:50%;top:10%;width:10%;height:16%"></div>
+      <div class="parcel" style="left:5%;top:60%;width:16%;height:14%"></div>
+      <div class="parcel" style="left:21%;top:60%;width:8%;height:14%"></div>
+      <!-- pins -->
+      <div class="pin pin-teal" style="left:36%;top:15%"><div class="pin-h"></div><div class="pin-s"></div></div>
+      <div class="pin pin-amber" style="left:7%;top:9%"><div class="pin-h"></div><div class="pin-s"></div></div>
+      <!-- topbar -->
+      <div class="topbar">
+        <div class="logo">Pocket<span>Dev</span></div>
+        <div class="searchbar" style="max-width:280px"><div class="search-icon"></div><span class="search-ph">Search…</span></div>
+        <div class="nav-pills">
+          <div class="npill on">Map</div>
+          <div class="npill">Saved</div>
+          <div class="npill" style="position:relative">Alerts<div class="ndot"></div></div>
+        </div>
+        <div class="avatar">JT</div>
+      </div>
+      <!-- map controls shifted left -->
+      <div class="map-ctrls" style="right:394px;top:60px">
+        <div class="mc">+</div><div class="mc">−</div>
+        <div class="mc" style="margin-top:4px"><div style="width:10px;height:10px;border:1.5px solid var(--mid);border-radius:50%;position:relative"><div style="position:absolute;inset:2px;background:var(--accent);border-radius:50%"></div></div></div>
+      </div>
+      <div class="hud-bl" style="right:394px">33.9519° N · 84.1142° W</div>
+      <!-- PANEL -->
+      <div class="panel" style="width:380px">
+        <div class="panel-hdr">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px">
+            <div>
+              <div class="panel-addr">4821 Buford Hwy NE</div>
+              <div class="panel-sub">Gwinnett County · Unincorporated</div>
+            </div>
+            <div style="font-family:var(--mono);font-size:9px;color:var(--muted);white-space:nowrap;padding-top:2px">APN: 099-1-0234</div>
+          </div>
+          <div class="panel-tabs">
+            <div class="ptab on">Data</div>
+            <div class="ptab">Score ⟳</div>
+            <div class="ptab">Zoning</div>
+            <div class="ptab">Comps</div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="ds">
+            <div class="ds-label">Ownership</div>
+            <div class="dr"><span class="dk">Owner</span><span class="dv" style="font-size:9px">MERIDIAN HOLDINGS LLC</span></div>
+            <div class="dr"><span class="dk">Mailing</span><span class="dv" style="font-size:8px;max-width:55%;text-align:right">PO Box 8831, Atlanta GA 30340</span></div>
+          </div>
+          <div class="ds">
+            <div class="ds-label">Parcel</div>
+            <div class="dr"><span class="dk">Lot Size</span><span class="dv">2.14 ac · 93,218 SF</span></div>
+            <div class="dr"><span class="dk">Land Use</span><span class="dv">General Commercial</span></div>
+            <div class="dr"><span class="dk">Zoning</span><span class="dv ac">C-2</span></div>
+          </div>
+          <div class="ds">
+            <div class="ds-label">Assessed Value</div>
+            <div class="dr"><span class="dk">Land</span><span class="dv">$312,000</span></div>
+            <div class="dr"><span class="dk">Improvement</span><span class="dv">$84,000</span></div>
+            <div class="dr"><span class="dk">Total</span><span class="dv hl">$396,000</span></div>
+          </div>
+          <div class="ds">
+            <div class="ds-label">Last Sale</div>
+            <div class="dr"><span class="dk">Date</span><span class="dv">Aug 14, 2021</span></div>
+            <div class="dr"><span class="dk">Price</span><span class="dv hl">$1,240,000</span></div>
+            <div class="dr"><span class="dk">Per SF</span><span class="dv">$13.30 / SF</span></div>
+          </div>
+        </div>
+        <div class="action-bar">
+          <div class="btn btn-p">Save</div>
+          <div class="btn btn-s">LLC →</div>
+          <div class="btn btn-g">Compare</div>
+          <div class="btn btn-g">Brief</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ann-strip">
+    <div class="chip"><div class="chip-dot" style="background:var(--accent)"></div><div class="chip-text">Panel slides in at 380px — map pads right to compensate</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">Score tab shows ⟳ spinner until Phase 2 computes</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--amber)"></div><div class="chip-text">Last sale price + $/SF = primary decision data, always prominent</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">Map controls shift inward so they don't overlap panel</div></div>
+  </div>
+</div>
+
+<!-- ============================= -->
+<!-- DESKTOP 03+04: SECONDARY STATES -->
+<!-- ============================= -->
+<div class="sec">
+  <div class="sec-head">
+    <div class="sec-label">Desktop · 03 + 04</div>
+    <div class="sec-title">LLC Lookup + Layer Control</div>
+    <div class="sec-desc">Two secondary interaction states that live on top of the panel and map respectively. Entity card expands inline — no modal. Layer popup anchors to its button trigger.</div>
+  </div>
+  <div class="grid2">
+    <!-- LLC LOOKUP -->
+    <div>
+      <div class="state-pill"><div class="state-dot"></div><div class="state-text">entityStatus = 'resolved' · ownerType = 'LLC'</div></div>
+      <div class="frame">
+        <div class="frame-bar"><div class="chrome-dots"><div class="chrome-dot"></div><div class="chrome-dot"></div><div class="chrome-dot"></div></div><span class="frame-name">LLC Entity Lookup</span><span class="frame-tag tag-d">Desktop</span></div>
+        <div class="canvas" style="height:460px">
+          <div class="map-bg" style="right:380px;opacity:.45"></div>
+          <div class="topbar" style="opacity:.4"><div class="logo">Pocket<span>Dev</span></div></div>
+          <div class="panel" style="width:380px">
+            <div class="panel-hdr">
+              <div style="margin-bottom:4px"><div class="panel-addr">4821 Buford Hwy NE</div><div class="panel-sub">APN: 099-1-0234 · Gwinnett</div></div>
+              <div class="panel-tabs"><div class="ptab on">Data</div><div class="ptab">Score</div><div class="ptab">Zoning</div><div class="ptab">Comps</div></div>
+            </div>
+            <div class="panel-body">
+              <div class="ds">
+                <div class="ds-label">Ownership</div>
+                <div class="dr"><span class="dk">Owner</span><span class="dv" style="font-size:9px">MERIDIAN HOLDINGS LLC</span></div>
+              </div>
+              <!-- entity card -->
+              <div class="entity-card">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+                  <span style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)">Georgia SOS</span>
+                  <span class="entity-badge">Active</span>
+                </div>
+                <div class="dr" style="border-bottom:1px solid var(--line)"><span class="dk">Principal</span><span class="dv" style="font-size:9px">Marcus W. Chen</span></div>
+                <div class="dr" style="border-bottom:1px solid var(--line)"><span class="dk">Reg. Agent</span><span class="dv" style="font-size:9px">David R. Thornton</span></div>
+                <div class="dr" style="border-bottom:none"><span class="dk">Formed</span><span class="dv" style="font-size:9px">March 2018</span></div>
+                <div style="font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:8px 0 4px">Other Properties · 3</div>
+                <div class="rel-row"><span class="rel-addr" style="font-size:8px">3200 Peachtree Ind Blvd</span><span class="rel-link">→</span></div>
+                <div class="rel-row" style="margin:2px 0"><span class="rel-addr" style="font-size:8px">5510 Jimmy Carter Blvd</span><span class="rel-link">→</span></div>
+                <div class="rel-row"><span class="rel-addr" style="font-size:8px">1844 Old Norcross Rd</span><span class="rel-link">→</span></div>
+              </div>
+            </div>
+            <div class="action-bar">
+              <div class="btn btn-p">Save</div>
+              <div class="btn btn-s" style="border-color:var(--accent);color:var(--accent)">LLC ✓</div>
+              <div class="btn btn-g">Compare</div>
+              <div class="btn btn-g">Brief</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ann-strip">
+        <div class="chip"><div class="chip-dot" style="background:var(--green)"></div><div class="chip-text">Active badge = GA SOS status field</div></div>
+        <div class="chip"><div class="chip-dot" style="background:var(--accent)"></div><div class="chip-text">→ arrow rows fly to parcel on click</div></div>
+        <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">LLC button goes teal + checkmark on resolve</div></div>
+      </div>
+    </div>
+    <!-- LAYER CONTROL -->
+    <div>
+      <div class="state-pill"><div class="state-dot"></div><div class="state-text">layerPanelOpen = true · baseMap = 'streets'</div></div>
+      <div class="frame">
+        <div class="frame-bar"><div class="chrome-dots"><div class="chrome-dot"></div><div class="chrome-dot"></div><div class="chrome-dot"></div></div><span class="frame-name">Layer Control Popup</span><span class="frame-tag tag-s">Overlay State</span></div>
+        <div class="canvas" style="height:460px">
+          <div class="map-bg"></div>
+          <div class="road-h" style="top:40%;height:5px"></div>
+          <div class="road-v road-maj" style="left:38%;width:7px"></div>
+          <div class="parcel" style="left:5%;top:10%;width:10%;height:20%"></div>
+          <div class="parcel p-save" style="left:55%;top:10%;width:12%;height:16%"></div>
+          <div class="parcel" style="left:42%;top:10%;width:11%;height:26%"></div>
+          <div class="parcel" style="left:42%;top:60%;width:15%;height:18%"></div>
+          <div class="topbar" style="opacity:.7"><div class="logo">Pocket<span>Dev</span></div><div class="searchbar" style="max-width:220px"><div class="search-icon"></div><span class="search-ph">Search…</span></div></div>
+          <div class="pin pin-amber" style="left:59%;top:7%"><div class="pin-h"></div><div class="pin-s"></div></div>
+          <!-- map controls, layer btn active -->
+          <div class="map-ctrls" style="right:14px;top:60px">
+            <div class="mc">+</div><div class="mc">−</div>
+            <div class="mc" style="margin-top:4px"><div style="width:10px;height:10px;border:1.5px solid var(--mid);border-radius:50%;position:relative"><div style="position:absolute;inset:2px;background:var(--accent);border-radius:50%"></div></div></div>
+            <div class="mc" style="border-color:var(--accent);background:var(--accent-dim)">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;width:12px;height:12px"><div style="background:var(--accent);border-radius:1px"></div><div style="background:var(--muted);border-radius:1px"></div><div style="background:var(--muted);border-radius:1px"></div><div style="background:var(--accent);border-radius:1px"></div></div>
+            </div>
+          </div>
+          <!-- layer popup -->
+          <div class="layer-popup" style="right:56px;top:156px">
+            <div class="lp-title">Map Layers</div>
+            <div class="lp-row"><span class="lp-name">Parcel Boundaries</span><div class="tog tog-on"></div></div>
+            <div class="lp-row"><span class="lp-name">Parcel Fill</span><div class="tog tog-off"></div></div>
+            <div class="lp-row"><span class="lp-name">Zoning Colors</span><div class="tog tog-off"></div></div>
+            <div class="lp-row"><span class="lp-name">Saved Pins</span><div class="tog tog-on"></div></div>
+            <div class="lp-row"><span class="lp-name">Road Labels</span><div class="tog tog-on"></div></div>
+            <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--line)">
+              <div class="lp-title" style="margin-bottom:6px">Base Map</div>
+              <div class="base-opts"><div class="base-opt sel">Streets</div><div class="base-opt">Satellite</div><div class="base-opt">Hybrid</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ann-strip">
+        <div class="chip"><div class="chip-dot" style="background:var(--accent)"></div><div class="chip-text">Popup anchors to layer button — not a modal, no overlay</div></div>
+        <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">Closes on outside click · state in localStorage</div></div>
+        <div class="chip"><div class="chip-dot" style="background:var(--amber)"></div><div class="chip-text">Style switch (Streets↔Satellite) re-fires style.load — re-add custom layers</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================= -->
+<!-- DESKTOP 05: SEARCH DROPDOWN -->
+<!-- ============================= -->
+<div class="sec">
+  <div class="sec-head">
+    <div class="sec-label">Desktop · 05</div>
+    <div class="sec-title">Search Active — Address Dropdown</div>
+    <div class="sec-desc">Typing in the search bar triggers Mapbox Search Box v2 after 300ms debounce. Dropdown renders up to 5 results. Keyboard navigable. Selecting flies the map to coordinates and auto-opens the parcel panel.</div>
+  </div>
+  <div class="state-pill"><div class="state-dot"></div><div class="state-text">searchQuery = '4821 Buf' · suggestions = [5] · panelOpen = false</div></div>
+  <div class="frame" style="max-width:780px">
+    <div class="frame-bar"><div class="chrome-dots"><div class="chrome-dot"></div><div class="chrome-dot"></div><div class="chrome-dot"></div></div><span class="frame-name">Desktop · Search Active</span><span class="frame-tag tag-s">Search State</span></div>
+    <div class="canvas" style="height:360px">
+      <div class="map-bg"></div>
+      <div class="road-h road-maj" style="top:42%;height:7px"></div>
+      <div class="road-v" style="left:46%"></div>
+      <div class="parcel" style="left:8%;top:15%;width:9%;height:18%"></div>
+      <div class="parcel" style="left:17%;top:15%;width:7%;height:18%"></div>
+      <div class="parcel" style="left:50%;top:15%;width:12%;height:20%"></div>
+      <div class="parcel" style="left:50%;top:55%;width:10%;height:14%"></div>
+      <!-- topbar with active search -->
+      <div class="topbar">
+        <div class="logo">Pocket<span>Dev</span></div>
+        <div class="searchbar" style="max-width:340px;border-color:var(--accent);background:var(--ink)">
+          <div class="search-icon" style="border-color:var(--accent)"></div>
+          <span style="font-family:var(--mono);font-size:10px;color:var(--bright)">4821 Buf</span>
+          <span style="font-family:var(--mono);font-size:10px;color:var(--accent);animation:blink 1s infinite">|</span>
+        </div>
+        <div class="nav-pills"><div class="npill on">Map</div><div class="npill">Saved</div><div class="npill" style="position:relative">Alerts<div class="ndot"></div></div></div>
+        <div class="avatar">JT</div>
+      </div>
+      <!-- dropdown -->
+      <div class="search-dd" style="top:48px;left:152px;width:340px">
+        <div class="sr focus"><div class="sr-icon">📍</div><div><div class="sr-addr">4821 Buford Hwy NE</div><div class="sr-county">Gwinnett County · APN: 099-1-0234</div></div></div>
+        <div class="sr"><div class="sr-icon">🏢</div><div><div class="sr-addr">4821 Buford Dr, Buford GA</div><div class="sr-county">Hall County</div></div></div>
+        <div class="sr"><div class="sr-icon">📍</div><div><div class="sr-addr">4821 Buford Hwy, Chamblee GA</div><div class="sr-county">DeKalb County</div></div></div>
+        <div class="sr" style="opacity:.5"><div class="sr-icon">📍</div><div><div class="sr-addr">4821 Buford Hwy, Doraville GA</div><div class="sr-county">DeKalb County</div></div></div>
+        <div style="padding:6px 12px;border-top:1px solid var(--line)"><div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase">Powered by Mapbox Search Box v2</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="ann-strip">
+    <div class="chip"><div class="chip-dot" style="background:var(--accent)"></div><div class="chip-text">Search border goes teal on focus</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">APN shown in subline when found in local DB (no API call)</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--amber)"></div><div class="chip-text">First result auto-focused for keyboard arrow nav (↑↓ + Enter)</div></div>
+  </div>
+</div>
+
+<!-- ============================= -->
+<!-- MOBILE SCREENS -->
+<!-- ============================= -->
+<div class="sec">
+  <div class="sec-head">
+    <div class="sec-label">Mobile · PWA · iOS + Android</div>
+    <div class="sec-title">Mobile — Four Core States</div>
+    <div class="sec-desc">Progressive Web App served over HTTPS. No App Store dependency during pilot. Map fills the viewport natively. Bottom sheet drawer replaces the desktop side panel. Tab bar provides primary nav. Four states: Default, Parcel Panel, LLC Lookup, Saved Properties.</div>
+  </div>
+  <div class="mob-grid">
+
+    <!-- MOB 1: DEFAULT -->
+    <div class="phone-wrap">
+      <div class="phone-cap">1 · Map Default</div>
+      <div class="device">
+        <div class="screen" style="height:575px">
+          <div class="notch"></div>
+          <div class="status-bar"><span class="stime">9:41</span><div class="sicons"><div class="swifi"><div style="height:4px"></div><div style="height:7px"></div><div style="height:9px"></div></div><div class="sbatt"></div></div></div>
+          <div class="mob-top"><div class="mob-logo">P<span>D</span></div><div class="mob-search"><div class="search-icon" style="width:9px;height:9px;border-width:1px"></div><span class="mob-ph">Search address or APN…</span></div></div>
+          <div class="mob-map" style="height:400px">
+            <div class="road-h road-maj" style="top:42%;height:6px"></div>
+            <div class="road-h" style="top:64%;height:4px"></div>
+            <div class="road-v road-maj" style="left:38%;width:6px"></div>
+            <div class="road-v" style="left:66%;width:4px"></div>
+            <div class="parcel" style="left:5%;top:10%;width:14%;height:22%"></div>
+            <div class="parcel" style="left:19%;top:10%;width:11%;height:22%"></div>
+            <div class="parcel" style="left:44%;top:8%;width:14%;height:25%"></div>
+            <div class="parcel" style="left:44%;top:33%;width:14%;height:8%"></div>
+            <div class="parcel" style="left:5%;top:50%;width:22%;height:12%"></div>
+            <div class="parcel" style="left:5%;top:62%;width:22%;height:18%"></div>
+            <div class="parcel" style="left:70%;top:50%;width:18%;height:14%"></div>
+            <div class="pin pin-amber" style="left:9%;top:7%"><div class="pin-h" style="width:10px;height:10px"></div><div class="pin-s" style="height:6px"></div></div>
+            <div class="gps" style="left:52%;top:55%;width:10px;height:10px"></div>
+            <!-- map controls -->
+            <div style="position:absolute;right:10px;bottom:16px;display:flex;flex-direction:column;gap:5px">
+              <div class="mc" style="width:28px;height:28px;font-size:12px">+</div>
+              <div class="mc" style="width:28px;height:28px;font-size:12px">−</div>
+            </div>
+            <div style="position:absolute;left:10px;bottom:16px;width:28px;height:28px;background:rgba(13,15,18,.9);border:1px solid var(--line2);border-radius:4px;display:flex;align-items:center;justify-content:center">
+              <div style="width:10px;height:10px;border:1.5px solid var(--accent);border-radius:50%;position:relative"><div style="position:absolute;inset:2px;background:var(--accent);border-radius:50%"></div></div>
+            </div>
+          </div>
+          <!-- tab bar -->
+          <div class="tabbar">
+            <div class="tbi"><div class="tbi-icon on circ"></div><span class="tbi-label on">Map</span></div>
+            <div class="tbi"><div class="tbi-icon"></div><span class="tbi-label">Saved</span></div>
+            <div class="tbi" style="position:relative"><div class="tbi-icon" style="position:relative"><div class="ndot" style="width:6px;height:6px"></div></div><span class="tbi-label">Alerts</span></div>
+            <div class="tbi"><div class="tbi-icon"></div><span class="tbi-label">Settings</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOB 2: PARCEL PANEL -->
+    <div class="phone-wrap">
+      <div class="phone-cap">2 · Parcel Panel</div>
+      <div class="device">
+        <div class="screen" style="height:575px">
+          <div class="notch"></div>
+          <div class="status-bar"><span class="stime">9:41</span></div>
+          <div class="mob-top"><div class="mob-logo">P<span>D</span></div><div class="mob-search"><div class="search-icon" style="width:9px;height:9px;border-width:1px"></div><span class="mob-ph">Search…</span></div></div>
+          <!-- condensed map -->
+          <div class="mob-map" style="height:190px;position:relative">
+            <div class="road-h road-maj" style="top:42%;height:5px"></div>
+            <div class="road-v road-maj" style="left:44%;width:5px"></div>
+            <div class="parcel" style="left:8%;top:10%;width:16%;height:70%"></div>
+            <div class="parcel p-sel" style="left:50%;top:8%;width:16%;height:70%"></div>
+            <div class="parcel" style="left:66%;top:8%;width:14%;height:70%"></div>
+            <div class="pin pin-teal" style="left:57%;top:4%"><div class="pin-h" style="width:10px;height:10px"></div><div class="pin-s" style="height:6px"></div></div>
+          </div>
+          <!-- sheet -->
+          <div class="mob-sheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-hdr">
+              <div class="sheet-addr">4821 Buford Hwy NE</div>
+              <div class="sheet-meta">APN: 099-1-0234 · Gwinnett</div>
+            </div>
+            <div class="mob-tabs"><div class="mtab on">Data</div><div class="mtab">Score</div><div class="mtab">Zoning</div><div class="mtab">Comps</div></div>
+            <div class="sheet-body">
+              <div class="mob-dr"><span class="mob-dk">Owner</span><span class="mob-dv" style="font-size:8px">MERIDIAN HOLDINGS LLC</span></div>
+              <div class="mob-dr"><span class="mob-dk">Zoning</span><span class="mob-dv ac">C-2</span></div>
+              <div class="mob-dr"><span class="mob-dk">Lot Size</span><span class="mob-dv">2.14 ac</span></div>
+              <div class="mob-dr"><span class="mob-dk">Assessed</span><span class="mob-dv hl">$396,000</span></div>
+              <div class="mob-dr"><span class="mob-dk">Last Sale</span><span class="mob-dv hl">$1,240,000</span></div>
+              <div class="mob-dr"><span class="mob-dk">Price/SF</span><span class="mob-dv">$13.30</span></div>
+            </div>
+            <div class="mob-actions">
+              <div class="mbtn mbtn-p">Save</div>
+              <div class="mbtn mbtn-s">LLC →</div>
+              <div class="mbtn mbtn-s">+Comp</div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tbi"><div class="tbi-icon on circ"></div><span class="tbi-label on">Map</span></div>
+            <div class="tbi"><div class="tbi-icon"></div><span class="tbi-label">Saved</span></div>
+            <div class="tbi" style="position:relative"><div class="tbi-icon"><div class="ndot" style="width:6px;height:6px"></div></div><span class="tbi-label">Alerts</span></div>
+            <div class="tbi"><div class="tbi-icon"></div><span class="tbi-label">Settings</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOB 3: LLC RESOLVED -->
+    <div class="phone-wrap">
+      <div class="phone-cap">3 · LLC Resolved</div>
+      <div class="device">
+        <div class="screen" style="height:575px">
+          <div class="notch"></div>
+          <div class="status-bar"><span class="stime">9:41</span></div>
+          <div class="mob-top"><div class="mob-logo">P<span>D</span></div><div class="mob-search"><div class="search-icon" style="width:9px;height:9px;border-width:1px"></div><span class="mob-ph">Search…</span></div></div>
+          <div class="mob-map" style="height:110px;opacity:.6;position:relative">
+            <div class="road-h road-maj" style="top:40%;height:5px"></div>
+            <div class="parcel p-sel" style="left:38%;top:10%;width:18%;height:70%"></div>
+            <div class="pin pin-teal" style="left:45%;top:4%"><div class="pin-h" style="width:10px;height:10px"></div><div class="pin-s" style="height:6px"></div></div>
+          </div>
+          <div class="mob-sheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-hdr">
+              <div class="sheet-addr">4821 Buford Hwy NE</div>
+              <div class="sheet-meta">MERIDIAN HOLDINGS LLC</div>
+            </div>
+            <div class="mob-tabs"><div class="mtab on">Data</div><div class="mtab">Score</div><div class="mtab">Zoning</div><div class="mtab">Comps</div></div>
+            <div class="sheet-body">
+              <div style="background:var(--ink3);border:1px solid var(--line2);border-radius:5px;padding:8px;margin-bottom:8px">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-family:var(--mono);font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)">GA SOS Entity</span><span class="entity-badge" style="font-size:7px;padding:1px 5px">Active</span></div>
+                <div class="mob-dr" style="border:none;padding:2px 0"><span class="mob-dk">Principal</span><span class="mob-dv" style="font-size:8px">Marcus W. Chen</span></div>
+                <div class="mob-dr" style="border:none;padding:2px 0"><span class="mob-dk">Agent</span><span class="mob-dv" style="font-size:8px">David R. Thornton</span></div>
+                <div class="mob-dr" style="border:none;padding:2px 0"><span class="mob-dk">Formed</span><span class="mob-dv" style="font-size:8px">March 2018</span></div>
+              </div>
+              <div style="font-family:var(--mono);font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px">Other Properties · 3</div>
+              <div class="rel-row" style="margin-bottom:2px"><span class="rel-addr" style="font-size:8px">3200 Peachtree Ind Blvd</span><span class="rel-link">→</span></div>
+              <div class="rel-row" style="margin-bottom:2px"><span class="rel-addr" style="font-size:8px">5510 Jimmy Carter Blvd</span><span class="rel-link">→</span></div>
+              <div class="rel-row"><span class="rel-addr" style="font-size:8px">1844 Old Norcross Rd</span><span class="rel-link">→</span></div>
+            </div>
+            <div class="mob-actions">
+              <div class="mbtn mbtn-p">Save</div>
+              <div class="mbtn mbtn-s" style="border-color:var(--accent);color:var(--accent)">LLC ✓</div>
+              <div class="mbtn mbtn-s">Brief</div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tbi"><div class="tbi-icon on circ"></div><span class="tbi-label on">Map</span></div>
+            <div class="tbi"><div class="tbi-icon"></div><span class="tbi-label">Saved</span></div>
+            <div class="tbi" style="position:relative"><div class="tbi-icon"><div class="ndot" style="width:6px;height:6px"></div></div><span class="tbi-label">Alerts</span></div>
+            <div class="tbi"><div class="tbi-icon"></div><span class="tbi-label">Settings</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOB 4: SAVED LIST -->
+    <div class="phone-wrap">
+      <div class="phone-cap">4 · Saved Properties</div>
+      <div class="device">
+        <div class="screen" style="height:575px">
+          <div class="notch"></div>
+          <div class="status-bar"><span class="stime">9:41</span></div>
+          <div class="saved-hdr">
+            <div class="saved-title">Saved</div>
+            <div class="coll-tabs">
+              <div class="ct on">All (12)</div>
+              <div class="ct off">Norcross Q2 (4)</div>
+              <div class="ct off">Watch (8)</div>
+              <div class="ct new">+ New</div>
+            </div>
+          </div>
+          <div class="saved-list" style="height:430px">
+            <div class="saved-item">
+              <div class="saved-thumb"><div class="saved-thumb-inner"></div></div>
+              <div class="saved-info">
+                <div class="saved-addr">4821 Buford Hwy NE</div>
+                <div class="saved-zoning">C-2 · 2.14 ac · Gwinnett</div>
+                <div class="saved-price">$1.24M · $13.30/SF</div>
+              </div>
+              <div class="saved-arr">→</div>
+            </div>
+            <div class="saved-item">
+              <div class="saved-thumb"><div class="saved-thumb-inner"></div></div>
+              <div class="saved-info">
+                <div class="saved-addr">3200 Peachtree Ind Blvd</div>
+                <div class="saved-zoning">I-1 · 5.80 ac · Gwinnett</div>
+                <div class="saved-price">$2.10M · $8.31/SF</div>
+              </div>
+              <div class="saved-arr">→</div>
+            </div>
+            <div class="saved-item">
+              <div class="saved-thumb"><div class="saved-thumb-inner"></div></div>
+              <div class="saved-info">
+                <div class="saved-addr">5510 Jimmy Carter Blvd</div>
+                <div class="saved-zoning">C-2 · 1.90 ac · Gwinnett</div>
+                <div class="saved-note">"Owner not interested — check back Q3"</div>
+              </div>
+              <div class="saved-arr">→</div>
+            </div>
+            <div class="saved-item" style="opacity:.65">
+              <div class="saved-thumb"><div class="saved-thumb-inner"></div></div>
+              <div class="saved-info">
+                <div class="saved-addr">1844 Old Norcross Rd</div>
+                <div class="saved-zoning">C-1 · 0.94 ac · Gwinnett</div>
+                <div class="saved-price">$410K · $10.12/SF</div>
+              </div>
+              <div class="saved-arr">→</div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tbi"><div class="tbi-icon circ"></div><span class="tbi-label">Map</span></div>
+            <div class="tbi"><div class="tbi-icon on"></div><span class="tbi-label on">Saved</span></div>
+            <div class="tbi" style="position:relative"><div class="tbi-icon"><div class="ndot" style="width:6px;height:6px"></div></div><span class="tbi-label">Alerts</span></div>
+            <div class="tbi"><div class="tbi-icon"></div><span class="tbi-label">Settings</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end mob-grid -->
+
+  <div class="ann-strip" style="margin-top:24px">
+    <div class="chip"><div class="chip-dot" style="background:var(--accent)"></div><div class="chip-text">Map shrinks to 190px when panel open — parcel stays visible</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">Bottom sheet swipe-to-dismiss on mobile</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--amber)"></div><div class="chip-text">Saved list rows: tap → fly to parcel, open panel</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--accent)"></div><div class="chip-text">Collection tabs scroll horizontally, "+ New" always at end</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">Italic note text renders inline in saved list row</div></div>
+  </div>
+</div>
+
+<!-- ============================= -->
+<!-- DESIGN TOKENS -->
+<!-- ============================= -->
+<div class="sec">
+  <div class="sec-head">
+    <div class="sec-label">Design System · Tokens</div>
+    <div class="sec-title">Color · Type · Dimensions</div>
+    <div class="sec-desc">Map these directly to CSS custom properties in your Next.js globals.css. Consistent token usage is what makes phases 2–4 feel like one product.</div>
+  </div>
+  <div class="token-grid">
+    <div class="token-card">
+      <div class="token-label">Color Palette</div>
+      <div class="color-swatch"><div class="swatch" style="background:#0d0f12"></div><div><div class="swatch-name">--ink: #0d0f12</div><div class="swatch-desc">Primary background</div></div></div>
+      <div class="color-swatch"><div class="swatch" style="background:#141720"></div><div><div class="swatch-name">--ink2: #141720</div><div class="swatch-desc">Panel / card surface</div></div></div>
+      <div class="color-swatch"><div class="swatch" style="background:#00d4c8"></div><div><div class="swatch-name">--accent: #00d4c8</div><div class="swatch-desc">Selected / interactive</div></div></div>
+      <div class="color-swatch"><div class="swatch" style="background:#f5a623"></div><div><div class="swatch-name">--amber: #f5a623</div><div class="swatch-desc">Saved / financial data</div></div></div>
+      <div class="color-swatch"><div class="swatch" style="background:#c8d0e0"></div><div><div class="swatch-name">--text: #c8d0e0</div><div class="swatch-desc">Body text</div></div></div>
+      <div class="color-swatch"><div class="swatch" style="background:#6b7898"></div><div><div class="swatch-name">--mid: #6b7898</div><div class="swatch-desc">Labels / secondary</div></div></div>
+      <div class="color-swatch"><div class="swatch" style="background:#22c55e"></div><div><div class="swatch-name">--green: #22c55e</div><div class="swatch-desc">Active / confirmed</div></div></div>
+      <div class="color-swatch"><div class="swatch" style="background:#ef4444"></div><div><div class="swatch-name">--red: #ef4444</div><div class="swatch-desc">Alerts / critical</div></div></div>
+    </div>
+    <div class="token-card">
+      <div class="token-label">Typography</div>
+      <div style="margin-bottom:16px">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--bright);letter-spacing:.04em;line-height:1;margin-bottom:4px">PocketDev</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--muted)">Bebas Neue · Display / logo / headings</div>
+      </div>
+      <div style="margin-bottom:16px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--text);margin-bottom:4px">APN: 099-1-0234</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--muted)">IBM Plex Mono · All data labels + values</div>
+      </div>
+      <div style="margin-bottom:16px">
+        <div style="font-family:'Barlow',sans-serif;font-size:14px;font-weight:600;color:var(--bright);margin-bottom:4px">4821 Buford Hwy NE</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--muted)">Barlow SemiBold · Panel addresses</div>
+      </div>
+      <div>
+        <div style="font-family:'Barlow',sans-serif;font-size:13px;color:var(--mid);margin-bottom:4px">General Commercial</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--muted)">Barlow Regular · Descriptive body text</div>
+      </div>
+    </div>
+    <div class="token-card">
+      <div class="token-label">Key Dimensions</div>
+      <div class="dim-row"><span class="dim-k">Desktop topbar</span><span class="dim-v">48px</span></div>
+      <div class="dim-row"><span class="dim-k">Desktop panel</span><span class="dim-v">380px</span></div>
+      <div class="dim-row"><span class="dim-k">Mobile topbar</span><span class="dim-v">44px</span></div>
+      <div class="dim-row"><span class="dim-k">Mobile sheet (open)</span><span class="dim-v">~60vh</span></div>
+      <div class="dim-row"><span class="dim-k">Mobile map (panel open)</span><span class="dim-v">190px</span></div>
+      <div class="dim-row"><span class="dim-k">Tab bar height</span><span class="dim-v">52px</span></div>
+      <div class="dim-row"><span class="dim-k">Map control button</span><span class="dim-v">32×32px</span></div>
+      <div class="dim-row"><span class="dim-k">Panel slide anim</span><span class="dim-v">200ms ease-out</span></div>
+      <div class="dim-row"><span class="dim-k">Border radius (cards)</span><span class="dim-v">6–8px</span></div>
+      <div class="dim-row"><span class="dim-k">Parcel highlight fill</span><span class="dim-v">rgba(0,212,200,.10)</span></div>
+      <div class="dim-row"><span class="dim-k">Search debounce</span><span class="dim-v">300ms</span></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end page -->
+</body>
+</html>

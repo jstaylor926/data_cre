@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pocket Developer — Phase 2 Wireframes</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0d0f12;--ink2:#141720;--ink3:#1b1f2a;--ink4:#232838;--ink5:#2a3040;
+  --line:#252b3b;--line2:#2e3547;--muted:#3d4760;--mid:#6b7898;
+  --text:#c8d0e0;--bright:#e8edf8;
+  --accent:#00d4c8;--accent-dim:rgba(0,212,200,.1);--accent-glow:rgba(0,212,200,.2);
+  --amber:#f5a623;--amber-dim:rgba(245,166,35,.12);--amber-glow:rgba(245,166,35,.2);
+  --violet:#a78bfa;--violet-dim:rgba(167,139,250,.12);--violet-glow:rgba(167,139,250,.2);
+  --green:#22c55e;--green-dim:rgba(34,197,94,.1);
+  --red:#ef4444;--red-dim:rgba(239,68,68,.12);
+  --mono:'IBM Plex Mono',monospace;--head:'Bebas Neue',sans-serif;--body:'Barlow',sans-serif;
+}
+body{background:#080a0d;font-family:var(--body);color:var(--text);min-height:100vh}
+.page{max-width:1640px;margin:0 auto;padding:48px 48px 96px}
+
+/* DOC HEADER */
+.doc-header{margin-bottom:64px;padding-bottom:32px;border-bottom:1px solid var(--line);display:flex;align-items:flex-end;justify-content:space-between;gap:24px}
+.doc-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--violet);margin-bottom:8px}
+.doc-title{font-family:var(--head);font-size:52px;letter-spacing:.04em;color:var(--bright);line-height:1}
+.doc-title span{color:var(--violet)}
+.doc-meta{display:flex;gap:12px;align-items:center}
+.meta-pill{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border:1px solid var(--line2);border-radius:3px;color:var(--mid)}
+
+/* SECTION */
+.sec{margin-bottom:80px}
+.sec-head{margin-bottom:28px}
+.sec-label{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:10px}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--line);max-width:80px}
+.sec-title{font-family:var(--head);font-size:28px;letter-spacing:.04em;color:var(--bright)}
+.sec-desc{font-size:13px;color:var(--mid);margin-top:4px;max-width:580px;line-height:1.65}
+
+/* STATE PILL */
+.state-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.25);border-radius:4px;padding:8px 14px;margin-bottom:18px}
+.sp-dot{width:6px;height:6px;border-radius:50%;background:var(--violet);flex-shrink:0}
+.sp-text{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--violet)}
+
+/* SCREEN FRAME */
+.frame{background:var(--ink2);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.frame-bar{padding:10px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;background:var(--ink)}
+.dots{display:flex;gap:5px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.fn{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-left:6px}
+.ftag{margin-left:auto;font-family:var(--mono);font-size:9px;letter-spacing:.08em;padding:3px 8px;border-radius:3px;text-transform:uppercase}
+.td{background:rgba(99,102,241,.15);color:#a5b4fc}
+.tm{background:rgba(0,212,200,.1);color:var(--accent)}
+.ts{background:var(--violet-dim);color:var(--violet)}
+
+/* CANVAS */
+.canvas{position:relative;overflow:hidden}
+
+/* MAP */
+.map-bg{position:absolute;inset:0;background:var(--ink3);background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:32px 32px}
+.road-h{position:absolute;left:0;right:0;background:var(--ink4)}
+.road-v{position:absolute;top:0;bottom:0;background:var(--ink4)}
+.road-maj{background:#252c3d}
+.parcel{position:absolute;border:1px solid rgba(0,212,200,.2);border-radius:2px}
+.p-sel{border-color:var(--accent);background:rgba(0,212,200,.08);box-shadow:0 0 0 2px var(--accent-glow)}
+.p-save{border-color:var(--amber);background:var(--amber-dim)}
+
+/* TOPBAR */
+.topbar{position:absolute;top:0;left:0;right:0;height:48px;background:rgba(13,15,18,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 14px;gap:10px;z-index:10}
+.logo{font-family:var(--head);font-size:16px;letter-spacing:.06em;color:var(--bright)}
+.logo span{color:var(--accent)}
+.searchbar{flex:1;max-width:320px;height:32px;background:var(--ink3);border:1px solid var(--line2);border-radius:4px;display:flex;align-items:center;padding:0 10px;gap:6px}
+.si{width:11px;height:11px;border:1.5px solid var(--muted);border-radius:50%;position:relative;flex-shrink:0}
+.si::after{content:'';position:absolute;bottom:-3px;right:-3px;width:4px;height:1.5px;background:var(--muted);transform:rotate(45deg)}
+.sph{font-family:var(--mono);font-size:10px;color:var(--muted)}
+.npills{display:flex;gap:4px;margin-left:auto}
+.np{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:3px;color:var(--mid);border:1px solid var(--line);white-space:nowrap;position:relative}
+.np.on{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}
+.av{width:28px;height:28px;border-radius:50%;background:var(--ink4);border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;color:var(--accent);flex-shrink:0}
+
+/* MAP CONTROLS */
+.mcs{position:absolute;display:flex;flex-direction:column;gap:6px;z-index:10}
+.mc{width:32px;height:32px;background:rgba(13,15,18,.9);border:1px solid var(--line2);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:14px;color:var(--mid)}
+
+/* PINS */
+.pin{position:absolute;display:flex;flex-direction:column;align-items:center;z-index:5}
+.pin-h{width:12px;height:12px;border-radius:50%;border:2px solid var(--ink)}
+.pin-s{width:1.5px;height:8px;margin-top:-1px}
+.amber-pin .pin-h{background:var(--amber)}.amber-pin .pin-s{background:var(--amber)}
+.teal-pin .pin-h{background:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}.teal-pin .pin-s{background:var(--accent)}
+
+/* SCORE BADGE ON PIN */
+.score-pin{position:absolute;display:flex;flex-direction:column;align-items:center;z-index:5}
+.score-pin-bubble{background:rgba(13,15,18,.92);border:1px solid;border-radius:4px;padding:2px 6px;font-family:var(--mono);font-size:9px;font-weight:500;white-space:nowrap}
+.score-pin-stem{width:1.5px;height:8px}
+
+/* PANEL */
+.panel{position:absolute;right:0;top:0;bottom:0;background:rgba(13,15,18,.97);border-left:1px solid var(--line);display:flex;flex-direction:column;z-index:10}
+.ph{padding:14px 16px 0;border-bottom:1px solid var(--line);flex-shrink:0}
+.pa{font-family:var(--body);font-size:13px;font-weight:600;color:var(--bright);line-height:1.3}
+.ps{font-family:var(--mono);font-size:9px;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;margin-top:1px}
+.ptabs{display:flex;border-top:1px solid var(--line);margin-top:8px}
+.pt{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;padding:8px 10px;color:var(--muted);border-bottom:2px solid transparent;flex:1;text-align:center}
+.pt.on{color:var(--violet);border-bottom-color:var(--violet)}
+.pt.p1{color:var(--accent);border-bottom-color:var(--accent)}
+.pb{flex:1;overflow:hidden;padding:14px 16px;display:flex;flex-direction:column;gap:10px;overflow-y:auto}
+.abar{padding:10px 14px;border-top:1px solid var(--line);display:flex;gap:6px;flex-shrink:0}
+.btn{flex:1;height:30px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:8px;letter-spacing:.08em;text-transform:uppercase}
+.btn-p{background:var(--accent);color:var(--ink);font-weight:600}
+.btn-vp{background:var(--violet);color:var(--ink);font-weight:600}
+.btn-s{background:var(--ink4);border:1px solid var(--line2);color:var(--mid)}
+.btn-g{border:1px solid var(--line);color:var(--muted)}
+.btn-amber{background:var(--amber);color:var(--ink);font-weight:600}
+
+/* DATA ROWS */
+.dl{font-family:var(--mono);font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;padding-bottom:4px;border-bottom:1px solid var(--line)}
+.dr{display:flex;justify-content:space-between;align-items:baseline;padding:4px 0;border-bottom:1px solid var(--line)}
+.dr:last-child{border-bottom:none}
+.dk{font-family:var(--mono);font-size:9px;letter-spacing:.05em;color:var(--mid);text-transform:uppercase}
+.dv{font-family:var(--mono);font-size:10px;color:var(--bright);font-weight:500;text-align:right}
+.dv.hl{color:var(--amber)}.dv.ac{color:var(--accent)}.dv.vi{color:var(--violet)}
+
+/* NOTIF DOT */
+.nd{width:7px;height:7px;border-radius:50%;background:var(--red);position:absolute;top:-2px;right:-2px;border:1.5px solid var(--ink)}
+
+/* ─── SCORE TAB ─── */
+.score-hero{text-align:center;padding:16px 0 12px;position:relative}
+.score-num{font-family:var(--head);font-size:72px;letter-spacing:-.02em;line-height:1;color:var(--bright)}
+.score-num span{color:var(--violet)}
+.score-label{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--mid);margin-top:2px}
+.score-tier{display:inline-flex;align-items:center;gap:5px;background:var(--violet-dim);border:1px solid var(--violet);border-radius:3px;padding:3px 10px;margin-top:6px}
+.score-tier-text{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--violet)}
+
+/* Sub score bars */
+.subscore{margin-bottom:2px}
+.ssrow{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.ss-name{font-family:var(--mono);font-size:9px;letter-spacing:.05em;color:var(--mid);text-transform:uppercase;width:90px;flex-shrink:0}
+.ss-track{flex:1;height:6px;background:var(--ink4);border-radius:3px;overflow:hidden;position:relative}
+.ss-fill{height:100%;border-radius:3px}
+.ss-val{font-family:var(--mono);font-size:9px;color:var(--text);width:28px;text-align:right;flex-shrink:0}
+
+/* SHAP drivers */
+.shap-row{display:flex;align-items:center;gap:6px;padding:3px 0}
+.shap-name{font-family:var(--mono);font-size:8px;color:var(--mid);width:130px;flex-shrink:0}
+.shap-bar-wrap{flex:1;height:6px;position:relative;display:flex;align-items:center}
+.shap-center{position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--line2)}
+.shap-fill-pos{height:6px;border-radius:0 3px 3px 0;position:absolute;left:50%}
+.shap-fill-neg{height:6px;border-radius:3px 0 0 3px;position:absolute;right:50%}
+.shap-delta{font-family:var(--mono);font-size:9px;width:36px;text-align:right;flex-shrink:0}
+
+/* ─── ZONING TAB ─── */
+.zone-hero{background:var(--ink3);border:1px solid var(--line2);border-radius:6px;padding:12px;margin-bottom:10px}
+.zone-code{font-family:var(--head);font-size:32px;letter-spacing:.04em;color:var(--accent);line-height:1;margin-bottom:2px}
+.zone-name{font-family:var(--body);font-size:12px;color:var(--mid)}
+.zone-flags{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.zone-flag{font-family:var(--mono);font-size:8px;padding:2px 7px;border-radius:3px;letter-spacing:.04em}
+.zf-green{background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,.2)}
+.zf-amber{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,166,35,.2)}
+.zf-red{background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+
+.zone-section{margin-bottom:10px}
+.zone-sl{font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.zone-item{display:flex;align-items:center;gap:5px;padding:3px 0;font-size:11px;color:var(--text)}
+.zone-bullet{width:4px;height:4px;border-radius:50%;flex-shrink:0}
+
+/* Zoning Chat */
+.chat-area{background:var(--ink3);border:1px solid var(--line2);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:8px}
+.chat-suggestions{display:flex;flex-direction:column;gap:4px;margin-bottom:6px}
+.chat-sug{font-family:var(--mono);font-size:8px;padding:5px 8px;border-radius:3px;border:1px solid var(--line2);color:var(--mid);background:var(--ink4);cursor:pointer}
+.chat-sug.picked{border-color:var(--violet);color:var(--violet);background:var(--violet-dim)}
+.chat-msg-user{align-self:flex-end;background:var(--violet-dim);border:1px solid rgba(167,139,250,.25);border-radius:6px 6px 2px 6px;padding:6px 10px;max-width:85%}
+.chat-msg-user p{font-family:var(--mono);font-size:9px;color:var(--violet)}
+.chat-msg-ai{align-self:flex-start;background:var(--ink4);border:1px solid var(--line2);border-radius:2px 6px 6px 6px;padding:8px 10px;max-width:90%}
+.chat-msg-ai p{font-family:var(--mono);font-size:9px;color:var(--text);line-height:1.6}
+.chat-msg-ai .ai-label{font-family:var(--mono);font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--violet);margin-bottom:4px}
+.chat-flag{display:inline-flex;align-items:center;gap:4px;background:var(--amber-dim);border:1px solid rgba(245,166,35,.25);border-radius:3px;padding:2px 6px;margin-top:4px}
+.chat-flag-text{font-family:var(--mono);font-size:8px;color:var(--amber)}
+.chat-input-row{display:flex;gap:6px;margin-top:6px}
+.chat-input{flex:1;height:28px;background:var(--ink);border:1px solid var(--line2);border-radius:4px;padding:0 8px;font-family:var(--mono);font-size:9px;color:var(--text)}
+.chat-send{width:28px;height:28px;background:var(--violet);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+
+/* ─── COMPS TAB ─── */
+.comps-filter{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.cf-item{font-family:var(--mono);font-size:8px;padding:4px 8px;border-radius:3px;border:1px solid var(--line2);color:var(--mid);background:var(--ink4)}
+.cf-item.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.comps-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:9px}
+.comps-table th{padding:4px 6px;text-align:left;color:var(--muted);font-size:8px;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--line);font-weight:400}
+.comps-table td{padding:5px 6px;border-bottom:1px solid var(--line);color:var(--text)}
+.comps-table tr:last-child td{border-bottom:none}
+.comps-table tr:hover td{background:var(--ink3)}
+.comp-dist{color:var(--mid);font-size:8px}
+.comp-price{color:var(--amber)}
+.comp-psf{color:var(--mid)}
+.comps-summary{background:var(--ink3);border:1px solid var(--line2);border-left:2px solid var(--violet);border-radius:0 5px 5px 0;padding:10px;margin-top:10px}
+.cs-label{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--violet);margin-bottom:5px}
+.cs-text{font-family:var(--mono);font-size:9px;color:var(--text);line-height:1.6}
+
+/* ─── RAG / FIRM HISTORY ─── */
+.firm-hist{background:rgba(245,166,35,.04);border:1px solid rgba(245,166,35,.15);border-radius:6px;padding:10px}
+.fh-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.fh-label{font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber)}
+.fh-badge{font-family:var(--mono);font-size:8px;padding:2px 7px;border-radius:3px;background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,166,35,.25)}
+.fh-card{background:var(--ink3);border:1px solid var(--line2);border-radius:5px;padding:8px;margin-bottom:5px}
+.fh-card:last-child{margin-bottom:0}
+.fh-card-top{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.fh-deal-name{font-family:var(--body);font-size:11px;font-weight:600;color:var(--bright);flex:1}
+.fh-outcome{font-family:var(--mono);font-size:8px;padding:2px 6px;border-radius:2px}
+.fhout-closed{background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,.2)}
+.fhout-passed{background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+.fhout-loi{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,166,35,.2)}
+.fh-sim{font-family:var(--mono);font-size:8px;color:var(--muted)}
+.fh-excerpt{font-family:var(--mono);font-size:9px;color:var(--mid);line-height:1.55;font-style:italic}
+.fh-highlight{color:var(--amber)}
+
+/* ─── BRIEF OVERLAY ─── */
+.brief-overlay{position:absolute;inset:0;background:rgba(8,10,13,.95);backdrop-filter:blur(12px);z-index:20;display:flex;flex-direction:column}
+.brief-topbar{height:52px;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 24px;gap:16px;flex-shrink:0}
+.brief-logo{font-family:var(--head);font-size:14px;letter-spacing:.06em;color:var(--bright)}
+.brief-logo span{color:var(--violet)}
+.brief-title{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--violet);flex:1}
+.brief-actions{display:flex;gap:8px;margin-left:auto}
+.brief-btn{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;border-radius:4px;display:flex;align-items:center;gap:5px}
+.brief-btn-dl{background:var(--violet);color:var(--ink);font-weight:600}
+.brief-btn-share{border:1px solid var(--line2);color:var(--mid)}
+.brief-btn-close{border:1px solid var(--line);color:var(--muted)}
+.brief-body{flex:1;display:grid;grid-template-columns:240px 1fr;overflow:hidden}
+.brief-nav{border-right:1px solid var(--line);padding:20px 0;overflow-y:auto}
+.brief-nav-item{padding:7px 20px;font-family:var(--mono);font-size:9px;letter-spacing:.06em;color:var(--muted);cursor:pointer;border-left:2px solid transparent;display:flex;align-items:center;gap:8px}
+.brief-nav-item.on{color:var(--violet);border-left-color:var(--violet);background:var(--violet-dim)}
+.brief-nav-num{font-size:8px;color:var(--muted)}
+.brief-content{padding:24px 32px;overflow-y:auto}
+.brief-section{margin-bottom:28px}
+.brief-sh{font-family:var(--head);font-size:20px;letter-spacing:.04em;color:var(--bright);margin-bottom:10px}
+.brief-sh span{color:var(--violet)}
+.brief-para{font-size:13px;color:var(--mid);line-height:1.7;margin-bottom:8px}
+.brief-kv-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:10px 0}
+.brief-kv{background:var(--ink3);border:1px solid var(--line2);border-radius:5px;padding:10px}
+.brief-kv-k{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.brief-kv-v{font-family:var(--mono);font-size:14px;color:var(--bright);font-weight:500}
+.brief-kv-v.hl{color:var(--amber)}.brief-kv-v.ac{color:var(--accent)}.brief-kv-v.vi{color:var(--violet)}
+.brief-score-row{display:flex;align-items:center;gap:12px;background:var(--ink3);border:1px solid var(--line2);border-radius:6px;padding:12px;margin:10px 0}
+.brief-big-score{font-family:var(--head);font-size:52px;color:var(--violet);line-height:1}
+.brief-sub-scores{flex:1;display:flex;flex-direction:column;gap:5px}
+.bss-row{display:flex;align-items:center;gap:6px}
+.bss-name{font-family:var(--mono);font-size:8px;color:var(--muted);width:80px;flex-shrink:0;text-transform:uppercase;letter-spacing:.04em}
+.bss-track{flex:1;height:5px;background:var(--ink4);border-radius:3px;overflow:hidden}
+.bss-fill{height:100%;border-radius:3px;background:var(--violet)}
+.bss-val{font-family:var(--mono);font-size:8px;color:var(--text);width:24px;text-align:right}
+
+/* Risk flags */
+.risk-flag{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:5px;margin-bottom:6px}
+.rf-high{background:var(--red-dim);border:1px solid rgba(239,68,68,.2)}
+.rf-med{background:var(--amber-dim);border:1px solid rgba(245,166,35,.2)}
+.rf-low{background:var(--green-dim);border:1px solid rgba(34,197,94,.2)}
+.rf-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:2px}
+.rf-text{font-family:var(--mono);font-size:9px;line-height:1.5}
+.rf-label{font-size:8px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px;font-weight:500}
+
+/* HUD OVERLAYS */
+.hud-bl{position:absolute;bottom:14px;left:14px;background:rgba(13,15,18,.85);border:1px solid var(--line);border-radius:3px;padding:4px 8px;font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:.06em;z-index:10}
+.hud-br{position:absolute;bottom:14px;right:14px;background:rgba(13,15,18,.85);border:1px solid var(--line);border-radius:3px;padding:4px 8px;font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:.06em;z-index:10}
+
+/* GRIDS */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;align-items:start}
+
+/* ANNOTATION CHIPS */
+.ann-strip{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.chip{display:flex;align-items:center;gap:5px;background:rgba(13,15,18,.8);border:1px solid var(--line);border-radius:4px;padding:4px 10px}
+.chip-dot{width:5px;height:5px;border-radius:50%}
+.chip-text{font-family:var(--mono);font-size:9px;color:var(--mid);letter-spacing:.04em}
+
+/* ─── MOBILE ─── */
+.mob-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;justify-items:center;align-items:start}
+.phone-wrap{display:flex;flex-direction:column;align-items:center;gap:14px}
+.phone-cap{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center}
+.device{background:#000;border-radius:38px;padding:10px;border:2px solid #222;box-shadow:0 0 0 1px #333,0 20px 50px rgba(0,0,0,.6);width:288px}
+.screen{border-radius:30px;overflow:hidden;position:relative;background:var(--ink2)}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:78px;height:22px;background:#000;border-radius:0 0 14px 14px;z-index:100}
+.sbar{height:30px;background:var(--ink);display:flex;align-items:flex-end;padding:0 14px 4px;position:relative;z-index:10}
+.stime{font-family:var(--mono);font-size:10px;font-weight:500;color:var(--bright);letter-spacing:.05em}
+.sicons{margin-left:auto;display:flex;gap:5px;align-items:center}
+.sbatt{width:14px;height:7px;border:1.5px solid var(--bright);border-radius:2px;position:relative}
+.sbatt::after{content:'';position:absolute;inset:1px;right:2px;background:var(--bright)}
+.mob-top{background:rgba(13,15,18,.95);padding:7px 12px;display:flex;align-items:center;gap:7px;border-bottom:1px solid var(--line);z-index:10}
+.mob-logo{font-family:var(--head);font-size:13px;letter-spacing:.05em;color:var(--bright)}
+.mob-logo span{color:var(--accent)}
+.mob-search{flex:1;height:26px;background:var(--ink3);border:1px solid var(--line2);border-radius:4px;display:flex;align-items:center;padding:0 7px;gap:4px}
+.mob-ph{font-family:var(--mono);font-size:7.5px;color:var(--muted)}
+.mob-map{position:relative;background:var(--ink3);background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:24px 24px}
+.mob-sheet{background:rgba(13,15,18,.98);border-top:1px solid var(--line)}
+.sheet-handle{width:30px;height:3px;background:var(--line2);border-radius:2px;margin:7px auto 0}
+.sheet-hdr{padding:8px 14px 0}
+.sheet-addr{font-size:12px;font-weight:600;color:var(--bright);margin-bottom:1px}
+.sheet-meta{font-family:var(--mono);font-size:7.5px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px}
+.mob-tabs{display:flex;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.mtab{flex:1;padding:6px 0;text-align:center;font-family:var(--mono);font-size:7px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:2px solid transparent}
+.mtab.on{color:var(--violet);border-bottom-color:var(--violet)}
+.sheet-body{padding:8px 14px;overflow-y:auto}
+
+/* Mobile score */
+.mob-score-hero{text-align:center;padding:12px 0 8px}
+.msn{font-family:var(--head);font-size:56px;letter-spacing:-.02em;line-height:1;color:var(--bright)}
+.msn span{color:var(--violet)}
+.msl{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);margin-top:2px}
+.mob-tier{display:inline-flex;align-items:center;gap:4px;background:var(--violet-dim);border:1px solid var(--violet);border-radius:3px;padding:2px 8px;margin-top:4px}
+.mob-tier-text{font-family:var(--mono);font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--violet)}
+
+.mob-ss-row{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.mob-ss-name{font-family:var(--mono);font-size:8px;letter-spacing:.04em;color:var(--mid);text-transform:uppercase;width:80px;flex-shrink:0}
+.mob-ss-track{flex:1;height:5px;background:var(--ink4);border-radius:3px;overflow:hidden}
+.mob-ss-fill{height:100%;border-radius:3px}
+.mob-ss-val{font-family:var(--mono);font-size:8px;color:var(--text);width:24px;text-align:right;flex-shrink:0}
+
+/* Mobile FH */
+.mob-fh{background:rgba(245,166,35,.04);border:1px solid rgba(245,166,35,.15);border-radius:5px;padding:8px;margin-top:8px}
+.mob-fh-label{font-family:var(--mono);font-size:7px;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);margin-bottom:6px}
+.mob-fh-card{background:var(--ink3);border:1px solid var(--line2);border-radius:4px;padding:7px;margin-bottom:4px}
+.mob-fh-deal{font-size:10px;font-weight:600;color:var(--bright);margin-bottom:2px}
+.mob-fh-excerpt{font-family:var(--mono);font-size:7.5px;color:var(--mid);line-height:1.5;font-style:italic}
+
+/* Mobile brief progress */
+.mob-brief-progress{padding:16px 14px;display:flex;flex-direction:column;gap:10px}
+.mbp-title{font-family:var(--head);font-size:16px;letter-spacing:.04em;color:var(--bright);margin-bottom:4px}
+.mbp-label{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--violet);margin-bottom:12px}
+.mbp-step{display:flex;align-items:center;gap:8px}
+.mbp-step-icon{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mbp-done{background:var(--violet);color:var(--ink);font-size:9px}
+.mbp-curr{background:var(--violet-dim);border:1.5px solid var(--violet);animation:pulse 1.5s infinite}
+.mbp-wait{background:var(--ink4);border:1px solid var(--line2)}
+.mbp-step-text{font-family:var(--mono);font-size:9px;color:var(--mid)}
+.mbp-step-text.done{color:var(--text)}
+.mbp-step-text.curr{color:var(--violet)}
+
+/* Tab bar */
+.tabbar{background:rgba(13,15,18,.98);border-top:1px solid var(--line);display:flex;padding:5px 0 10px}
+.tbi{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px}
+.tbi-icon{width:17px;height:17px;border:1.5px solid var(--muted);border-radius:3px}
+.tbi-icon.on{border-color:var(--accent);background:var(--accent-dim)}
+.tbi-icon.circ{border-radius:50%}
+.tbi-label{font-family:var(--mono);font-size:6.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.tbi-label.on{color:var(--accent)}
+
+/* Actions */
+.mob-actions{padding:6px 14px 10px;display:flex;gap:5px;border-top:1px solid var(--line)}
+.mbtn{flex:1;height:26px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:7px;letter-spacing:.05em;text-transform:uppercase}
+.mbtn-p{background:var(--accent);color:var(--ink);font-weight:600}
+.mbtn-vp{background:var(--violet);color:var(--ink);font-weight:600}
+.mbtn-s{background:var(--ink4);border:1px solid var(--line2);color:var(--mid)}
+
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+@media(max-width:1300px){.mob-grid{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- HEADER -->
+<div class="doc-header">
+  <div>
+    <div class="doc-eyebrow">Pocket Developer · Design Ref</div>
+    <div class="doc-title">Phase 2<span>.</span> AI Analysis</div>
+  </div>
+  <div class="doc-meta">
+    <div class="meta-pill">Desktop + Mobile</div>
+    <div class="meta-pill">10 Screens</div>
+    <div class="meta-pill">Extends Phase 1</div>
+  </div>
+</div>
+
+<!-- PHASE 2 INTRO NOTE -->
+<div style="background:var(--violet-dim);border:1px solid rgba(167,139,250,.2);border-radius:6px;padding:16px 20px;margin-bottom:56px;display:flex;gap:12px;align-items:flex-start">
+  <div style="width:6px;height:6px;border-radius:50%;background:var(--violet);flex-shrink:0;margin-top:5px"></div>
+  <div>
+    <div style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--violet);margin-bottom:4px">Design Continuity Note</div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--mid);line-height:1.65">Phase 2 adds tabs to the existing Phase 1 panel — <span style="color:var(--text)">no layout changes</span>. The map, topbar, and panel shell remain identical. What changes: the Score, Zoning, and Comps tabs activate with content. A new "Firm History" section appears within the Score tab. The "Brief" button in the action bar now fires the full-screen brief overlay. Violet (#a78bfa) is the Phase 2 accent — distinct from Phase 1's teal so users intuitively understand "this is AI-generated."</div>
+  </div>
+</div>
+
+<!-- ============================= -->
+<!-- DESKTOP 01: SCORE TAB -->
+<!-- ============================= -->
+<div class="sec">
+  <div class="sec-head">
+    <div class="sec-label">Desktop · 01</div>
+    <div class="sec-title">Score Tab — Site Intelligence</div>
+    <div class="sec-desc">The Phase 2 primary view. Composite score displayed as a large hero number. Five sub-score bars animate in sequentially on first load. Firm History section below — only visible to authenticated org users. Tapping a sub-score bar expands the rationale inline.</div>
+  </div>
+  <div class="state-pill"><div class="sp-dot"></div><div class="sp-text">activeTab = 'score' · scoreStatus = 'computed' · firmHistory = [3 matches]</div></div>
+  <div class="frame">
+    <div class="frame-bar"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="fn">Desktop · Score Tab</span><span class="ftag td">Desktop</span></div>
+    <div class="canvas" style="height:580px">
+      <div class="map-bg" style="right:400px"></div>
+      <!-- roads -->
+      <div class="road-h road-maj" style="top:36%;height:8px;right:400px"></div>
+      <div class="road-h" style="top:60%;right:400px"></div>
+      <div class="road-v road-maj" style="left:24%;width:8px"></div>
+      <div class="road-v" style="left:50%"></div>
+      <!-- parcels -->
+      <div class="parcel" style="left:5%;top:12%;width:9%;height:16%"></div>
+      <div class="parcel" style="left:14%;top:12%;width:7%;height:16%"></div>
+      <div class="parcel" style="left:26%;top:8%;width:10%;height:22%"></div>
+      <div class="parcel p-sel" style="left:36%;top:17%;width:7%;height:12%"></div>
+      <div class="parcel" style="left:36%;top:8%;width:7%;height:9%"></div>
+      <div class="parcel" style="left:43%;top:8%;width:8%;height:22%"></div>
+      <div class="parcel" style="left:53%;top:10%;width:10%;height:16%"></div>
+      <div class="parcel p-save" style="left:7%;top:58%;width:12%;height:14%"></div>
+      <!-- score badges on saved pins -->
+      <div class="score-pin" style="left:8%;top:54%">
+        <div class="score-pin-bubble" style="color:var(--green);border-color:rgba(34,197,94,.4)">74</div>
+        <div class="score-pin-stem" style="background:var(--amber)"></div>
+      </div>
+      <div class="pin amber-pin" style="left:29%;top:5%"><div class="pin-h"></div><div class="pin-s"></div></div>
+      <div class="pin teal-pin" style="left:39%;top:13%"><div class="pin-h"></div><div class="pin-s"></div></div>
+      <!-- topbar -->
+      <div class="topbar">
+        <div class="logo">Pocket<span>Dev</span></div>
+        <div class="searchbar"><div class="si"></div><span class="sph">Search…</span></div>
+        <div class="npills"><div class="np on">Map</div><div class="np">Saved</div><div class="np" style="position:relative">Alerts<div class="nd"></div></div></div>
+        <div class="av">JT</div>
+      </div>
+      <!-- map controls -->
+      <div class="mcs" style="right:414px;top:60px"><div class="mc">+</div><div class="mc">−</div></div>
+      <div class="hud-bl" style="right:414px">33.9519° N · 84.1142° W</div>
+      <!-- PANEL -->
+      <div class="panel" style="width:400px">
+        <div class="ph">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px">
+            <div><div class="pa">4821 Buford Hwy NE</div><div class="ps">Gwinnett · C-2 · 2.14 ac</div></div>
+            <div style="font-family:var(--mono);font-size:9px;color:var(--muted);padding-top:2px">APN: 099-1-0234</div>
+          </div>
+          <div class="ptabs">
+            <div class="pt p1">Data</div>
+            <div class="pt on">Score</div>
+            <div class="pt">Zoning</div>
+            <div class="pt">Comps</div>
+          </div>
+        </div>
+        <div class="pb">
+          <!-- Score hero -->
+          <div class="score-hero">
+            <div class="score-num">7<span>6</span></div>
+            <div class="score-label">Site Intelligence Score</div>
+            <div><div class="score-tier"><div class="score-tier-text">Strong Candidate</div></div></div>
+          </div>
+          <!-- Sub scores -->
+          <div class="subscore">
+            <div class="dl">Score Breakdown</div>
+            <div class="ssrow">
+              <div class="ss-name">Zoning</div>
+              <div class="ss-track"><div class="ss-fill" style="width:90%;background:var(--green)"></div></div>
+              <div class="ss-val" style="color:var(--green)">18</div>
+            </div>
+            <div class="ssrow">
+              <div class="ss-name">Access</div>
+              <div class="ss-track"><div class="ss-fill" style="width:75%;background:var(--accent)"></div></div>
+              <div class="ss-val">15</div>
+            </div>
+            <div class="ssrow">
+              <div class="ss-name">Demographics</div>
+              <div class="ss-track"><div class="ss-fill" style="width:70%;background:var(--accent)"></div></div>
+              <div class="ss-val">14</div>
+            </div>
+            <div class="ssrow">
+              <div class="ss-name">Market</div>
+              <div class="ss-track"><div class="ss-fill" style="width:65%;background:var(--amber)"></div></div>
+              <div class="ss-val" style="color:var(--amber)">13</div>
+            </div>
+            <div class="ssrow">
+              <div class="ss-name">Infrastructure</div>
+              <div class="ss-track"><div class="ss-fill" style="width:80%;background:var(--accent)"></div></div>
+              <div class="ss-val">16</div>
+            </div>
+          </div>
+          <!-- Firm History RAG -->
+          <div class="firm-hist">
+            <div class="fh-header">
+              <div class="fh-label">Firm History · What We've Seen Like This</div>
+              <div class="fh-badge">3 Matches</div>
+            </div>
+            <div class="fh-card">
+              <div class="fh-card-top">
+                <div class="fh-deal-name">Buford Hwy @ I-985 (2021)</div>
+                <div class="fh-outcome fhout-closed">Closed</div>
+                <div class="fh-sim">87%</div>
+              </div>
+              <div class="fh-excerpt">"Similar 2.1ac C-2 corridor site. <span class="fh-highlight">Traffic count 44K ADT was key driver.</span> Achieved $14.20/SF. Strong QSR comp set."</div>
+            </div>
+            <div class="fh-card">
+              <div class="fh-card-top">
+                <div class="fh-deal-name">Jimmy Carter Blvd Pad (2019)</div>
+                <div class="fh-outcome fhout-passed">Passed</div>
+                <div class="fh-sim">72%</div>
+              </div>
+              <div class="fh-excerpt">"Passed due to <span class="fh-highlight">traffic count 26K ADT below 30K threshold.</span> This site shows 41K ADT — that concern is resolved."</div>
+            </div>
+          </div>
+        </div>
+        <div class="abar">
+          <div class="btn btn-s">Save</div>
+          <div class="btn btn-s">LLC →</div>
+          <div class="btn btn-vp">Generate Brief</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ann-strip">
+    <div class="chip"><div class="chip-dot" style="background:var(--violet)"></div><div class="chip-text">Violet = Phase 2 AI signal — distinct from Phase 1 teal</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--green)"></div><div class="chip-text">Score badges appear on saved pins after score computed</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--amber)"></div><div class="chip-text">Firm History has amber glow — signals "your proprietary data"</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">Sub-score bars animate in sequentially on first render (CSS stagger)</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--violet)"></div><div class="chip-text">"Generate Brief" replaces generic action when score is computed</div></div>
+  </div>
+</div>
+
+<!-- ============================= -->
+<!-- DESKTOP 02 + 03: ZONING + COMPS -->
+<!-- ============================= -->
+<div class="sec">
+  <div class="sec-head">
+    <div class="sec-label">Desktop · 02 + 03</div>
+    <div class="sec-title">Zoning AI Chat · Auto-Comps</div>
+    <div class="sec-desc">Two additional panel tabs that activate in Phase 2. Zoning tab renders a structured summary first (from local DB — no LLM), then adds a contextual chat interface. Comps tab auto-runs on tab open, renders a sortable table with a filter bar and a 2–3 sentence AI value summary below.</div>
+  </div>
+  <div class="grid2">
+    <!-- ZONING -->
+    <div>
+      <div class="state-pill"><div class="sp-dot"></div><div class="sp-text">activeTab = 'zoning' · chatHistory = [1 exchange]</div></div>
+      <div class="frame">
+        <div class="frame-bar"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="fn">Desktop · Zoning AI Tab</span><span class="ftag td">Desktop</span></div>
+        <div class="canvas" style="height:520px">
+          <div class="map-bg" style="right:400px;opacity:.4"></div>
+          <div class="topbar" style="opacity:.4"><div class="logo">Pocket<span>Dev</span></div></div>
+          <div class="panel" style="width:400px">
+            <div class="ph">
+              <div style="margin-bottom:4px"><div class="pa">4821 Buford Hwy NE</div><div class="ps">C-2 · Gwinnett · APN: 099-1-0234</div></div>
+              <div class="ptabs"><div class="pt p1">Data</div><div class="pt">Score</div><div class="pt on">Zoning</div><div class="pt">Comps</div></div>
+            </div>
+            <div class="pb" style="gap:8px">
+              <!-- Zone hero -->
+              <div class="zone-hero">
+                <div class="zone-code">C-2</div>
+                <div class="zone-name">General Commercial District · Gwinnett County</div>
+                <div class="zone-flags">
+                  <div class="zone-flag zf-green">Retail Permitted</div>
+                  <div class="zone-flag zf-green">Restaurant Permitted</div>
+                  <div class="zone-flag zf-green">Drive-Through Permitted</div>
+                  <div class="zone-flag zf-amber">Car Wash Conditional</div>
+                  <div class="zone-flag zf-red">Residential Prohibited</div>
+                </div>
+              </div>
+              <!-- Setbacks -->
+              <div class="zone-section">
+                <div class="zone-sl">Key Standards</div>
+                <div class="zone-item"><div class="zone-bullet" style="background:var(--mid)"></div>Front setback: 30 ft from right-of-way</div>
+                <div class="zone-item"><div class="zone-bullet" style="background:var(--mid)"></div>Side setback: 10 ft (20 ft adj. residential)</div>
+                <div class="zone-item"><div class="zone-bullet" style="background:var(--mid)"></div>Max height: 50 ft / 4 stories</div>
+                <div class="zone-item"><div class="zone-bullet" style="background:var(--mid)"></div>Min lot: 1.0 acre</div>
+                <div class="zone-item"><div class="zone-bullet" style="background:var(--mid)"></div>Max lot coverage: 75%</div>
+              </div>
+              <!-- Chat -->
+              <div class="chat-area">
+                <div class="chat-msg-user"><p>Can I build a drive-through QSR here?</p></div>
+                <div class="chat-msg-ai">
+                  <div class="ai-label">Zoning AI · Grounded in Gwinnett C-2 Ord.</div>
+                  <p>Yes — drive-through restaurants are a permitted by-right use in C-2. No variance or CUP required. You'll need to meet the 30-ft front setback and satisfy the parking ratio of 1 space per 3 seats plus stacking lane requirements.</p>
+                  <div class="chat-flag"><div class="chat-flag-text">⚠ Stacking lane min. 150 ft per Gwinnett §505.3</div></div>
+                </div>
+                <div class="chat-input-row">
+                  <div class="chat-input" style="display:flex;align-items:center"><span style="color:var(--muted)">Ask about this zoning…</span></div>
+                  <div class="chat-send">↑</div>
+                </div>
+              </div>
+            </div>
+            <div class="abar">
+              <div class="btn btn-s">Save</div>
+              <div class="btn btn-vp">Generate Brief</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ann-strip">
+        <div class="chip"><div class="chip-dot" style="background:var(--green)"></div><div class="chip-text">Permitted / Conditional / Prohibited badges from local zoning_rules table — no LLM</div></div>
+        <div class="chip"><div class="chip-dot" style="background:var(--violet)"></div><div class="chip-text">Chat fires LLM only on user question — system prompt includes full ordinance record</div></div>
+        <div class="chip"><div class="chip-dot" style="background:var(--amber)"></div><div class="chip-text">Amber warning flags surface conditional requirements from ordinance text</div></div>
+      </div>
+    </div>
+    <!-- COMPS -->
+    <div>
+      <div class="state-pill"><div class="sp-dot"></div><div class="sp-text">activeTab = 'comps' · radius = 1mi · months = 24 · results = 4</div></div>
+      <div class="frame">
+        <div class="frame-bar"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="fn">Desktop · Auto-Comps Tab</span><span class="ftag td">Desktop</span></div>
+        <div class="canvas" style="height:520px">
+          <div class="map-bg" style="right:400px;opacity:.4"></div>
+          <!-- comp markers on map -->
+          <div style="position:absolute;left:20%;top:22%;width:8px;height:8px;border-radius:50%;background:var(--violet);border:1.5px solid var(--ink);z-index:5"></div>
+          <div style="position:absolute;left:35%;top:55%;width:8px;height:8px;border-radius:50%;background:var(--violet);border:1.5px solid var(--ink);z-index:5"></div>
+          <div style="position:absolute;left:9%;top:40%;width:8px;height:8px;border-radius:50%;background:var(--violet);border:1.5px solid var(--ink);z-index:5"></div>
+          <div style="position:absolute;left:48%;top:32%;width:8px;height:8px;border-radius:50%;background:var(--violet);border:1.5px solid var(--ink);z-index:5"></div>
+          <!-- circle overlay for radius -->
+          <div style="position:absolute;left:14%;top:8%;width:35%;height:62%;border:1px dashed rgba(167,139,250,.3);border-radius:50%;z-index:4"></div>
+          <div class="topbar" style="opacity:.4"><div class="logo">Pocket<span>Dev</span></div></div>
+          <div class="panel" style="width:400px">
+            <div class="ph">
+              <div style="margin-bottom:4px"><div class="pa">4821 Buford Hwy NE</div><div class="ps">C-2 · Gwinnett · APN: 099-1-0234</div></div>
+              <div class="ptabs"><div class="pt p1">Data</div><div class="pt">Score</div><div class="pt">Zoning</div><div class="pt on">Comps</div></div>
+            </div>
+            <div class="pb" style="gap:8px">
+              <!-- Filter bar -->
+              <div class="comps-filter">
+                <div class="cf-item active">Radius: 1 mi</div>
+                <div class="cf-item active">24 months</div>
+                <div class="cf-item">±50% ac</div>
+                <div class="cf-item">C-2 only</div>
+                <div style="font-family:var(--mono);font-size:8px;color:var(--muted);margin-left:auto;align-self:center">4 results</div>
+              </div>
+              <!-- Comps table -->
+              <div style="overflow-x:auto">
+                <table class="comps-table" style="width:100%">
+                  <thead>
+                    <tr>
+                      <th>Address</th>
+                      <th>Dist</th>
+                      <th>Acres</th>
+                      <th>Date</th>
+                      <th>Price</th>
+                      <th>$/SF</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td style="font-size:9px">3200 Peachtree Ind</td>
+                      <td class="comp-dist">0.4mi</td>
+                      <td>2.3</td>
+                      <td style="color:var(--mid)">Jun '23</td>
+                      <td class="comp-price">$1.38M</td>
+                      <td class="comp-psf">$13.80</td>
+                    </tr>
+                    <tr>
+                      <td style="font-size:9px">5510 Jimmy Carter</td>
+                      <td class="comp-dist">0.7mi</td>
+                      <td>1.9</td>
+                      <td style="color:var(--mid)">Feb '23</td>
+                      <td class="comp-price">$1.10M</td>
+                      <td class="comp-psf">$13.30</td>
+                    </tr>
+                    <tr>
+                      <td style="font-size:9px">1844 Old Norcross</td>
+                      <td class="comp-dist">0.9mi</td>
+                      <td>0.9</td>
+                      <td style="color:var(--mid)">Oct '22</td>
+                      <td class="comp-price">$0.41M</td>
+                      <td class="comp-psf">$10.40</td>
+                    </tr>
+                    <tr>
+                      <td style="font-size:9px">730 Buford Hwy</td>
+                      <td class="comp-dist">1.0mi</td>
+                      <td>2.8</td>
+                      <td style="color:var(--mid)">Apr '22</td>
+                      <td class="comp-price">$1.82M</td>
+                      <td class="comp-psf">$14.90</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- AI summary -->
+              <div class="comps-summary">
+                <div class="cs-label">AI Value Summary</div>
+                <div class="cs-text">Based on 4 comparable C-2 sales within 1 mile (10–24 months), similar parcels traded between $10.40–$14.90/SF. At 2.14 acres, the implied range for this site is <span style="color:var(--amber)">$1.06M – $1.51M</span>. The subject's $13.30/SF last sale price sits at the median of this comp set.</div>
+              </div>
+            </div>
+            <div class="abar">
+              <div class="btn btn-s">Save</div>
+              <div class="btn btn-vp">Generate Brief</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ann-strip">
+        <div class="chip"><div class="chip-dot" style="background:var(--violet)"></div><div class="chip-text">Violet dots on map = comp locations, dashed circle = search radius</div></div>
+        <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">Filter pills re-query on toggle — 500ms debounce, then GET /api/comps</div></div>
+        <div class="chip"><div class="chip-dot" style="background:var(--amber)"></div><div class="chip-text">Value range highlighted amber in AI summary — the key output</div></div>
+        <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">Clicking a table row flies map to that comp parcel</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================= -->
+<!-- DESKTOP 04: BRIEF OVERLAY -->
+<!-- ============================= -->
+<div class="sec">
+  <div class="sec-head">
+    <div class="sec-label">Desktop · 04</div>
+    <div class="sec-title">Feasibility Brief — Full-Screen Overlay</div>
+    <div class="sec-desc">Triggered by "Generate Brief" in the action bar. A full-screen overlay with a left nav + scrollable content panel. This is the deliverable that leaves the platform — PDF exported with the firm's watermark. Each section is collapsible. Export options in the topbar.</div>
+  </div>
+  <div class="state-pill"><div class="sp-dot"></div><div class="sp-text">briefStatus = 'generated' · activeSection = 'score' · briefId = 'brf_8x3n'</div></div>
+  <div class="frame">
+    <div class="frame-bar"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="fn">Desktop · Feasibility Brief Overlay</span><span class="ftag ts">Full-Screen Overlay</span></div>
+    <div class="canvas" style="height:600px">
+      <div class="brief-overlay">
+        <!-- brief topbar -->
+        <div class="brief-topbar">
+          <div class="brief-logo">Pocket<span>Dev</span></div>
+          <div class="brief-title">Site Feasibility Brief · 4821 Buford Hwy NE · Generated Feb 19, 2026</div>
+          <div class="brief-actions">
+            <div class="brief-btn brief-btn-dl">↓ PDF</div>
+            <div class="brief-btn brief-btn-share">Share Link</div>
+            <div class="brief-btn brief-btn-close">✕ Close</div>
+          </div>
+        </div>
+        <!-- brief body -->
+        <div class="brief-body">
+          <!-- left nav -->
+          <div class="brief-nav">
+            <div class="brief-nav-item"><span class="brief-nav-num">01</span>Executive Summary</div>
+            <div class="brief-nav-item"><span class="brief-nav-num">02</span>Site Overview</div>
+            <div class="brief-nav-item on"><span class="brief-nav-num">03</span>Development Score</div>
+            <div class="brief-nav-item"><span class="brief-nav-num">04</span>Zoning Analysis</div>
+            <div class="brief-nav-item"><span class="brief-nav-num">05</span>Comparable Sales</div>
+            <div class="brief-nav-item"><span class="brief-nav-num">06</span>Firm History</div>
+            <div class="brief-nav-item"><span class="brief-nav-num">07</span>Key Risks</div>
+            <div class="brief-nav-item"><span class="brief-nav-num">08</span>Recommended Actions</div>
+          </div>
+          <!-- brief content -->
+          <div class="brief-content">
+            <!-- Exec Summary -->
+            <div class="brief-section">
+              <div class="brief-sh">Executive <span>Summary</span></div>
+              <div class="brief-para">4821 Buford Highway NE is a 2.14-acre C-2 general commercial parcel in unincorporated Gwinnett County, currently owned by Meridian Holdings LLC. Last traded at $1.24M ($13.30/SF) in August 2021. The site scores 76/100 on the PocketDev Site Intelligence model — a strong candidate for immediate outreach.</div>
+              <!-- KV grid -->
+              <div class="brief-kv-grid">
+                <div class="brief-kv"><div class="brief-kv-k">Site Score</div><div class="brief-kv-v vi">76 / 100</div></div>
+                <div class="brief-kv"><div class="brief-kv-k">Lot Size</div><div class="brief-kv-v ac">2.14 ac</div></div>
+                <div class="brief-kv"><div class="brief-kv-k">Zoning</div><div class="brief-kv-v ac">C-2</div></div>
+                <div class="brief-kv"><div class="brief-kv-k">Last Sale</div><div class="brief-kv-v hl">$1.24M</div></div>
+                <div class="brief-kv"><div class="brief-kv-k">Price / SF</div><div class="brief-kv-v hl">$13.30</div></div>
+                <div class="brief-kv"><div class="brief-kv-k">Owner</div><div class="brief-kv-v" style="font-size:11px">Meridian Holdings</div></div>
+              </div>
+            </div>
+            <!-- Score section (active) -->
+            <div class="brief-section" style="border-left:2px solid var(--violet);padding-left:20px">
+              <div class="brief-sh">Development <span>Score</span></div>
+              <div class="brief-score-row">
+                <div class="brief-big-score">76</div>
+                <div class="brief-sub-scores">
+                  <div class="bss-row"><span class="bss-name">Zoning</span><div class="bss-track"><div class="bss-fill" style="width:90%;background:var(--green)"></div></div><span class="bss-val" style="color:var(--green)">18</span></div>
+                  <div class="bss-row"><span class="bss-name">Access</span><div class="bss-track"><div class="bss-fill" style="width:75%"></div></div><span class="bss-val">15</span></div>
+                  <div class="bss-row"><span class="bss-name">Demographics</span><div class="bss-track"><div class="bss-fill" style="width:70%"></div></div><span class="bss-val">14</span></div>
+                  <div class="bss-row"><span class="bss-name">Market</span><div class="bss-track"><div class="bss-fill" style="width:65%;background:var(--amber)"></div></div><span class="bss-val" style="color:var(--amber)">13</span></div>
+                  <div class="bss-row"><span class="bss-name">Infrastructure</span><div class="bss-track"><div class="bss-fill" style="width:80%"></div></div><span class="bss-val">16</span></div>
+                </div>
+              </div>
+              <!-- Key Risks preview -->
+              <div style="margin-top:12px">
+                <div style="font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Key Risk Flags</div>
+                <div class="risk-flag rf-med"><div class="rf-dot" style="background:var(--amber)"></div><div class="rf-text"><div class="rf-label" style="color:var(--amber)">Medium · Market</div><span style="color:var(--mid)">Market activity score dragged by only 3 land sales in 6-month window. Check for off-market activity.</span></div></div>
+                <div class="risk-flag rf-low"><div class="rf-dot" style="background:var(--green)"></div><div class="rf-text"><div class="rf-label" style="color:var(--green)">Clear · Environmental</div><span style="color:var(--mid)">No flood zone, no wetlands, no EPA contamination sites within 1,000 ft.</span></div></div>
+                <div class="risk-flag rf-low"><div class="rf-dot" style="background:var(--green)"></div><div class="rf-text"><div class="rf-label" style="color:var(--green)">Clear · Zoning</div><span style="color:var(--mid)">Drive-through restaurant is permitted by-right. No variance required.</span></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ann-strip">
+    <div class="chip"><div class="chip-dot" style="background:var(--violet)"></div><div class="chip-text">Active section highlighted in left nav + left border on content</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">PDF export = server-side Puppeteer render with firm watermark</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--amber)"></div><div class="chip-text">Risk flags use severity system: Medium (amber) / Clear (green) / Critical (red)</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--accent)"></div><div class="chip-text">Share Link creates a brief hosted at /brief/:id — org-gated access</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">✕ Close returns to map with panel still open at Score tab</div></div>
+  </div>
+</div>
+
+<!-- ============================= -->
+<!-- DESKTOP 05: BRIEF GENERATION IN PROGRESS -->
+<!-- ============================= -->
+<div class="sec">
+  <div class="sec-head">
+    <div class="sec-label">Desktop · 05</div>
+    <div class="sec-title">Brief Generating — Progress State</div>
+    <div class="sec-desc">The overlay opens immediately on "Generate Brief" tap. Rather than a blocking spinner, each section completes and renders progressively. Live section status indicators build confidence in what's happening. Takes 8–18 seconds depending on RAG and LLM latency.</div>
+  </div>
+  <div class="state-pill"><div class="sp-dot"></div><div class="sp-text">briefStatus = 'generating' · completedSections = 4 · currentSection = 'firm_history'</div></div>
+  <div class="frame" style="max-width:860px">
+    <div class="frame-bar"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="fn">Desktop · Brief Generating</span><span class="ftag ts">Loading State</span></div>
+    <div class="canvas" style="height:420px">
+      <div class="brief-overlay">
+        <div class="brief-topbar">
+          <div class="brief-logo">Pocket<span>Dev</span></div>
+          <div class="brief-title">Generating Site Brief… 4821 Buford Hwy NE</div>
+          <div class="brief-actions">
+            <div class="brief-btn brief-btn-close" style="opacity:.5">Cancel</div>
+          </div>
+        </div>
+        <div style="flex:1;display:flex;align-items:center;justify-content:center">
+          <div style="width:480px">
+            <div style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--violet);margin-bottom:16px;text-align:center">Building your site intelligence brief</div>
+            <!-- progress steps -->
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--ink3);border:1px solid rgba(34,197,94,.2);border-radius:6px">
+                <div style="width:20px;height:20px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0">✓</div>
+                <div><div style="font-family:var(--mono);font-size:9px;color:var(--green)">Site Overview + Ownership</div><div style="font-family:var(--mono);font-size:8px;color:var(--muted);margin-top:1px">APN data · Owner record · Parcel attributes</div></div>
+                <div style="margin-left:auto;font-family:var(--mono);font-size:8px;color:var(--muted)">0.2s</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--ink3);border:1px solid rgba(34,197,94,.2);border-radius:6px">
+                <div style="width:20px;height:20px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0">✓</div>
+                <div><div style="font-family:var(--mono);font-size:9px;color:var(--green)">Development Score</div><div style="font-family:var(--mono);font-size:8px;color:var(--muted);margin-top:1px">5-dimension composite score + sub-scores</div></div>
+                <div style="margin-left:auto;font-family:var(--mono);font-size:8px;color:var(--muted)">1.1s</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--ink3);border:1px solid rgba(34,197,94,.2);border-radius:6px">
+                <div style="width:20px;height:20px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0">✓</div>
+                <div><div style="font-family:var(--mono);font-size:9px;color:var(--green)">Zoning Analysis + Comps</div><div style="font-family:var(--mono);font-size:8px;color:var(--muted);margin-top:1px">Ordinance summary · 4 comparable sales</div></div>
+                <div style="margin-left:auto;font-family:var(--mono);font-size:8px;color:var(--muted)">2.4s</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--ink3);border:1px solid rgba(167,139,250,.25);border-radius:6px;animation:pulse 1.5s infinite">
+                <div style="width:20px;height:20px;border-radius:50%;background:var(--violet-dim);border:1.5px solid var(--violet);flex-shrink:0"></div>
+                <div><div style="font-family:var(--mono);font-size:9px;color:var(--violet)">Firm Historical Context</div><div style="font-family:var(--mono);font-size:8px;color:var(--muted);margin-top:1px">Searching 847 deal documents… 3 matches found</div></div>
+                <div style="margin-left:auto;font-family:var(--mono);font-size:8px;color:var(--violet)">●</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--ink3);border:1px solid var(--line);border-radius:6px;opacity:.4">
+                <div style="width:20px;height:20px;border-radius:50%;background:var(--ink4);border:1px solid var(--line2);flex-shrink:0"></div>
+                <div><div style="font-family:var(--mono);font-size:9px;color:var(--muted)">Risk Analysis + Recommendations</div><div style="font-family:var(--mono);font-size:8px;color:var(--muted);margin-top:1px">Environmental flags · Next steps</div></div>
+              </div>
+            </div>
+            <!-- progress bar -->
+            <div style="margin-top:20px;height:3px;background:var(--ink4);border-radius:3px;overflow:hidden">
+              <div style="height:100%;width:70%;background:linear-gradient(90deg,var(--violet),var(--accent));border-radius:3px"></div>
+            </div>
+            <div style="font-family:var(--mono);font-size:8px;color:var(--muted);margin-top:6px;text-align:center">Step 4 of 5 · Estimated 4 seconds remaining</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ann-strip">
+    <div class="chip"><div class="chip-dot" style="background:var(--violet)"></div><div class="chip-text">Progress is sectional, not a spinner — each step confirms completion</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--amber)"></div><div class="chip-text">RAG step shows "X deal documents searched" — transparency builds trust</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">Progress bar fills left-to-right as sections complete</div></div>
+  </div>
+</div>
+
+<!-- ============================= -->
+<!-- MOBILE SCREENS -->
+<!-- ============================= -->
+<div class="sec">
+  <div class="sec-head">
+    <div class="sec-label">Mobile · Phase 2 States</div>
+    <div class="sec-title">Mobile — Five Phase 2 States</div>
+    <div class="sec-desc">Phase 2 tabs activate on the same bottom sheet. The score tab is the new default when panel opens. Firm History renders as a compact card section within the score tab. Brief generation shows a progress overlay. Brief viewer is a full-screen scrollable sheet on mobile.</div>
+  </div>
+  <div class="mob-grid">
+
+    <!-- MOB 1: SCORE TAB -->
+    <div class="phone-wrap">
+      <div class="phone-cap">1 · Score Tab</div>
+      <div class="device">
+        <div class="screen" style="height:580px">
+          <div class="notch"></div>
+          <div class="sbar"><span class="stime">9:41</span><div class="sicons"><div class="sbatt"></div></div></div>
+          <div class="mob-top"><div class="mob-logo">P<span>D</span></div><div class="mob-search"><div class="si" style="width:9px;height:9px;border-width:1px"></div><span class="mob-ph">Search…</span></div></div>
+          <!-- condensed map -->
+          <div class="mob-map" style="height:140px;position:relative">
+            <div class="road-h road-maj" style="top:42%;height:5px"></div>
+            <div class="road-v road-maj" style="left:44%;width:5px"></div>
+            <div class="parcel p-sel" style="left:50%;top:8%;width:16%;height:70%"></div>
+            <div class="parcel" style="left:66%;top:8%;width:14%;height:70%"></div>
+            <div class="pin teal-pin" style="left:57%;top:4%"><div class="pin-h" style="width:10px;height:10px"></div><div class="pin-s" style="height:6px"></div></div>
+          </div>
+          <div class="mob-sheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-hdr">
+              <div class="sheet-addr">4821 Buford Hwy NE</div>
+              <div class="sheet-meta">APN: 099-1-0234 · C-2 · 2.14 ac</div>
+            </div>
+            <div class="mob-tabs"><div class="mtab">Data</div><div class="mtab on">Score</div><div class="mtab">Zoning</div><div class="mtab">Comps</div></div>
+            <div class="sheet-body" style="max-height:250px;overflow-y:auto">
+              <div class="mob-score-hero">
+                <div class="msn">7<span>6</span></div>
+                <div class="msl">Site Intelligence Score</div>
+                <div><div class="mob-tier"><div class="mob-tier-text">Strong Candidate</div></div></div>
+              </div>
+              <!-- sub scores -->
+              <div style="margin:8px 0">
+                <div class="mob-ss-row"><span class="mob-ss-name">Zoning</span><div class="mob-ss-track"><div class="mob-ss-fill" style="width:90%;background:var(--green)"></div></div><span class="mob-ss-val" style="color:var(--green)">18</span></div>
+                <div class="mob-ss-row"><span class="mob-ss-name">Access</span><div class="mob-ss-track"><div class="mob-ss-fill" style="width:75%;background:var(--accent)"></div></div><span class="mob-ss-val">15</span></div>
+                <div class="mob-ss-row"><span class="mob-ss-name">Demographics</span><div class="mob-ss-track"><div class="mob-ss-fill" style="width:70%;background:var(--accent)"></div></div><span class="mob-ss-val">14</span></div>
+                <div class="mob-ss-row"><span class="mob-ss-name">Market</span><div class="mob-ss-track"><div class="mob-ss-fill" style="width:65%;background:var(--amber)"></div></div><span class="mob-ss-val" style="color:var(--amber)">13</span></div>
+                <div class="mob-ss-row"><span class="mob-ss-name">Infrastructure</span><div class="mob-ss-track"><div class="mob-ss-fill" style="width:80%;background:var(--accent)"></div></div><span class="mob-ss-val">16</span></div>
+              </div>
+              <!-- firm history compact -->
+              <div class="mob-fh">
+                <div class="mob-fh-label">Firm History · 3 Matches</div>
+                <div class="mob-fh-card">
+                  <div style="display:flex;align-items:center;gap:5px;margin-bottom:3px">
+                    <div class="mob-fh-deal">Buford @ I-985 (2021)</div>
+                    <div style="font-family:var(--mono);font-size:7px;padding:1px 5px;border-radius:2px;background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,.2)">Closed</div>
+                  </div>
+                  <div class="mob-fh-excerpt">"41K ADT resolved prior concern. Similar C-2 site closed at $14.20/SF."</div>
+                </div>
+              </div>
+            </div>
+            <div class="mob-actions">
+              <div class="mbtn mbtn-s">Save</div>
+              <div class="mbtn mbtn-vp">Brief →</div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tbi"><div class="tbi-icon on circ"></div><span class="tbi-label on">Map</span></div>
+            <div class="tbi"><div class="tbi-icon"></div><span class="tbi-label">Saved</span></div>
+            <div class="tbi" style="position:relative"><div class="tbi-icon"><div class="nd" style="width:6px;height:6px"></div></div><span class="tbi-label">Alerts</span></div>
+            <div class="tbi"><div class="tbi-icon"></div><span class="tbi-label">Settings</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOB 2: ZONING CHAT -->
+    <div class="phone-wrap">
+      <div class="phone-cap">2 · Zoning AI Chat</div>
+      <div class="device">
+        <div class="screen" style="height:580px">
+          <div class="notch"></div>
+          <div class="sbar"><span class="stime">9:41</span></div>
+          <div class="mob-top"><div class="mob-logo">P<span>D</span></div><div class="mob-search"><div class="si" style="width:9px;height:9px;border-width:1px"></div><span class="mob-ph">Search…</span></div></div>
+          <div class="mob-map" style="height:100px;position:relative;opacity:.6">
+            <div class="parcel p-sel" style="left:40%;top:10%;width:18%;height:70%"></div>
+          </div>
+          <div class="mob-sheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-hdr">
+              <div class="sheet-addr">4821 Buford Hwy NE</div>
+              <div class="sheet-meta">C-2 · Gwinnett</div>
+            </div>
+            <div class="mob-tabs"><div class="mtab">Data</div><div class="mtab">Score</div><div class="mtab on">Zoning</div><div class="mtab">Comps</div></div>
+            <div class="sheet-body" style="max-height:300px;overflow-y:auto">
+              <!-- zone hero compact -->
+              <div style="background:var(--ink3);border:1px solid var(--line2);border-radius:5px;padding:8px;margin-bottom:8px">
+                <div style="font-family:var(--head);font-size:24px;letter-spacing:.04em;color:var(--accent);line-height:1;margin-bottom:1px">C-2</div>
+                <div style="font-size:10px;color:var(--mid);margin-bottom:6px">General Commercial · Gwinnett</div>
+                <div style="display:flex;gap:4px;flex-wrap:wrap">
+                  <div style="font-family:var(--mono);font-size:7px;padding:2px 5px;border-radius:2px;background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,.2)">QSR ✓</div>
+                  <div style="font-family:var(--mono);font-size:7px;padding:2px 5px;border-radius:2px;background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,.2)">Drive-Thru ✓</div>
+                  <div style="font-family:var(--mono);font-size:7px;padding:2px 5px;border-radius:2px;background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,166,35,.2)">Car Wash CUP</div>
+                </div>
+              </div>
+              <!-- chat -->
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div style="align-self:flex-end;background:var(--violet-dim);border:1px solid rgba(167,139,250,.25);border-radius:5px 5px 2px 5px;padding:5px 8px;max-width:85%">
+                  <p style="font-family:var(--mono);font-size:8px;color:var(--violet)">Can I build a drive-through here?</p>
+                </div>
+                <div style="align-self:flex-start;background:var(--ink4);border:1px solid var(--line2);border-radius:2px 5px 5px 5px;padding:7px 8px;max-width:92%">
+                  <div style="font-family:var(--mono);font-size:7px;letter-spacing:.08em;text-transform:uppercase;color:var(--violet);margin-bottom:3px">Zoning AI</div>
+                  <p style="font-family:var(--mono);font-size:8px;color:var(--text);line-height:1.55">Yes — permitted by-right in C-2. No variance needed. 30-ft front setback + 150-ft stacking lane required.</p>
+                  <div style="display:inline-flex;align-items:center;gap:3px;background:var(--amber-dim);border:1px solid rgba(245,166,35,.25);border-radius:2px;padding:2px 5px;margin-top:4px">
+                    <span style="font-family:var(--mono);font-size:7px;color:var(--amber)">⚠ Stacking lane §505.3</span>
+                  </div>
+                </div>
+                <div style="display:flex;gap:5px;margin-top:2px">
+                  <div style="flex:1;height:25px;background:var(--ink);border:1px solid var(--line2);border-radius:3px;display:flex;align-items:center;padding:0 7px"><span style="font-family:var(--mono);font-size:8px;color:var(--muted)">Ask about zoning…</span></div>
+                  <div style="width:25px;height:25px;background:var(--violet);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:10px">↑</div>
+                </div>
+              </div>
+            </div>
+            <div class="mob-actions">
+              <div class="mbtn mbtn-s">Save</div>
+              <div class="mbtn mbtn-vp">Brief →</div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tbi"><div class="tbi-icon on circ"></div><span class="tbi-label on">Map</span></div>
+            <div class="tbi"><div class="tbi-icon"></div><span class="tbi-label">Saved</span></div>
+            <div class="tbi"><div class="tbi-icon"></div><span class="tbi-label">Alerts</span></div>
+            <div class="tbi"><div class="tbi-icon"></div><span class="tbi-label">Settings</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOB 3: COMPS -->
+    <div class="phone-wrap">
+      <div class="phone-cap">3 · Auto-Comps</div>
+      <div class="device">
+        <div class="screen" style="height:580px">
+          <div class="notch"></div>
+          <div class="sbar"><span class="stime">9:41</span></div>
+          <div class="mob-top"><div class="mob-logo">P<span>D</span></div><div class="mob-search"><div class="si" style="width:9px;height:9px;border-width:1px"></div><span class="mob-ph">Search…</span></div></div>
+          <div class="mob-map" style="height:120px;position:relative">
+            <div class="parcel p-sel" style="left:44%;top:10%;width:14%;height:70%"></div>
+            <div style="position:absolute;left:20%;top:20%;width:8px;height:8px;border-radius:50%;background:var(--violet);border:1.5px solid var(--ink)"></div>
+            <div style="position:absolute;left:60%;top:50%;width:8px;height:8px;border-radius:50%;background:var(--violet);border:1.5px solid var(--ink)"></div>
+            <div style="position:absolute;left:30%;top:60%;width:8px;height:8px;border-radius:50%;background:var(--violet);border:1.5px solid var(--ink)"></div>
+            <!-- radius circle -->
+            <div style="position:absolute;left:12%;top:5%;width:50%;height:80%;border:1px dashed rgba(167,139,250,.3);border-radius:50%"></div>
+          </div>
+          <div class="mob-sheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-hdr">
+              <div class="sheet-addr">4821 Buford Hwy NE</div>
+              <div class="sheet-meta">4 comps · 1mi · 24mo</div>
+            </div>
+            <div class="mob-tabs"><div class="mtab">Data</div><div class="mtab">Score</div><div class="mtab">Zoning</div><div class="mtab on">Comps</div></div>
+            <div class="sheet-body" style="max-height:290px;overflow-y:auto">
+              <!-- filters -->
+              <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px">
+                <div style="font-family:var(--mono);font-size:7px;padding:3px 6px;border-radius:3px;border:1px solid var(--accent);color:var(--accent);background:var(--accent-dim)">1 mi</div>
+                <div style="font-family:var(--mono);font-size:7px;padding:3px 6px;border-radius:3px;border:1px solid var(--accent);color:var(--accent);background:var(--accent-dim)">24 mo</div>
+                <div style="font-family:var(--mono);font-size:7px;padding:3px 6px;border-radius:3px;border:1px solid var(--line2);color:var(--muted)">±50%</div>
+              </div>
+              <!-- compact comp rows -->
+              <div style="font-family:var(--mono);font-size:7.5px">
+                <div style="display:grid;grid-template-columns:1fr auto auto;gap:4px;padding:4px 0;border-bottom:1px solid var(--line);color:var(--muted);font-size:7px;letter-spacing:.06em;text-transform:uppercase">
+                  <span>Address</span><span>Date</span><span>$/SF</span>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr auto auto;gap:4px;padding:5px 0;border-bottom:1px solid var(--line)">
+                  <div><div style="font-size:8px;color:var(--bright)">3200 Peachtree Ind</div><div style="font-size:7px;color:var(--muted)">0.4mi · 2.3ac</div></div>
+                  <span style="color:var(--mid);align-self:center">Jun'23</span>
+                  <span style="color:var(--amber);align-self:center">$13.80</span>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr auto auto;gap:4px;padding:5px 0;border-bottom:1px solid var(--line)">
+                  <div><div style="font-size:8px;color:var(--bright)">5510 Jimmy Carter</div><div style="font-size:7px;color:var(--muted)">0.7mi · 1.9ac</div></div>
+                  <span style="color:var(--mid);align-self:center">Feb'23</span>
+                  <span style="color:var(--amber);align-self:center">$13.30</span>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr auto auto;gap:4px;padding:5px 0;border-bottom:1px solid var(--line)">
+                  <div><div style="font-size:8px;color:var(--bright)">1844 Old Norcross</div><div style="font-size:7px;color:var(--muted)">0.9mi · 0.9ac</div></div>
+                  <span style="color:var(--mid);align-self:center">Oct'22</span>
+                  <span style="color:var(--amber);align-self:center">$10.40</span>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr auto auto;gap:4px;padding:5px 0">
+                  <div><div style="font-size:8px;color:var(--bright)">730 Buford Hwy</div><div style="font-size:7px;color:var(--muted)">1.0mi · 2.8ac</div></div>
+                  <span style="color:var(--mid);align-self:center">Apr'22</span>
+                  <span style="color:var(--amber);align-self:center">$14.90</span>
+                </div>
+              </div>
+              <!-- AI summary -->
+              <div style="background:var(--ink3);border:1px solid var(--line2);border-left:2px solid var(--violet);border-radius:0 4px 4px 0;padding:8px;margin-top:8px">
+                <div style="font-family:var(--mono);font-size:7px;letter-spacing:.1em;text-transform:uppercase;color:var(--violet);margin-bottom:4px">AI Summary</div>
+                <div style="font-family:var(--mono);font-size:8px;color:var(--text);line-height:1.55">Implied range <span style="color:var(--amber)">$1.06M – $1.51M</span>. Subject's $13.30/SF at comp median.</div>
+              </div>
+            </div>
+            <div class="mob-actions">
+              <div class="mbtn mbtn-s">Save</div>
+              <div class="mbtn mbtn-vp">Brief →</div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tbi"><div class="tbi-icon on circ"></div><span class="tbi-label on">Map</span></div>
+            <div class="tbi"><div class="tbi-icon"></div><span class="tbi-label">Saved</span></div>
+            <div class="tbi"><div class="tbi-icon"></div><span class="tbi-label">Alerts</span></div>
+            <div class="tbi"><div class="tbi-icon"></div><span class="tbi-label">Settings</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOB 4: BRIEF GENERATING -->
+    <div class="phone-wrap">
+      <div class="phone-cap">4 · Brief Generating</div>
+      <div class="device">
+        <div class="screen" style="height:580px">
+          <div class="notch"></div>
+          <div class="sbar"><span class="stime">9:41</span></div>
+          <!-- full screen brief progress overlay -->
+          <div style="position:absolute;inset:30px 0 0;background:rgba(8,10,13,.97);z-index:20;display:flex;flex-direction:column">
+            <div style="padding:12px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between">
+              <div style="font-family:var(--head);font-size:14px;letter-spacing:.04em;color:var(--bright)">Site <span style="color:var(--violet)">Brief</span></div>
+              <div style="font-family:var(--mono);font-size:7px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">Cancel</div>
+            </div>
+            <div style="flex:1;padding:20px 16px;display:flex;flex-direction:column;justify-content:center">
+              <div style="font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--violet);margin-bottom:16px;text-align:center">Generating Brief</div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div style="display:flex;align-items:center;gap:9px;padding:8px 10px;background:var(--ink3);border:1px solid rgba(34,197,94,.2);border-radius:5px">
+                  <div style="width:16px;height:16px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0">✓</div>
+                  <div style="font-family:var(--mono);font-size:8px;color:var(--green)">Site Overview</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:9px;padding:8px 10px;background:var(--ink3);border:1px solid rgba(34,197,94,.2);border-radius:5px">
+                  <div style="width:16px;height:16px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0">✓</div>
+                  <div style="font-family:var(--mono);font-size:8px;color:var(--green)">Score + Comps</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:9px;padding:8px 10px;background:var(--ink3);border:1px solid rgba(34,197,94,.2);border-radius:5px">
+                  <div style="width:16px;height:16px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0">✓</div>
+                  <div style="font-family:var(--mono);font-size:8px;color:var(--green)">Zoning Analysis</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:9px;padding:8px 10px;background:var(--ink3);border:1px solid rgba(167,139,250,.25);border-radius:5px;animation:pulse 1.5s infinite">
+                  <div style="width:16px;height:16px;border-radius:50%;background:var(--violet-dim);border:1.5px solid var(--violet);flex-shrink:0"></div>
+                  <div style="font-family:var(--mono);font-size:8px;color:var(--violet)">Firm History…</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:9px;padding:8px 10px;background:var(--ink3);border:1px solid var(--line);border-radius:5px;opacity:.4">
+                  <div style="width:16px;height:16px;border-radius:50%;background:var(--ink4);border:1px solid var(--line2);flex-shrink:0"></div>
+                  <div style="font-family:var(--mono);font-size:8px;color:var(--muted)">Risks + Actions</div>
+                </div>
+              </div>
+              <div style="margin-top:16px;height:3px;background:var(--ink4);border-radius:3px;overflow:hidden">
+                <div style="height:100%;width:68%;background:linear-gradient(90deg,var(--violet),var(--accent));border-radius:3px"></div>
+              </div>
+            </div>
+          </div>
+          <!-- map visible behind overlay at reduced opacity -->
+          <div class="mob-map" style="height:200px;opacity:.2"></div>
+          <div class="tabbar">
+            <div class="tbi"><div class="tbi-icon on circ"></div><span class="tbi-label on">Map</span></div>
+            <div class="tbi"><div class="tbi-icon"></div><span class="tbi-label">Saved</span></div>
+            <div class="tbi"><div class="tbi-icon"></div><span class="tbi-label">Alerts</span></div>
+            <div class="tbi"><div class="tbi-icon"></div><span class="tbi-label">Settings</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOB 5: BRIEF VIEWER -->
+    <div class="phone-wrap" style="grid-column:1/3;justify-self:start;padding-left:14px">
+      <div class="phone-cap">5 · Brief Viewer (Mobile)</div>
+      <div class="device">
+        <div class="screen" style="height:580px">
+          <div class="notch"></div>
+          <div class="sbar"><span class="stime">9:41</span></div>
+          <!-- brief full-screen -->
+          <div style="position:absolute;inset:30px 0 0;background:rgba(8,10,13,.98);z-index:20;display:flex;flex-direction:column">
+            <!-- brief header -->
+            <div style="padding:10px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;flex-shrink:0">
+              <div style="font-family:var(--head);font-size:13px;letter-spacing:.04em;color:var(--bright)">Site <span style="color:var(--violet)">Brief</span></div>
+              <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);flex:1">4821 Buford Hwy NE</div>
+              <div style="font-family:var(--mono);font-size:8px;color:var(--muted)">✕</div>
+            </div>
+            <!-- section nav chips -->
+            <div style="display:flex;gap:5px;overflow-x:auto;padding:8px 14px;border-bottom:1px solid var(--line);flex-shrink:0">
+              <div style="font-family:var(--mono);font-size:7px;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:3px;white-space:nowrap;background:var(--violet-dim);border:1px solid var(--violet);color:var(--violet)">Summary</div>
+              <div style="font-family:var(--mono);font-size:7px;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:3px;white-space:nowrap;border:1px solid var(--line2);color:var(--muted)">Score</div>
+              <div style="font-family:var(--mono);font-size:7px;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:3px;white-space:nowrap;border:1px solid var(--line2);color:var(--muted)">Zoning</div>
+              <div style="font-family:var(--mono);font-size:7px;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:3px;white-space:nowrap;border:1px solid var(--line2);color:var(--muted)">Comps</div>
+              <div style="font-family:var(--mono);font-size:7px;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:3px;white-space:nowrap;border:1px solid var(--line2);color:var(--muted)">History</div>
+              <div style="font-family:var(--mono);font-size:7px;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:3px;white-space:nowrap;border:1px solid var(--line2);color:var(--muted)">Risks</div>
+            </div>
+            <!-- brief content scrollable -->
+            <div style="flex:1;padding:14px 14px;overflow-y:auto">
+              <div style="font-family:var(--head);font-size:20px;letter-spacing:.04em;color:var(--bright);margin-bottom:6px">Executive <span style="color:var(--violet)">Summary</span></div>
+              <div style="font-size:11px;color:var(--mid);line-height:1.65;margin-bottom:12px">2.14-acre C-2 parcel, Gwinnett County. Owned by Meridian Holdings LLC. Last traded $1.24M ($13.30/SF) Aug 2021. Site scores <span style="color:var(--violet)">76/100</span> — strong candidate for immediate outreach.</div>
+              <!-- kv grid 2col -->
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px">
+                <div style="background:var(--ink3);border:1px solid var(--line2);border-radius:4px;padding:8px"><div style="font-family:var(--mono);font-size:7px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Score</div><div style="font-family:var(--mono);font-size:18px;color:var(--violet)">76</div></div>
+                <div style="background:var(--ink3);border:1px solid var(--line2);border-radius:4px;padding:8px"><div style="font-family:var(--mono);font-size:7px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Last Sale</div><div style="font-family:var(--mono);font-size:14px;color:var(--amber)">$1.24M</div></div>
+                <div style="background:var(--ink3);border:1px solid var(--line2);border-radius:4px;padding:8px"><div style="font-family:var(--mono);font-size:7px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Zoning</div><div style="font-family:var(--mono);font-size:14px;color:var(--accent)">C-2</div></div>
+                <div style="background:var(--ink3);border:1px solid var(--line2);border-radius:4px;padding:8px"><div style="font-family:var(--mono);font-size:7px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Lot Size</div><div style="font-family:var(--mono);font-size:14px;color:var(--text)">2.14ac</div></div>
+              </div>
+              <!-- risks preview -->
+              <div style="background:var(--amber-dim);border:1px solid rgba(245,166,35,.2);border-radius:5px;padding:8px;margin-bottom:6px">
+                <div style="font-family:var(--mono);font-size:7px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);margin-bottom:3px">⚠ Medium Risk</div>
+                <div style="font-family:var(--mono);font-size:8px;color:var(--text);line-height:1.5">Market activity low in 6-month window. Verify off-market activity.</div>
+              </div>
+              <div style="background:var(--green-dim);border:1px solid rgba(34,197,94,.2);border-radius:5px;padding:8px">
+                <div style="font-family:var(--mono);font-size:7px;letter-spacing:.08em;text-transform:uppercase;color:var(--green);margin-bottom:3px">✓ Clear · Environmental</div>
+                <div style="font-family:var(--mono);font-size:8px;color:var(--text);line-height:1.5">No flood zone, wetlands, or EPA contamination within 1,000 ft.</div>
+              </div>
+            </div>
+            <!-- export bar -->
+            <div style="padding:8px 14px;border-top:1px solid var(--line);display:flex;gap:6px;flex-shrink:0">
+              <div style="flex:1;height:28px;border-radius:4px;background:var(--violet);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:7px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);font-weight:600">↓ Download PDF</div>
+              <div style="height:28px;padding:0 10px;border-radius:4px;border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:7px;letter-spacing:.06em;text-transform:uppercase;color:var(--mid)">Share</div>
+            </div>
+          </div>
+          <div style="position:absolute;bottom:0;left:0;right:0;z-index:25">
+            <div class="tabbar">
+              <div class="tbi"><div class="tbi-icon on circ"></div><span class="tbi-label on">Map</span></div>
+              <div class="tbi"><div class="tbi-icon"></div><span class="tbi-label">Saved</span></div>
+              <div class="tbi"><div class="tbi-icon"></div><span class="tbi-label">Alerts</span></div>
+              <div class="tbi"><div class="tbi-icon"></div><span class="tbi-label">Settings</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end mob-grid -->
+
+  <div class="ann-strip" style="margin-top:24px">
+    <div class="chip"><div class="chip-dot" style="background:var(--violet)"></div><div class="chip-text">Score tab becomes default active tab in Phase 2 (was Data in Phase 1)</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--amber)"></div><div class="chip-text">Firm History compresses to 1 card on mobile — tap to expand list</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">Brief viewer on mobile: horizontal section chips replace left nav</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--violet)"></div><div class="chip-text">PDF export = same endpoint as desktop, same Puppeteer render</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">Brief generating overlay covers full screen on mobile with same 5-step progress</div></div>
+  </div>
+</div>
+
+</div><!-- end page -->
+</body>
+</html>
