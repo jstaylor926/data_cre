@@ -1,8 +1,8 @@
 import type { BaseMapStyle } from "./types";
 
-// Map defaults — centered on Gwinnett County, GA
-export const MAP_DEFAULT_CENTER: [number, number] = [-84.07, 33.95];
-export const MAP_DEFAULT_ZOOM = 12;
+// Map defaults — centered on the Norcross / Peachtree Corners parcel cluster
+export const MAP_DEFAULT_CENTER: [number, number] = [-84.1950, 33.9450];
+export const MAP_DEFAULT_ZOOM = 14;
 
 // Map styles
 export const MAP_STYLES: Record<BaseMapStyle, string> = {

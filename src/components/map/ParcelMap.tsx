@@ -39,7 +39,10 @@ export default function ParcelMap({ mapRef }: ParcelMapProps) {
   const selectedAPN = useAppStore((s) => s.selectedAPN);
   const baseMapStyle = useAppStore((s) => s.baseMapStyle);
   const showParcels = useAppStore((s) => s.showParcels);
+  const showParcelFill = useAppStore((s) => s.showParcelFill);
   const showZoning = useAppStore((s) => s.showZoning);
+  const showSavedPins = useAppStore((s) => s.showSavedPins);
+  const showRoadLabels = useAppStore((s) => s.showRoadLabels);
   const panelOpen = useAppStore((s) => s.panelOpen);
   const selectParcel = useAppStore((s) => s.selectParcel);
   const { isMobile } = useResponsive();
@@ -79,11 +82,13 @@ export default function ParcelMap({ mapRef }: ParcelMapProps) {
     [selectParcel]
   );
 
-  // Dynamic paint based on selection
+  // Dynamic paint based on selection and fill toggle
+  // Use near-invisible fill (not fully transparent) so Mapbox can detect click events
+  const defaultFill = showParcelFill ? 'rgba(0, 212, 200, 0.06)' : 'rgba(0, 212, 200, 0.01)';
   const fillPaint: FillLayerSpecification['paint'] = {
     'fill-color': selectedAPN
-      ? ['case', ['==', ['get', 'apn'], selectedAPN], PARCEL_FILL_SELECTED, 'transparent']
-      : 'transparent',
+      ? ['case', ['==', ['get', 'apn'], selectedAPN], PARCEL_FILL_SELECTED, defaultFill]
+      : defaultFill,
     'fill-opacity': 1,
   };
 
@@ -95,6 +100,26 @@ export default function ParcelMap({ mapRef }: ParcelMapProps) {
       ? ['case', ['==', ['get', 'apn'], selectedAPN], 2, 1]
       : 1,
   };
+
+  // Toggle road labels visibility on the base map style
+  useEffect(() => {
+    const map = internalMapRef.current;
+    if (!map || !map.isStyleLoaded()) return;
+    const style = map.getStyle();
+    if (!style?.layers) return;
+    for (const layer of style.layers) {
+      if (
+        layer.type === 'symbol' &&
+        (layer.id.includes('label') || layer.id.includes('road-label'))
+      ) {
+        map.setLayoutProperty(
+          layer.id,
+          'visibility',
+          showRoadLabels ? 'visible' : 'none'
+        );
+      }
+    }
+  }, [showRoadLabels, baseMapStyle]);
 
   // Map padding adjusts when panel is open on desktop
   const padding = {
@@ -111,6 +136,20 @@ export default function ParcelMap({ mapRef }: ParcelMapProps) {
           if (ref) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             internalMapRef.current = (ref as any).getMap?.() ?? null;
+          }
+        }}
+        onLoad={() => {
+          // Apply road labels visibility after style loads
+          if (!showRoadLabels) {
+            const map = internalMapRef.current;
+            if (!map) return;
+            const style = map.getStyle();
+            if (!style?.layers) return;
+            for (const layer of style.layers) {
+              if (layer.type === 'symbol' && (layer.id.includes('label') || layer.id.includes('road-label'))) {
+                map.setLayoutProperty(layer.id, 'visibility', 'none');
+              }
+            }
           }
         }}
         initialViewState={{
@@ -149,7 +188,7 @@ export default function ParcelMap({ mapRef }: ParcelMapProps) {
         )}
 
         {/* Saved parcel pins */}
-        <SavedPins savedParcels={savedParcels} />
+        {showSavedPins && <SavedPins savedParcels={savedParcels} />}
       </Map>
     </div>
   );

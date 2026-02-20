@@ -12,7 +12,10 @@ interface AppState {
   // Layers
   baseMapStyle: BaseMapStyle;
   showParcels: boolean;
+  showParcelFill: boolean;
   showZoning: boolean;
+  showSavedPins: boolean;
+  showRoadLabels: boolean;
 
   // Entity lookup
   entityLoading: boolean;
@@ -25,7 +28,10 @@ interface AppState {
   setActiveTab: (tab: PanelTab) => void;
   setBaseMapStyle: (style: BaseMapStyle) => void;
   toggleParcels: () => void;
+  toggleParcelFill: () => void;
   toggleZoning: () => void;
+  toggleSavedPins: () => void;
+  toggleRoadLabels: () => void;
   setEntityLoading: (loading: boolean) => void;
 }
 
@@ -39,7 +45,10 @@ export const useAppStore = create<AppState>((set) => ({
 
   baseMapStyle: "streets",
   showParcels: true,
+  showParcelFill: false,
   showZoning: false,
+  showSavedPins: true,
+  showRoadLabels: true,
 
   entityLoading: false,
 
@@ -71,7 +80,13 @@ export const useAppStore = create<AppState>((set) => ({
 
   toggleParcels: () => set((s) => ({ showParcels: !s.showParcels })),
 
+  toggleParcelFill: () => set((s) => ({ showParcelFill: !s.showParcelFill })),
+
   toggleZoning: () => set((s) => ({ showZoning: !s.showZoning })),
+
+  toggleSavedPins: () => set((s) => ({ showSavedPins: !s.showSavedPins })),
+
+  toggleRoadLabels: () => set((s) => ({ showRoadLabels: !s.showRoadLabels })),
 
   setEntityLoading: (loading) => set({ entityLoading: loading }),
 }));
