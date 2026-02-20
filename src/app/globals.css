@@ -7,8 +7,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-mono);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -45,75 +45,88 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
+
+  /* Pocket Developer custom colors for Tailwind utilities */
+  --color-ink: #0d0f12;
+  --color-ink2: #141720;
+  --color-ink3: #1b1f2a;
+  --color-ink4: #232838;
+  --color-line: #252b3b;
+  --color-line2: #2e3547;
+  --color-pd-muted: #3d4760;
+  --color-mid: #6b7898;
+  --color-text: #c8d0e0;
+  --color-bright: #e8edf8;
+  --color-teal: #00d4c8;
+  --color-teal-dim: rgba(0, 212, 200, 0.1);
+  --color-teal-glow: rgba(0, 212, 200, 0.2);
+  --color-amber: #f5a623;
+  --color-amber-dim: rgba(245, 166, 35, 0.12);
+  --color-pd-red: #ef4444;
+  --color-pd-green: #22c55e;
+  --color-pd-green-dim: rgba(34, 197, 94, 0.1);
 }
 
+/* Pocket Developer — Dark-only design system */
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
+  --radius: 0.5rem;
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* Pocket Developer palette */
+  --ink: #0d0f12;
+  --ink2: #141720;
+  --ink3: #1b1f2a;
+  --ink4: #232838;
+  --line: #252b3b;
+  --line2: #2e3547;
+  --pd-muted: #3d4760;
+  --mid: #6b7898;
+  --text: #c8d0e0;
+  --bright: #e8edf8;
+  --teal: #00d4c8;
+  --teal-dim: rgba(0, 212, 200, 0.1);
+  --teal-glow: rgba(0, 212, 200, 0.2);
+  --amber: #f5a623;
+  --amber-dim: rgba(245, 166, 35, 0.12);
+  --pd-red: #ef4444;
+  --pd-green: #22c55e;
+  --pd-green-dim: rgba(34, 197, 94, 0.1);
+
+  /* Map shadcn variables to Pocket Developer tokens */
+  --background: var(--ink);
+  --foreground: var(--text);
+  --card: var(--ink2);
+  --card-foreground: var(--text);
+  --popover: var(--ink2);
+  --popover-foreground: var(--text);
+  --primary: var(--teal);
+  --primary-foreground: var(--ink);
+  --secondary: var(--ink3);
+  --secondary-foreground: var(--text);
+  --muted: var(--ink3);
+  --muted-foreground: var(--mid);
+  --accent: var(--ink3);
+  --accent-foreground: var(--text);
+  --destructive: var(--pd-red);
+  --border: var(--line);
+  --input: var(--line2);
+  --ring: var(--teal);
+
+  /* Charts */
+  --chart-1: var(--teal);
+  --chart-2: var(--amber);
+  --chart-3: var(--pd-green);
+  --chart-4: #a78bfa;
+  --chart-5: #f97316;
+
+  /* Sidebar */
+  --sidebar: var(--ink2);
+  --sidebar-foreground: var(--text);
+  --sidebar-primary: var(--teal);
+  --sidebar-primary-foreground: var(--ink);
+  --sidebar-accent: var(--ink3);
+  --sidebar-accent-foreground: var(--text);
+  --sidebar-border: var(--line);
+  --sidebar-ring: var(--teal);
 }
 
 @layer base {
@@ -122,5 +135,19 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-body);
+  }
+}
+
+/* Utility classes for the Pocket Developer design system */
+@layer utilities {
+  .font-head {
+    font-family: var(--font-head);
+  }
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+  .font-body {
+    font-family: var(--font-body);
   }
 }
