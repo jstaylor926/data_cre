@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pocket Developer — Phase 4 Wireframes</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0d0f12;--ink2:#141720;--ink3:#1b1f2a;--ink4:#232838;--ink5:#2a3040;
+  --line:#252b3b;--line2:#2e3547;--muted:#3d4760;--mid:#6b7898;
+  --text:#c8d0e0;--bright:#e8edf8;
+  --teal:#00d4c8;--teal-dim:rgba(0,212,200,.1);
+  --violet:#a78bfa;--violet-dim:rgba(167,139,250,.12);
+  --orange:#f97316;--orange-dim:rgba(249,115,22,.12);
+  --amber:#f5a623;--amber-dim:rgba(245,166,35,.12);
+  --green:#22c55e;--green-dim:rgba(34,197,94,.1);
+  --red:#ef4444;--red-dim:rgba(239,68,68,.12);
+  --blue:#3b82f6;--blue-dim:rgba(59,130,246,.12);
+  /* Pipeline stage colors */
+  --stage-id:var(--teal);     /* Identified */
+  --stage-ev:var(--violet);   /* Evaluating */
+  --stage-lo:var(--orange);   /* LOI */
+  --stage-dd:var(--amber);    /* Due Diligence */
+  --stage-uc:#a855f7;         /* Under Contract */
+  --stage-cl:var(--green);    /* Closed */
+  --stage-pa:var(--mid);      /* Passed */
+  --mono:'IBM Plex Mono',monospace;--head:'Bebas Neue',sans-serif;--body:'Barlow',sans-serif;
+}
+body{background:#080a0d;font-family:var(--body);color:var(--text);min-height:100vh}
+.page{max-width:1760px;margin:0 auto;padding:48px 48px 96px}
+
+/* DOC HEADER */
+.doc-header{margin-bottom:56px;padding-bottom:32px;border-bottom:1px solid var(--line);display:flex;align-items:flex-end;justify-content:space-between}
+.doc-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--violet);margin-bottom:8px}
+.doc-title{font-family:var(--head);font-size:52px;letter-spacing:.04em;color:var(--bright);line-height:1}
+.doc-title span{color:var(--violet)}
+.doc-meta{display:flex;gap:12px}
+.meta-pill{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border:1px solid var(--line2);border-radius:3px;color:var(--mid)}
+
+/* SECTIONS */
+.sec{margin-bottom:80px}
+.sec-label{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:10px}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--line);max-width:80px}
+.sec-title{font-family:var(--head);font-size:28px;letter-spacing:.04em;color:var(--bright);margin-bottom:4px}
+.sec-desc{font-size:13px;color:var(--mid);max-width:620px;line-height:1.65;margin-bottom:16px}
+.state-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.25);border-radius:4px;padding:8px 14px;margin-bottom:18px}
+.sp-dot{width:6px;height:6px;border-radius:50%;background:var(--violet);flex-shrink:0}
+.sp-text{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--violet)}
+
+/* FRAME */
+.frame{background:var(--ink2);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.frame-bar{padding:10px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;background:var(--ink)}
+.dots{display:flex;gap:5px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.fn{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-left:6px}
+.ftag{margin-left:auto;font-family:var(--mono);font-size:9px;letter-spacing:.08em;padding:3px 8px;border-radius:3px;text-transform:uppercase}
+.tv{background:rgba(167,139,250,.12);color:var(--violet)}
+.tg{background:var(--green-dim);color:var(--green)}
+.to{background:var(--orange-dim);color:var(--orange)}
+.tt{background:var(--teal-dim);color:var(--teal)}
+
+.canvas{position:relative;overflow:hidden}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+
+/* ── SIDEBAR SHELL ── */
+.sidebar{position:absolute;left:0;top:0;bottom:0;width:56px;background:var(--ink);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:4px;z-index:20}
+.sidebar.wide{width:200px;align-items:flex-start;padding:14px 0}
+.sb-logo{font-family:var(--head);font-size:14px;letter-spacing:.06em;color:var(--bright);margin-bottom:14px}
+.sb-logo span{color:var(--teal)}
+.sb-logo.wide{padding:0 14px;font-size:16px}
+.sb-section{font-family:var(--mono);font-size:7px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:8px 14px 4px;width:100%}
+.sb-item{width:100%;display:flex;align-items:center;gap:10px;padding:7px 14px;border-radius:0;cursor:pointer;position:relative}
+.sb-item.on{background:var(--ink3)}
+.sb-item.on::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--violet);border-radius:0 2px 2px 0}
+.sb-icon{width:18px;height:18px;border-radius:3px;border:1.5px solid var(--muted);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.sb-icon.on{border-color:var(--violet);background:var(--violet-dim)}
+.sb-icon.tl{border-color:var(--teal);background:var(--teal-dim)}
+.sb-item-label{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.sb-item.on .sb-item-label{color:var(--bright)}
+.sb-dot{width:5px;height:5px;border-radius:50%;background:var(--orange);position:absolute;right:12px;top:50%;transform:translateY(-50%)}
+
+/* ── DASHBOARD TOPBAR ── */
+.dash-topbar{position:absolute;top:0;left:200px;right:0;height:48px;background:rgba(13,15,18,.95);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 20px;gap:12px;z-index:10}
+.dash-topbar.narrow{left:56px}
+.dash-title{font-family:var(--head);font-size:16px;letter-spacing:.05em;color:var(--bright)}
+.dash-meta{font-family:var(--mono);font-size:9px;letter-spacing:.06em;color:var(--muted)}
+.dash-actions{margin-left:auto;display:flex;gap:8px;align-items:center}
+.dab{height:28px;padding:0 12px;border-radius:4px;display:flex;align-items:center;font-family:var(--mono);font-size:8px;letter-spacing:.07em;text-transform:uppercase}
+.dab-p{background:var(--violet);color:var(--ink);font-weight:600}
+.dab-s{background:var(--ink4);border:1px solid var(--line2);color:var(--mid)}
+.av{width:28px;height:28px;border-radius:50%;background:var(--ink4);border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;color:var(--teal)}
+
+/* ── DASHBOARD CONTENT ── */
+.dash-content{position:absolute;top:48px;left:200px;right:0;bottom:0;overflow:auto;padding:20px}
+.dash-content.narrow{left:56px}
+.dash-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px}
+.stat-card{background:var(--ink3);border:1px solid var(--line2);border-radius:6px;padding:14px}
+.stat-label{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.stat-val{font-family:var(--head);font-size:32px;letter-spacing:.04em;color:var(--bright);line-height:1;margin-bottom:2px}
+.stat-delta{font-family:var(--mono);font-size:9px}
+.stat-delta.up{color:var(--green)}
+.stat-delta.dn{color:var(--red)}
+.stat-spark{height:24px;display:flex;align-items:flex-end;gap:2px;margin-top:8px}
+.spark-bar{flex:1;border-radius:2px 2px 0 0}
+
+/* KPI DIVIDER ROW */
+.kpi-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+.kpi-card{background:var(--ink3);border:1px solid var(--line2);border-radius:6px;padding:14px}
+.kpi-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.kpi-lbl{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.kpi-badge{font-family:var(--mono);font-size:7px;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:2px;border:1px solid}
+
+/* PIPELINE SUMMARY (mini funnel) */
+.funnel-stages{display:flex;flex-direction:column;gap:4px}
+.fs-row{display:flex;align-items:center;gap:8px}
+.fs-name{font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.06em;color:var(--mid);width:80px;flex-shrink:0}
+.fs-track{flex:1;height:6px;background:var(--ink4);border-radius:3px;overflow:hidden}
+.fs-fill{height:100%;border-radius:3px}
+.fs-cnt{font-family:var(--mono);font-size:9px;color:var(--text);width:24px;text-align:right}
+
+/* MARKET HEAT MAP */
+.heat-map{display:grid;grid-template-columns:repeat(5,1fr);gap:3px}
+.heat-cell{height:28px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:7px;color:rgba(255,255,255,.7);letter-spacing:.04em}
+
+/* ML MODEL CARD */
+.ml-card{background:var(--ink3);border:1px solid var(--line2);border-radius:6px;padding:14px}
+.ml-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.ml-title{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.ml-r2{font-family:var(--head);font-size:28px;letter-spacing:.04em;color:var(--green);line-height:1}
+.ml-r2 sub{font-family:var(--mono);font-size:10px;color:var(--mid)}
+.shap-list{display:flex;flex-direction:column;gap:5px}
+.shap-row{display:flex;align-items:center;gap:7px}
+.shap-name{font-family:var(--mono);font-size:8px;color:var(--mid);width:120px;flex-shrink:0;text-transform:uppercase;letter-spacing:.04em}
+.shap-track{flex:1;height:6px;background:var(--ink4);border-radius:3px;overflow:hidden}
+.shap-fill{height:100%;border-radius:3px}
+.shap-val{font-family:var(--mono);font-size:8px;color:var(--text);width:32px;text-align:right}
+
+/* COMPETITIVE FEED */
+.feed-item{border-left:2px solid var(--line2);padding:6px 0 6px 12px;margin-bottom:8px}
+.feed-item.hot{border-left-color:var(--orange)}
+.feed-item.warm{border-left-color:var(--amber)}
+.fi-time{font-family:var(--mono);font-size:7.5px;color:var(--muted);margin-bottom:2px}
+.fi-text{font-family:var(--mono);font-size:9px;color:var(--text);line-height:1.5}
+.fi-tag{display:inline-flex;margin-top:3px;padding:1px 6px;border-radius:2px;font-family:var(--mono);font-size:7px;letter-spacing:.06em;text-transform:uppercase}
+
+/* ── KANBAN BOARD ── */
+.kanban{display:flex;gap:10px;padding:20px;overflow-x:auto;height:100%}
+.kb-col{flex-shrink:0;width:190px;display:flex;flex-direction:column;gap:8px}
+.kb-col-head{display:flex;align-items:center;gap:7px;padding:6px 0;border-bottom:1px solid var(--line)}
+.kb-col-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.kb-col-name{font-family:var(--mono);font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--mid)}
+.kb-col-cnt{font-family:var(--mono);font-size:8px;padding:1px 5px;border-radius:2px;background:var(--ink4);color:var(--muted)}
+.kb-card{background:var(--ink3);border:1px solid var(--line2);border-radius:5px;padding:10px;cursor:grab;position:relative;overflow:hidden}
+.kb-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px}
+.kb-card.id::after{background:var(--stage-id)}
+.kb-card.ev::after{background:var(--stage-ev)}
+.kb-card.lo::after{background:var(--stage-lo)}
+.kb-card.dd::after{background:var(--stage-dd)}
+.kb-card.cl::after{background:var(--stage-cl)}
+.kb-card.pa::after{background:var(--stage-pa)}
+.kb-addr{font-family:var(--body);font-size:11px;font-weight:600;color:var(--bright);margin-bottom:2px}
+.kb-meta{font-family:var(--mono);font-size:8px;color:var(--muted);margin-bottom:7px}
+.kb-ml-bar{display:flex;align-items:center;gap:5px;margin-top:5px}
+.kb-ml-lbl{font-family:var(--mono);font-size:7px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.kb-ml-val{font-family:var(--mono);font-size:8px;font-weight:500}
+.kb-shap-hint{font-family:var(--mono);font-size:7px;color:var(--muted);margin-top:3px}
+.kb-actions{display:flex;gap:4px;margin-top:8px}
+.kb-btn{flex:1;height:20px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:7px;letter-spacing:.05em;text-transform:uppercase;border:1px solid var(--line2);color:var(--muted)}
+.kb-btn.p{background:var(--violet-dim);border-color:rgba(167,139,250,.3);color:var(--violet)}
+
+/* DEAL OUTCOME OVERLAY */
+.outcome-ov{position:absolute;inset:0;background:rgba(8,10,13,.92);z-index:30;display:flex;align-items:center;justify-content:center}
+.outcome-modal{background:var(--ink2);border:1px solid var(--line2);border-radius:8px;padding:20px;width:320px}
+.om-title{font-family:var(--head);font-size:18px;letter-spacing:.04em;color:var(--bright);margin-bottom:4px}
+.om-sub{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.outcome-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px}
+.oc-opt{padding:8px;border-radius:4px;border:1px solid var(--line2);display:flex;align-items:center;gap:6px;cursor:pointer}
+.oc-opt.sel{border-color:var(--violet);background:var(--violet-dim)}
+.oc-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.oc-lbl{font-family:var(--mono);font-size:8px;letter-spacing:.05em;text-transform:uppercase}
+.tag-grid{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px}
+.outcome-tag{padding:3px 8px;border-radius:3px;border:1px solid var(--line2);font-family:var(--mono);font-size:7.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);cursor:pointer}
+.outcome-tag.sel{border-color:var(--violet);background:var(--violet-dim);color:var(--violet)}
+.om-note{width:100%;background:var(--ink3);border:1px solid var(--line2);border-radius:4px;padding:8px;font-family:var(--mono);font-size:9px;color:var(--text);resize:none;height:52px}
+.om-footer{display:flex;gap:6px;margin-top:10px}
+.om-btn{flex:1;height:30px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:8px;letter-spacing:.07em;text-transform:uppercase}
+.om-btn-p{background:var(--violet);color:var(--ink);font-weight:600}
+.om-btn-s{background:var(--ink4);border:1px solid var(--line2);color:var(--mid)}
+
+/* ML TRAINING TERMINAL */
+.terminal{background:#080a0d;border:1px solid var(--line);border-radius:5px;padding:10px;font-family:var(--mono);font-size:8.5px;line-height:1.8;color:var(--mid)}
+.t-green{color:var(--green)}
+.t-orange{color:var(--orange)}
+.t-violet{color:var(--violet)}
+.t-dim{color:var(--muted)}
+.t-cursor{display:inline-block;width:6px;height:11px;background:var(--green);vertical-align:middle;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ALERT FEED */
+.alert-item{background:var(--ink3);border:1px solid var(--line2);border-radius:6px;padding:12px;margin-bottom:8px;display:flex;gap:10px}
+.ai-sev{width:4px;border-radius:2px;flex-shrink:0;align-self:stretch}
+.ai-sev.high{background:var(--orange)}
+.ai-sev.med{background:var(--amber)}
+.ai-sev.low{background:var(--teal)}
+.ai-body{flex:1}
+.ai-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
+.ai-title{font-family:var(--body);font-size:12px;font-weight:600;color:var(--bright)}
+.ai-time{font-family:var(--mono);font-size:8px;color:var(--muted)}
+.ai-addr{font-family:var(--mono);font-size:9px;color:var(--teal);margin-bottom:3px}
+.ai-text{font-family:var(--mono);font-size:9px;color:var(--mid);line-height:1.5}
+.ai-score-row{display:flex;gap:6px;margin-top:6px}
+.ai-score-tag{font-family:var(--mono);font-size:8px;padding:2px 7px;border-radius:3px;border:1px solid}
+.ai-actions{display:flex;gap:5px;margin-top:7px}
+.ai-btn{height:22px;padding:0 10px;border-radius:3px;font-family:var(--mono);font-size:7.5px;letter-spacing:.05em;text-transform:uppercase;border:1px solid var(--line2);color:var(--mid)}
+.ai-btn.p{background:var(--violet-dim);border-color:rgba(167,139,250,.3);color:var(--violet)}
+
+/* WATCH CONFIG */
+.watch-card{background:var(--ink3);border:1px solid var(--line2);border-radius:6px;overflow:hidden;margin-bottom:8px}
+.wc-map{position:relative;height:80px;background:var(--ink3);background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:16px 16px}
+.wc-polygon{position:absolute;left:20%;top:10%;width:60%;height:80%;border:2px dashed rgba(167,139,250,.5);border-radius:6px;background:rgba(167,139,250,.06)}
+.wc-body{padding:10px 12px}
+.wc-name{font-family:var(--body);font-size:12px;font-weight:600;color:var(--bright);margin-bottom:2px}
+.wc-criteria{font-family:var(--mono);font-size:8px;color:var(--muted);line-height:1.6}
+.wc-footer{display:flex;align-items:center;justify-content:space-between;padding:7px 12px;border-top:1px solid var(--line)}
+.wc-status{font-family:var(--mono);font-size:8px;letter-spacing:.06em;text-transform:uppercase}
+.wc-toggle{width:32px;height:16px;background:var(--violet);border-radius:8px;position:relative}
+.wc-toggle-dot{position:absolute;right:2px;top:2px;width:12px;height:12px;border-radius:50%;background:white}
+
+/* API CONSOLE */
+.api-endpoint{background:var(--ink3);border:1px solid var(--line2);border-radius:5px;padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;gap:10px}
+.api-method{font-family:var(--mono);font-size:8px;font-weight:600;width:32px;letter-spacing:.06em}
+.api-method.get{color:var(--green)}
+.api-method.post{color:var(--orange)}
+.api-path{font-family:var(--mono);font-size:9px;color:var(--bright);flex:1}
+.api-desc{font-family:var(--mono);font-size:8px;color:var(--muted)}
+.api-arrow{font-family:var(--mono);font-size:9px;color:var(--teal)}
+.webhook-row{background:var(--ink3);border:1px solid var(--line2);border-radius:5px;padding:9px 12px;margin-bottom:5px;display:flex;align-items:center;gap:10px}
+.wh-event{font-family:var(--mono);font-size:8px;color:var(--violet);flex:1}
+.wh-url{font-family:var(--mono);font-size:8px;color:var(--mid)}
+.wh-status{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.wh-status.on{background:var(--green)}
+.wh-status.off{background:var(--muted)}
+
+/* SHARED */
+.dl{font-family:var(--mono);font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;padding-bottom:4px;border-bottom:1px solid var(--line)}
+.hud-bl{position:absolute;bottom:14px;left:14px;background:rgba(13,15,18,.85);border:1px solid var(--line);border-radius:3px;padding:4px 8px;font-family:var(--mono);font-size:8px;color:var(--muted);z-index:5}
+
+.ann-strip{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.chip{display:flex;align-items:center;gap:5px;background:rgba(13,15,18,.8);border:1px solid var(--line);border-radius:4px;padding:4px 10px}
+.chip-dot{width:5px;height:5px;border-radius:50%}
+.chip-text{font-family:var(--mono);font-size:9px;color:var(--mid)}
+
+/* ── MOBILE ── */
+.mob-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;justify-items:center;align-items:start}
+.phone-wrap{display:flex;flex-direction:column;align-items:center;gap:14px}
+.phone-cap{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center}
+.device{background:#000;border-radius:38px;padding:10px;border:2px solid #222;box-shadow:0 0 0 1px #333,0 20px 50px rgba(0,0,0,.6);width:282px}
+.screen{border-radius:30px;overflow:hidden;position:relative;background:var(--ink2)}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:78px;height:22px;background:#000;border-radius:0 0 14px 14px;z-index:100}
+.sbar{height:30px;background:var(--ink);display:flex;align-items:flex-end;padding:0 14px 4px}
+.stime{font-family:var(--mono);font-size:10px;font-weight:500;color:var(--bright)}
+.mob-top{background:rgba(13,15,18,.95);padding:6px 12px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line)}
+.mob-logo{font-family:var(--head);font-size:13px;letter-spacing:.05em;color:var(--bright)}
+.mob-logo span{color:var(--teal)}
+.tabbar{background:rgba(13,15,18,.98);border-top:1px solid var(--line);display:flex;padding:5px 0 10px}
+.tbi{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px}
+.tbi-icon{width:17px;height:17px;border:1.5px solid var(--muted);border-radius:3px}
+.tbi-icon.on{border-color:var(--violet);background:var(--violet-dim)}
+.tbi-icon.circ{border-radius:50%}
+.tbi-lbl{font-family:var(--mono);font-size:6.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.tbi-lbl.on{color:var(--violet)}
+
+@media(max-width:1300px){.mob-grid{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- HEADER -->
+<div class="doc-header">
+  <div>
+    <div class="doc-eyebrow">Pocket Developer · Design Ref</div>
+    <div class="doc-title">Phase 4<span>.</span> Intelligence</div>
+  </div>
+  <div class="doc-meta">
+    <div class="meta-pill">Desktop + Mobile</div>
+    <div class="meta-pill">11 Screens</div>
+    <div class="meta-pill">Violet · Intelligence Layer</div>
+  </div>
+</div>
+
+<!-- INTRO NOTE -->
+<div style="background:var(--violet-dim);border:1px solid rgba(167,139,250,.2);border-radius:6px;padding:16px 20px;margin-bottom:56px;display:flex;gap:12px">
+  <div style="width:6px;height:6px;border-radius:50%;background:var(--violet);flex-shrink:0;margin-top:5px"></div>
+  <div>
+    <div style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--violet);margin-bottom:4px">Design System · Phase 4</div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--mid);line-height:1.7">Phase 4 introduces three new surface types that have never existed in this product: (1) a <span style="color:var(--bright)">full dashboard</span> at /dashboard with charts and pipeline summary — a separate route from the map entirely; (2) a <span style="color:var(--bright)">Kanban pipeline board</span> — the first non-map, non-panel UI pattern; (3) an <span style="color:var(--bright)">ML model performance panel</span> with SHAP feature importance. The product also gains a left sidebar for primary navigation across routes. <span style="color:var(--bright)">Violet (#a78bfa)</span> is already established as the AI/intelligence accent from Phase 2 — Phase 4 inherits it as the system-wide intelligence color. Pipeline stage cards get colored bottom-stripe identifiers. The ML model is the <span style="color:var(--bright)">compounding flywheel</span> — deal outcomes feed training data, SHAP surfaces why the model decided what it decided, retraining shows as a terminal log. Site Watch turns the product proactive for the first time — an alert feed replaces the "open and tap" workflow with "it finds things for you."</div>
+  </div>
+</div>
+
+<!-- ============================= -->
+<!-- DESKTOP 01: EXECUTIVE DASHBOARD -->
+<!-- ============================= -->
+<div class="sec">
+  <div class="sec-label">Desktop · 01</div>
+  <div class="sec-title">Executive Intelligence Dashboard</div>
+  <div class="sec-desc">The /dashboard route — a separate full-screen experience from the map. Left sidebar nav anchors all Phase 4 routes. Four KPI cards at top, then a three-column row: pipeline funnel, market heat map, ML model summary. Competitive intelligence feed at bottom right. The product earns its "platform" label here.</div>
+  <div class="state-pill"><div class="sp-dot"></div><div class="sp-text">route='/dashboard' · pipelineDeals=23 · modelR2=0.84 · newAlerts=3</div></div>
+  <div class="frame">
+    <div class="frame-bar"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="fn">Desktop · Executive Dashboard</span><span class="ftag tv">Phase 4</span></div>
+    <div class="canvas" style="height:620px;background:var(--ink2)">
+      <!-- SIDEBAR -->
+      <div class="sidebar wide">
+        <div class="sb-logo wide">Pocket<span>Dev</span></div>
+        <div class="sb-section">Platform</div>
+        <div class="sb-item">
+          <div class="sb-icon tl"><div style="width:8px;height:8px;border-radius:1px;background:var(--teal);opacity:.6"></div></div>
+          <div class="sb-item-label">Map</div>
+        </div>
+        <div class="sb-item on">
+          <div class="sb-icon on"><div style="width:8px;height:5px;border-radius:1px;background:var(--violet)"></div></div>
+          <div class="sb-item-label">Dashboard</div>
+        </div>
+        <div class="sb-item" style="position:relative">
+          <div class="sb-icon"><div style="width:8px;height:8px;border-radius:1px;border:1.5px solid var(--muted)"></div></div>
+          <div class="sb-item-label">Pipeline</div>
+          <div class="sb-dot"></div>
+        </div>
+        <div class="sb-item">
+          <div class="sb-icon"></div>
+          <div class="sb-item-label">Alerts</div>
+        </div>
+        <div class="sb-section" style="margin-top:8px">Developer</div>
+        <div class="sb-item">
+          <div class="sb-icon"></div>
+          <div class="sb-item-label">API</div>
+        </div>
+        <div class="sb-item">
+          <div class="sb-icon"></div>
+          <div class="sb-item-label">Webhooks</div>
+        </div>
+        <div style="flex:1"></div>
+        <div class="sb-section">Team</div>
+        <div class="sb-item">
+          <div class="sb-icon"></div>
+          <div class="sb-item-label">Members</div>
+        </div>
+        <div class="sb-item" style="margin-bottom:8px">
+          <div class="av" style="width:22px;height:22px;font-size:8px;border-radius:50%;flex-shrink:0">JT</div>
+          <div class="sb-item-label">JT · Admin</div>
+        </div>
+      </div>
+      <!-- TOPBAR -->
+      <div class="dash-topbar">
+        <div class="dash-title">Intelligence Dashboard</div>
+        <div class="dash-meta">DeThomas Investments · Q1 2026 · 23 active deals</div>
+        <div class="dash-actions">
+          <div class="dab dab-s">Export PDF</div>
+          <div class="dab dab-p">+ New Watch</div>
+          <div class="av">JT</div>
+        </div>
+      </div>
+      <!-- DASHBOARD CONTENT -->
+      <div class="dash-content">
+        <!-- KPI ROW -->
+        <div class="dash-grid">
+          <div class="stat-card">
+            <div class="stat-label">Active Pipeline</div>
+            <div class="stat-val">23</div>
+            <div class="stat-delta up">↑ 4 from last quarter</div>
+            <div class="stat-spark">
+              <div class="spark-bar" style="height:40%;background:var(--muted)"></div><div class="spark-bar" style="height:55%;background:var(--muted)"></div><div class="spark-bar" style="height:45%;background:var(--muted)"></div><div class="spark-bar" style="height:70%;background:var(--muted)"></div><div class="spark-bar" style="height:60%;background:var(--muted)"></div><div class="spark-bar" style="height:80%;background:var(--violet)"></div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Pipeline Value</div>
+            <div class="stat-val">$74M</div>
+            <div class="stat-delta up">↑ 12% MoM</div>
+            <div class="stat-spark">
+              <div class="spark-bar" style="height:50%;background:var(--muted)"></div><div class="spark-bar" style="height:55%;background:var(--muted)"></div><div class="spark-bar" style="height:48%;background:var(--muted)"></div><div class="spark-bar" style="height:65%;background:var(--muted)"></div><div class="spark-bar" style="height:72%;background:var(--muted)"></div><div class="spark-bar" style="height:88%;background:var(--green)"></div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Avg. Days in Stage</div>
+            <div class="stat-val">34</div>
+            <div class="stat-delta dn">↓ 8 days vs avg — good</div>
+            <div class="stat-spark">
+              <div class="spark-bar" style="height:80%;background:var(--muted)"></div><div class="spark-bar" style="height:75%;background:var(--muted)"></div><div class="spark-bar" style="height:85%;background:var(--muted)"></div><div class="spark-bar" style="height:65%;background:var(--muted)"></div><div class="spark-bar" style="height:55%;background:var(--muted)"></div><div class="spark-bar" style="height:40%;background:var(--teal)"></div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Model Accuracy</div>
+            <div class="stat-val">R²&nbsp;.84</div>
+            <div class="stat-delta up">↑ .06 from last training</div>
+            <div class="stat-spark">
+              <div class="spark-bar" style="height:55%;background:var(--muted)"></div><div class="spark-bar" style="height:60%;background:var(--muted)"></div><div class="spark-bar" style="height:62%;background:var(--muted)"></div><div class="spark-bar" style="height:70%;background:var(--muted)"></div><div class="spark-bar" style="height:78%;background:var(--muted)"></div><div class="spark-bar" style="height:84%;background:var(--violet)"></div>
+            </div>
+          </div>
+        </div>
+        <!-- 3-COL ROW -->
+        <div class="kpi-row">
+          <!-- PIPELINE FUNNEL -->
+          <div class="kpi-card">
+            <div class="kpi-head">
+              <div class="kpi-lbl">Pipeline by Stage</div>
+              <div class="kpi-badge" style="border-color:rgba(167,139,250,.3);color:var(--violet)">23 deals</div>
+            </div>
+            <div class="funnel-stages">
+              <div class="fs-row"><div class="fs-name">Identified</div><div class="fs-track"><div class="fs-fill" style="width:100%;background:var(--teal)"></div></div><div class="fs-cnt">8</div></div>
+              <div class="fs-row"><div class="fs-name">Evaluating</div><div class="fs-track"><div class="fs-fill" style="width:62%;background:var(--violet)"></div></div><div class="fs-cnt">5</div></div>
+              <div class="fs-row"><div class="fs-name">LOI</div><div class="fs-track"><div class="fs-fill" style="width:37%;background:var(--orange)"></div></div><div class="fs-cnt">3</div></div>
+              <div class="fs-row"><div class="fs-name">Due Dilig.</div><div class="fs-track"><div class="fs-fill" style="width:25%;background:var(--amber)"></div></div><div class="fs-cnt">2</div></div>
+              <div class="fs-row"><div class="fs-name">Under Cont.</div><div class="fs-track"><div class="fs-fill" style="width:25%;background:#a855f7"></div></div><div class="fs-cnt">2</div></div>
+              <div class="fs-row"><div class="fs-name">Closed</div><div class="fs-track"><div class="fs-fill" style="width:37%;background:var(--green)"></div></div><div class="fs-cnt">3</div></div>
+            </div>
+            <div style="height:1px;background:var(--line);margin:10px 0"></div>
+            <div style="font-family:var(--mono);font-size:8px;color:var(--muted)">Q1 conversion: <span style="color:var(--green)">37.5%</span> &nbsp;·&nbsp; Avg deal: <span style="color:var(--amber)">$3.2M</span></div>
+          </div>
+          <!-- MARKET HEAT MAP -->
+          <div class="kpi-card">
+            <div class="kpi-head">
+              <div class="kpi-lbl">Market Activity · Gwinnett/Fulton</div>
+              <div class="kpi-badge" style="border-color:rgba(245,166,35,.3);color:var(--amber)">deal density</div>
+            </div>
+            <div class="heat-map">
+              <div class="heat-cell" style="background:rgba(0,212,200,.08)">30096</div>
+              <div class="heat-cell" style="background:rgba(0,212,200,.22)">30097</div>
+              <div class="heat-cell" style="background:rgba(167,139,250,.35)">30518</div>
+              <div class="heat-cell" style="background:rgba(167,139,250,.55)">30519</div>
+              <div class="heat-cell" style="background:rgba(167,139,250,.7)">30024</div>
+              <div class="heat-cell" style="background:rgba(0,212,200,.1)">30005</div>
+              <div class="heat-cell" style="background:rgba(0,212,200,.18)">30004</div>
+              <div class="heat-cell" style="background:rgba(167,139,250,.2)">30040</div>
+              <div class="heat-cell" style="background:rgba(249,115,22,.4)">30041</div>
+              <div class="heat-cell" style="background:rgba(249,115,22,.6)">30043</div>
+              <div class="heat-cell" style="background:rgba(0,212,200,.05)">30022</div>
+              <div class="heat-cell" style="background:rgba(0,212,200,.12)">30021</div>
+              <div class="heat-cell" style="background:rgba(0,212,200,.16)">30017</div>
+              <div class="heat-cell" style="background:rgba(167,139,250,.12)">30019</div>
+              <div class="heat-cell" style="background:rgba(245,166,35,.3)">30071</div>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:8px;align-items:center">
+              <div style="display:flex;align-items:center;gap:4px"><div style="width:10px;height:4px;border-radius:2px;background:rgba(167,139,250,.7)"></div><div style="font-family:var(--mono);font-size:7px;color:var(--muted)">High</div></div>
+              <div style="display:flex;align-items:center;gap:4px"><div style="width:10px;height:4px;border-radius:2px;background:rgba(0,212,200,.3)"></div><div style="font-family:var(--mono);font-size:7px;color:var(--muted)">Medium</div></div>
+              <div style="display:flex;align-items:center;gap:4px"><div style="width:10px;height:4px;border-radius:2px;background:rgba(249,115,22,.5)"></div><div style="font-family:var(--mono);font-size:7px;color:var(--muted)">Your Activity</div></div>
+            </div>
+          </div>
+          <!-- ML MODEL SUMMARY -->
+          <div class="kpi-card">
+            <div class="kpi-head">
+              <div class="kpi-lbl">Proprietary ML Model</div>
+              <div class="kpi-badge" style="border-color:rgba(34,197,94,.3);color:var(--green)">✓ Current</div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:10px">
+              <div><div style="font-family:var(--mono);font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:2px">Accuracy</div><div class="ml-r2">0.84<sub> R²</sub></div></div>
+              <div style="flex:1">
+                <div style="font-family:var(--mono);font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px">Top Features (SHAP)</div>
+                <div class="shap-list">
+                  <div class="shap-row"><span class="shap-name">Power Score</span><div class="shap-track"><div class="shap-fill" style="width:92%;background:var(--orange)"></div></div><span class="shap-val" style="color:var(--orange)">0.31</span></div>
+                  <div class="shap-row"><span class="shap-name">Nearest 500kV</span><div class="shap-track"><div class="shap-fill" style="width:78%;background:var(--violet)"></div></div><span class="shap-val">0.26</span></div>
+                  <div class="shap-row"><span class="shap-name">Fiber Score</span><div class="shap-track"><div class="shap-fill" style="width:55%;background:var(--teal)"></div></div><span class="shap-val">0.18</span></div>
+                  <div class="shap-row"><span class="shap-name">Lot Size (ac)</span><div class="shap-track"><div class="shap-fill" style="width:38%;background:var(--mid)"></div></div><span class="shap-val">0.13</span></div>
+                </div>
+              </div>
+            </div>
+            <div style="font-family:var(--mono);font-size:8px;color:var(--muted)">Trained on <span style="color:var(--text)">147</span> deals · Last run <span style="color:var(--text)">2h ago</span> · Next at 02:00 EST</div>
+          </div>
+        </div>
+        <!-- BOTTOM 2-COL: COMPETITIVE FEED + TEAM ACTIVITY -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="kpi-card">
+            <div class="kpi-head"><div class="kpi-lbl">Competitive Intelligence · This Week</div><div class="kpi-badge" style="border-color:rgba(249,115,22,.3);color:var(--orange)">3 new</div></div>
+            <div class="feed-item hot">
+              <div class="fi-time">Today, 06:14 EST</div>
+              <div class="fi-text">Deed transfer: <span style="color:var(--bright)">4.8ac at 3800 Venture Dr</span> — acquired by Stonegate Capital LLC. Matches your 30043 watch area.</div>
+              <div><div class="fi-tag" style="background:var(--orange-dim);border:1px solid rgba(249,115,22,.2);color:var(--orange)">Watch Match</div></div>
+            </div>
+            <div class="feed-item warm">
+              <div class="fi-time">Yesterday, 14:32 EST</div>
+              <div class="fi-text">Rezoning filed: <span style="color:var(--bright)">2121 Pleasant Hill Rd</span> — C-2 to I-2. Gwinnett BOC hearing Apr 14.</div>
+              <div><div class="fi-tag" style="background:var(--amber-dim);border:1px solid rgba(245,166,35,.2);color:var(--amber)">Rezoning</div></div>
+            </div>
+            <div class="feed-item">
+              <div class="fi-time">Mon, Feb 17</div>
+              <div class="fi-text">Building permit issued: <span style="color:var(--bright)">280 Rockbridge Rd NW</span> — 48,000 sqft tilt-up industrial shell.</div>
+              <div><div class="fi-tag" style="background:var(--teal-dim);border:1px solid rgba(0,212,200,.2);color:var(--teal)">New Construction</div></div>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-head"><div class="kpi-lbl">Team Activity · Today</div><div class="av" style="width:22px;height:22px;font-size:7.5px">JT</div></div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--line)"><div class="av" style="width:20px;height:20px;font-size:7px;flex-shrink:0">SR</div><div><div style="font-family:var(--mono);font-size:8.5px;color:var(--text)">Sandra moved <span style="color:var(--bright)">1200 Satellite Blvd</span> → Passed</div><div style="font-family:var(--mono);font-size:7.5px;color:var(--muted)">Outcome: flood_risk · 2h ago</div></div></div>
+              <div style="display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--line)"><div class="av" style="width:20px;height:20px;font-size:7px;flex-shrink:0;color:var(--violet)">CM</div><div><div style="font-family:var(--mono);font-size:8.5px;color:var(--text)">Cristiana generated brief for <span style="color:var(--bright)">4821 Buford Hwy</span></div><div style="font-family:var(--mono);font-size:7.5px;color:var(--muted)">Brief #47 · 4h ago</div></div></div>
+              <div style="display:flex;gap:8px;align-items:flex-start;padding:6px 0"><div class="av" style="width:20px;height:20px;font-size:7px;flex-shrink:0;color:var(--orange)">MR</div><div><div style="font-family:var(--mono);font-size:8.5px;color:var(--text)">Maria added annotation on <span style="color:var(--bright)">3800 Venture Dr</span></div><div style="font-family:var(--mono);font-size:7.5px;color:var(--muted)">"Owner wants 18mo leaseback" · 5h ago</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ann-strip">
+    <div class="chip"><div class="chip-dot" style="background:var(--violet)"></div><div class="chip-text">Left sidebar is Phase 4's new nav paradigm — collapses to 56px icon-only on smaller screens</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--violet)"></div><div class="chip-text">Dashboard is a separate route from the map — router handles /map vs /dashboard vs /pipeline</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--green)"></div><div class="chip-text">Sparklines are recharts BarChart — 6-period history from materialized view refreshed nightly</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--amber)"></div><div class="chip-text">Heat map cells are zip codes colored by PostGIS deal density query — not a chart library</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--orange)"></div><div class="chip-text">Competitive feed: nightly GPT-4o digest of county deed/permit/rezoning public records</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">Team activity feed from Supabase Realtime — deal_activities table, org-scoped RLS</div></div>
+  </div>
+</div>
+
+<!-- ============================= -->
+<!-- DESKTOP 02: PIPELINE KANBAN BOARD -->
+<!-- ============================= -->
+<div class="sec">
+  <div class="sec-label">Desktop · 02</div>
+  <div class="sec-title">Pipeline & Deal Lifecycle Kanban</div>
+  <div class="sec-desc">The /pipeline route. Deals as draggable cards across 7 stage columns. Each card shows address, acreage, ML confidence score (from the proprietary model), and the top SHAP driver. Dragging a card to Passed/Closed triggers the Outcome tagging modal — this is the data collection mechanism that feeds model retraining.</div>
+  <div class="state-pill"><div class="sp-dot"></div><div class="sp-text">route='/pipeline' · dragging=null · outcomeModal=null · filterUser='all'</div></div>
+  <div class="frame">
+    <div class="frame-bar"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="fn">Desktop · Pipeline Kanban</span><span class="ftag tv">Phase 4</span></div>
+    <div class="canvas" style="height:580px;background:var(--ink2)">
+      <!-- SIDEBAR (narrow) -->
+      <div class="sidebar">
+        <div class="sb-logo" style="margin-bottom:16px">PD</div>
+        <div class="sb-icon tl" style="margin-bottom:6px"><div style="width:8px;height:8px;border-radius:1px;background:var(--teal);opacity:.6"></div></div>
+        <div class="sb-icon" style="margin-bottom:6px;position:relative"><div style="width:6px;height:4px;background:var(--muted);border-radius:1px"></div><div class="sb-dot" style="width:6px;height:6px;right:-2px;top:-2px"></div></div>
+        <div class="sb-icon on" style="margin-bottom:6px"><div style="width:7px;height:7px;border:1.5px solid var(--violet);border-radius:1px"></div></div>
+        <div class="sb-icon" style="margin-bottom:6px"></div>
+        <div style="flex:1"></div>
+        <div class="av" style="width:24px;height:24px;font-size:8px">JT</div>
+      </div>
+      <!-- TOPBAR -->
+      <div class="dash-topbar narrow">
+        <div class="dash-title">Pipeline</div>
+        <div class="dash-meta">23 deals · DeThomas Investments</div>
+        <div class="dash-actions">
+          <!-- filter chips -->
+          <div style="display:flex;gap:5px">
+            <div style="font-family:var(--mono);font-size:8px;padding:3px 8px;border-radius:3px;background:var(--ink4);border:1px solid var(--line2);color:var(--muted)">All Users</div>
+            <div style="font-family:var(--mono);font-size:8px;padding:3px 8px;border-radius:3px;background:var(--ink4);border:1px solid var(--line2);color:var(--muted)">Sort: Score ↓</div>
+          </div>
+          <div class="dab dab-p">+ Add Deal</div>
+          <div class="av">JT</div>
+        </div>
+      </div>
+      <!-- KANBAN BOARD -->
+      <div style="position:absolute;top:48px;left:56px;right:0;bottom:0;overflow:auto">
+        <div class="kanban">
+          <!-- IDENTIFIED -->
+          <div class="kb-col">
+            <div class="kb-col-head"><div class="kb-col-dot" style="background:var(--teal)"></div><div class="kb-col-name">Identified</div><div class="kb-col-cnt">8</div></div>
+            <div class="kb-card id">
+              <div class="kb-addr">4821 Buford Hwy NE</div>
+              <div class="kb-meta">2.14ac · C-2 · Gwinnett</div>
+              <div class="kb-ml-bar"><span class="kb-ml-lbl">Model</span><span class="kb-ml-val" style="color:var(--green)">87%</span></div>
+              <div class="kb-shap-hint">↑ Power score (0.31 SHAP)</div>
+              <div class="kb-actions"><div class="kb-btn p">Open</div><div class="kb-btn">Brief</div></div>
+            </div>
+            <div class="kb-card id" style="opacity:.75">
+              <div class="kb-addr">900 Peachtree Ind Blvd</div>
+              <div class="kb-meta">3.60ac · I-1 · Gwinnett</div>
+              <div class="kb-ml-bar"><span class="kb-ml-lbl">Model</span><span class="kb-ml-val" style="color:var(--amber)">72%</span></div>
+              <div class="kb-shap-hint">↑ Lot size (0.18 SHAP)</div>
+              <div class="kb-actions"><div class="kb-btn p">Open</div><div class="kb-btn">Brief</div></div>
+            </div>
+            <div class="kb-card id" style="opacity:.6">
+              <div class="kb-addr">155 Old Peachtree Rd</div>
+              <div class="kb-meta">1.82ac · C-1 · Gwinnett</div>
+              <div class="kb-ml-bar"><span class="kb-ml-lbl">Model</span><span class="kb-ml-val" style="color:var(--muted)">51%</span></div>
+              <div class="kb-shap-hint">↓ Fiber score (−0.14)</div>
+              <div class="kb-actions"><div class="kb-btn p">Open</div><div class="kb-btn">Brief</div></div>
+            </div>
+          </div>
+          <!-- EVALUATING -->
+          <div class="kb-col">
+            <div class="kb-col-head"><div class="kb-col-dot" style="background:var(--violet)"></div><div class="kb-col-name">Evaluating</div><div class="kb-col-cnt">5</div></div>
+            <div class="kb-card ev">
+              <div class="kb-addr">3800 Venture Dr NW</div>
+              <div class="kb-meta">8.40ac · I-2 · Gwinnett</div>
+              <div class="kb-ml-bar"><span class="kb-ml-lbl">Model</span><span class="kb-ml-val" style="color:var(--green)">79%</span></div>
+              <div class="kb-shap-hint">↑ Lot size, ↓ Fiber</div>
+              <div class="kb-actions"><div class="kb-btn p">Open</div><div class="kb-btn">Brief</div></div>
+            </div>
+            <div class="kb-card ev" style="opacity:.8">
+              <div class="kb-addr">2840 Buford Hwy NE</div>
+              <div class="kb-meta">4.10ac · C-2 · Gwinnett</div>
+              <div class="kb-ml-bar"><span class="kb-ml-lbl">Model</span><span class="kb-ml-val" style="color:var(--amber)">68%</span></div>
+              <div class="kb-shap-hint">↑ Demographics (0.22)</div>
+              <div class="kb-actions"><div class="kb-btn p">Open</div><div class="kb-btn">Brief</div></div>
+            </div>
+          </div>
+          <!-- LOI -->
+          <div class="kb-col">
+            <div class="kb-col-head"><div class="kb-col-dot" style="background:var(--orange)"></div><div class="kb-col-name">LOI Signed</div><div class="kb-col-cnt">3</div></div>
+            <div class="kb-card lo">
+              <div class="kb-addr">1050 Satellite Blvd</div>
+              <div class="kb-meta">5.20ac · I-2 · Gwinnett</div>
+              <div class="kb-ml-bar"><span class="kb-ml-lbl">Model</span><span class="kb-ml-val" style="color:var(--green)">91%</span></div>
+              <div class="kb-shap-hint">↑ Power + Fiber (top)</div>
+              <div class="kb-actions"><div class="kb-btn p">Open</div><div class="kb-btn">Brief</div></div>
+            </div>
+          </div>
+          <!-- DUE DILIGENCE -->
+          <div class="kb-col">
+            <div class="kb-col-head"><div class="kb-col-dot" style="background:var(--amber)"></div><div class="kb-col-name">Due Diligence</div><div class="kb-col-cnt">2</div></div>
+            <div class="kb-card dd">
+              <div class="kb-addr">280 Rockbridge Rd NW</div>
+              <div class="kb-meta">6.80ac · I-1 · Gwinnett</div>
+              <div class="kb-ml-bar"><span class="kb-ml-lbl">Model</span><span class="kb-ml-val" style="color:var(--green)">88%</span></div>
+              <div class="kb-shap-hint">↑ Power (0.29 SHAP)</div>
+              <div class="kb-actions"><div class="kb-btn p">Open</div><div class="kb-btn">Brief</div></div>
+            </div>
+          </div>
+          <!-- UNDER CONTRACT -->
+          <div class="kb-col">
+            <div class="kb-col-head"><div class="kb-col-dot" style="background:#a855f7"></div><div class="kb-col-name">Under Contract</div><div class="kb-col-cnt">2</div></div>
+            <div class="kb-card" style="border-color:rgba(168,85,247,.3);background:rgba(168,85,247,.04)">
+              <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:#a855f7"></div>
+              <div class="kb-addr">560 Commerce Dr</div>
+              <div class="kb-meta">4.20ac · I-2 · Fulton</div>
+              <div class="kb-ml-bar"><span class="kb-ml-lbl">Model</span><span class="kb-ml-val" style="color:var(--green)">93%</span></div>
+              <div class="kb-shap-hint">Model aligns with pursuit</div>
+              <div class="kb-actions"><div class="kb-btn p">Open</div><div class="kb-btn">Log</div></div>
+            </div>
+          </div>
+          <!-- CLOSED -->
+          <div class="kb-col">
+            <div class="kb-col-head"><div class="kb-col-dot" style="background:var(--green)"></div><div class="kb-col-name">Closed</div><div class="kb-col-cnt">3</div></div>
+            <div class="kb-card cl">
+              <div class="kb-addr">4100 Sugarloaf Pkwy</div>
+              <div class="kb-meta">Closed Feb 3 · $4.8M</div>
+              <div class="kb-ml-bar"><span class="kb-ml-lbl">Model was</span><span class="kb-ml-val" style="color:var(--green)">89%</span></div>
+              <div class="kb-shap-hint">↑ Training data added</div>
+              <div class="kb-actions"><div class="kb-btn">View</div><div class="kb-btn">Archive</div></div>
+            </div>
+          </div>
+          <!-- PASSED -->
+          <div class="kb-col">
+            <div class="kb-col-head"><div class="kb-col-dot" style="background:var(--mid)"></div><div class="kb-col-name">Passed / Lost</div><div class="kb-col-cnt">—</div></div>
+            <div style="padding:8px;background:var(--ink4);border:1px dashed var(--line2);border-radius:5px;font-family:var(--mono);font-size:8px;color:var(--muted);text-align:center;line-height:1.6">Drag here to record outcome.<br/>Tags feed model retraining.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ann-strip">
+    <div class="chip"><div class="chip-dot" style="background:var(--violet)"></div><div class="chip-text">Column bottom-stripe color matches stage — instant visual scan of where deals cluster</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--green)"></div><div class="chip-text">ML confidence score on every card — from firm's own XGBoost model, not generic scoring</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">Top SHAP driver shown as a hint — "why does the model like/dislike this site?"</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--orange)"></div><div class="chip-text">Passed column is the data collection mechanism — drag here triggers outcome modal</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">Zustand manages comparison list + drag state — react-beautiful-dnd or @dnd-kit for drag</div></div>
+  </div>
+</div>
+
+<!-- ============================= -->
+<!-- DESKTOP 03: OUTCOME MODAL + ML TRAINING -->
+<!-- ============================= -->
+<div class="sec">
+  <div class="sec-label">Desktop · 03 + 04</div>
+  <div class="sec-title">Outcome Tagging Modal · ML Training Terminal</div>
+  <div class="sec-desc">Left: the outcome tagging modal fires when a card is dragged to Passed or Closed. Outcome + taxonomy tags + optional note = training data record. Right: the ML model detail view showing SHAP rankings, R² history, and the terminal-style retraining log — the visible engine of the flywheel.</div>
+  <div class="grid2">
+
+    <!-- OUTCOME MODAL -->
+    <div>
+      <div class="state-pill"><div class="sp-dot"></div><div class="sp-text">outcomeModal=open · dealId='3800-venture' · stage='passed'</div></div>
+      <div class="frame">
+        <div class="frame-bar"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="fn">Desktop · Outcome Modal</span><span class="ftag tv">Phase 4</span></div>
+        <div class="canvas" style="height:480px;background:var(--ink2)">
+          <div class="outcome-ov">
+            <div class="outcome-modal">
+              <div class="om-title">Record Outcome</div>
+              <div class="om-sub">3800 Venture Dr NW · 8.40ac · Moving to Passed</div>
+              <!-- outcome type -->
+              <div style="font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Outcome Type</div>
+              <div class="outcome-grid">
+                <div class="oc-opt sel"><div class="oc-dot" style="background:var(--mid)"></div><div class="oc-lbl" style="color:var(--violet)">Passed</div></div>
+                <div class="oc-opt"><div class="oc-dot" style="background:var(--red)"></div><div class="oc-lbl">Lost</div></div>
+                <div class="oc-opt"><div class="oc-dot" style="background:var(--green)"></div><div class="oc-lbl">Closed</div></div>
+                <div class="oc-opt"><div class="oc-dot" style="background:var(--amber)"></div><div class="oc-lbl">LOI Signed</div></div>
+              </div>
+              <!-- reason tags -->
+              <div style="font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Reason Tags <span style="color:var(--muted);font-size:7px">(feeds retraining)</span></div>
+              <div class="tag-grid">
+                <div class="outcome-tag sel">price_too_high</div>
+                <div class="outcome-tag">zoning_incompatible</div>
+                <div class="outcome-tag sel">ownership_unwilling</div>
+                <div class="outcome-tag">environmental_issue</div>
+                <div class="outcome-tag">financing_unavailable</div>
+                <div class="outcome-tag">competitor_acquisition</div>
+                <div class="outcome-tag">traffic_insufficient</div>
+              </div>
+              <!-- note -->
+              <div style="font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px">Notes (optional)</div>
+              <textarea class="om-note" readonly>Owner wanted $4.2M — our ceiling was $3.6M. Single-carrier fiber also a concern at this acreage.</textarea>
+              <!-- training note -->
+              <div style="font-family:var(--mono);font-size:8px;color:var(--mid);margin-top:8px;line-height:1.5;padding:6px 8px;border-left:2px solid var(--violet);background:var(--violet-dim);border-radius:0 3px 3px 0">This outcome will be added to model training data. Next retraining at 02:00 EST will incorporate it.</div>
+              <div class="om-footer"><div class="om-btn om-btn-s">Cancel</div><div class="om-btn om-btn-p">Save Outcome</div></div>
+            </div>
+          </div>
+          <!-- blurred kanban in background -->
+          <div style="position:absolute;inset:0;filter:blur(2px);opacity:.4;background:var(--ink2)"></div>
+        </div>
+      </div>
+      <div class="ann-strip">
+        <div class="chip"><div class="chip-dot" style="background:var(--violet)"></div><div class="chip-text">Modal fires on drag-to-Passed/Closed — also accessible from card kebab menu</div></div>
+        <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">Tag taxonomy is structured — maps directly to XGBoost feature categories</div></div>
+        <div class="chip"><div class="chip-dot" style="background:var(--green)"></div><div class="chip-text">Training notice confirms data will be used — closes the flywheel loop visually</div></div>
+      </div>
+    </div>
+
+    <!-- ML TRAINING DETAIL -->
+    <div>
+      <div class="state-pill"><div class="sp-dot"></div><div class="sp-text">modelView='detail' · lastTrainedAt='2h ago' · r2=0.84 · features=18</div></div>
+      <div class="frame">
+        <div class="frame-bar"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="fn">Desktop · ML Model Detail</span><span class="ftag tv">Phase 4</span></div>
+        <div class="canvas" style="height:480px;background:var(--ink2)">
+          <div class="sidebar"><div class="sb-logo" style="margin-bottom:16px">PD</div><div class="sb-icon tl" style="margin-bottom:6px"></div><div class="sb-icon" style="margin-bottom:6px"></div><div class="sb-icon on" style="margin-bottom:6px"></div><div class="sb-icon" style="margin-bottom:6px"></div><div style="flex:1"></div><div class="av" style="width:24px;height:24px;font-size:8px">JT</div></div>
+          <div class="dash-topbar narrow"><div class="dash-title">ML Model</div><div class="dash-meta">XGBoost · Proprietary · 147 training records</div><div class="dash-actions"><div class="dab dab-s">Retrain Now</div><div class="dab dab-p">Export Model</div></div></div>
+          <div style="position:absolute;top:48px;left:56px;right:0;bottom:0;overflow:auto;padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:start">
+            <!-- R2 card -->
+            <div class="ml-card">
+              <div class="ml-head"><div class="ml-title">Model Performance</div><div class="kpi-badge" style="border-color:rgba(34,197,94,.3);color:var(--green)">✓ Good</div></div>
+              <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:8px">
+                <div class="ml-r2">0.84</div>
+                <div style="font-family:var(--mono);font-size:9px;color:var(--muted)">R² (accuracy)</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:5px">
+                <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:8px"><span style="color:var(--muted)">Training records</span><span style="color:var(--text)">147</span></div>
+                <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:8px"><span style="color:var(--muted)">Features used</span><span style="color:var(--text)">18</span></div>
+                <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:8px"><span style="color:var(--muted)">Max tree depth</span><span style="color:var(--text)">4</span></div>
+                <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:8px"><span style="color:var(--muted)">Last trained</span><span style="color:var(--green)">2h ago</span></div>
+                <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:8px"><span style="color:var(--muted)">Next scheduled</span><span style="color:var(--text)">02:00 EST</span></div>
+                <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:8px"><span style="color:var(--muted)">Drift status</span><span style="color:var(--green)">Normal</span></div>
+              </div>
+            </div>
+            <!-- SHAP RANKINGS -->
+            <div class="ml-card">
+              <div class="ml-title" style="margin-bottom:10px">Feature Importance · SHAP</div>
+              <div class="shap-list">
+                <div class="shap-row"><span class="shap-name">Power Score</span><div class="shap-track"><div class="shap-fill" style="width:100%;background:var(--orange)"></div></div><span class="shap-val" style="color:var(--orange)">0.31</span></div>
+                <div class="shap-row"><span class="shap-name">Nearest 500kV</span><div class="shap-track"><div class="shap-fill" style="width:84%;background:var(--violet)"></div></div><span class="shap-val">0.26</span></div>
+                <div class="shap-row"><span class="shap-name">Fiber Score</span><div class="shap-track"><div class="shap-fill" style="width:58%;background:var(--teal)"></div></div><span class="shap-val">0.18</span></div>
+                <div class="shap-row"><span class="shap-name">Lot Size (ac)</span><div class="shap-track"><div class="shap-fill" style="width:42%;background:var(--mid)"></div></div><span class="shap-val">0.13</span></div>
+                <div class="shap-row"><span class="shap-name">Demographics</span><div class="shap-track"><div class="shap-fill" style="width:30%;background:var(--mid)"></div></div><span class="shap-val">0.09</span></div>
+                <div class="shap-row"><span class="shap-name">Water Score</span><div class="shap-track"><div class="shap-fill" style="width:22%;background:var(--mid)"></div></div><span class="shap-val">0.07</span></div>
+                <div class="shap-row"><span class="shap-name">Zoning Class</span><div class="shap-track"><div class="shap-fill" style="width:16%;background:var(--muted)"></div></div><span class="shap-val" style="color:var(--muted)">0.05</span></div>
+              </div>
+            </div>
+            <!-- TRAINING TERMINAL -->
+            <div class="ml-card" style="grid-column:1/-1">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <div class="ml-title">Last Training Run · Log</div>
+                <div style="font-family:var(--mono);font-size:8px;color:var(--green)">● Complete · 02:14 EST</div>
+              </div>
+              <div class="terminal">
+                <div><span class="t-dim">02:00:01</span> <span class="t-green">[INIT]</span> Loading training data from supabase.deals ...</div>
+                <div><span class="t-dim">02:00:03</span> <span class="t-green">[DATA]</span> 147 records · 18 features · 0 null values</div>
+                <div><span class="t-dim">02:00:04</span> <span class="t-green">[SPLIT]</span> Train/val: 117/30 (80/20 stratified)</div>
+                <div><span class="t-dim">02:00:05</span> <span class="t-orange">[TRAIN]</span> XGBoost starting · max_depth=4 · n_estimators=200</div>
+                <div><span class="t-dim">02:00:11</span> <span class="t-orange">[TRAIN]</span> Best iteration: 142 · val_loss: 0.1847</div>
+                <div><span class="t-dim">02:00:12</span> <span class="t-violet">[SHAP]</span> TreeExplainer computing feature importances ...</div>
+                <div><span class="t-dim">02:00:14</span> <span class="t-green">[RESULT]</span> R² = <span class="t-green">0.8412</span> (prev: 0.7836 · <span class="t-green">+0.0576</span>)</div>
+                <div><span class="t-dim">02:00:14</span> <span class="t-green">[DEPLOY]</span> Model saved → S3 · site_scores cache invalidated</div>
+                <div><span class="t-dim">02:00:15</span> <span class="t-green">[DONE]</span> Next run scheduled 2026-02-21T07:00:00Z <span class="t-cursor"></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ann-strip">
+        <div class="chip"><div class="chip-dot" style="background:var(--green)"></div><div class="chip-text">Terminal log is a real-time Supabase channel subscription — no polling</div></div>
+        <div class="chip"><div class="chip-dot" style="background:var(--orange)"></div><div class="chip-text">SHAP bar colors key to Phase 3 infrastructure colors — Power orange, Fiber teal</div></div>
+        <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">R² improvement (+0.0576) is the clearest signal the flywheel is working</div></div>
+        <div class="chip"><div class="chip-dot" style="background:var(--violet)"></div><div class="chip-text">"Retrain Now" is an authenticated POST /api/model/train — debounced, rate-limited</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================= -->
+<!-- DESKTOP 05: SITE WATCH ALERTS -->
+<!-- ============================= -->
+<div class="sec">
+  <div class="sec-label">Desktop · 05</div>
+  <div class="sec-title">Site Watch — Alert Feed + Watch Config</div>
+  <div class="sec-desc">The product goes proactive. Left panel: the alert feed with severity-coded left borders (orange = high, amber = medium, teal = informational). Right panel: the watch area configuration — each watch shows a mini map thumbnail with the polygon, filter criteria, and an active toggle. New alerts are fired by the nightly scheduled job.</div>
+  <div class="state-pill"><div class="sp-dot"></div><div class="sp-text">route='/alerts' · unreadCount=3 · watches=[4] · sortBy='recency'</div></div>
+  <div class="frame">
+    <div class="frame-bar"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="fn">Desktop · Site Watch Alerts</span><span class="ftag tv">Phase 4</span></div>
+    <div class="canvas" style="height:560px;background:var(--ink2)">
+      <div class="sidebar"><div class="sb-logo" style="margin-bottom:16px">PD</div><div class="sb-icon tl" style="margin-bottom:6px"></div><div class="sb-icon" style="margin-bottom:6px"></div><div class="sb-icon" style="margin-bottom:6px"></div><div class="sb-icon on" style="margin-bottom:6px;position:relative"><div style="width:6px;height:6px;border-radius:50%;border:1.5px solid var(--orange)"></div><div class="sb-dot" style="width:6px;height:6px;right:-2px;top:-2px"></div></div><div style="flex:1"></div><div class="av" style="width:24px;height:24px;font-size:8px">JT</div></div>
+      <div class="dash-topbar narrow"><div class="dash-title">Site Watch Alerts</div><div class="dash-meta">3 unread · Last run: today 06:00 EST</div><div class="dash-actions"><div class="dab dab-s">Mark All Read</div><div class="dab dab-p">+ New Watch</div></div></div>
+      <div style="position:absolute;top:48px;left:56px;right:0;bottom:0;display:grid;grid-template-columns:1fr 320px">
+        <!-- ALERT FEED -->
+        <div style="overflow-y:auto;padding:16px;border-right:1px solid var(--line)">
+          <div style="font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Recent Alerts</div>
+          <div class="alert-item">
+            <div class="ai-sev high"></div>
+            <div class="ai-body">
+              <div class="ai-head"><div class="ai-title">New Land Transfer · Watch Area Match</div><div class="ai-time">Today, 06:14</div></div>
+              <div class="ai-addr">3800 Venture Dr NW · 8.40ac · Gwinnett</div>
+              <div class="ai-text">Deed transfer recorded. Acquired by Stonegate Capital LLC. Parcel matches your "30043 Industrial" watch area. ML score for this parcel: 71.</div>
+              <div class="ai-score-row">
+                <div class="ai-score-tag" style="border-color:rgba(167,139,250,.3);color:var(--violet)">ML Score: 71</div>
+                <div class="ai-score-tag" style="border-color:rgba(0,212,200,.3);color:var(--teal)">I-2 Zoning</div>
+                <div class="ai-score-tag" style="border-color:rgba(249,115,22,.3);color:var(--orange)">Watch Match</div>
+              </div>
+              <div class="ai-actions"><div class="ai-btn p">Open in Map</div><div class="ai-btn">Generate Brief</div><div class="ai-btn">Dismiss</div></div>
+            </div>
+          </div>
+          <div class="alert-item">
+            <div class="ai-sev high"></div>
+            <div class="ai-body">
+              <div class="ai-head"><div class="ai-title">Rezoning Filed · Opportunity Signal</div><div class="ai-time">Yesterday, 14:32</div></div>
+              <div class="ai-addr">2121 Pleasant Hill Rd · Gwinnett BOC</div>
+              <div class="ai-text">C-2 → I-2 rezoning application filed. Hearing scheduled April 14. If approved, parcel score increases by est. +14 points. Currently 58 → projected 72.</div>
+              <div class="ai-score-row">
+                <div class="ai-score-tag" style="border-color:rgba(245,166,35,.3);color:var(--amber)">Proj. Score +14</div>
+                <div class="ai-score-tag" style="border-color:rgba(0,212,200,.2);color:var(--teal)">Hearing Apr 14</div>
+              </div>
+              <div class="ai-actions"><div class="ai-btn p">Open in Map</div><div class="ai-btn">Set Reminder</div><div class="ai-btn">Dismiss</div></div>
+            </div>
+          </div>
+          <div class="alert-item">
+            <div class="ai-sev med"></div>
+            <div class="ai-body">
+              <div class="ai-head"><div class="ai-title">New Listing Match · Price Drop</div><div class="ai-time">Mon, Feb 17</div></div>
+              <div class="ai-addr">900 Peachtree Ind Blvd · 3.60ac · Gwinnett</div>
+              <div class="ai-text">Listed at $2.8M — below your $3.5M ceiling for this area. Score 72. Matches "Peachtree Corridor" watch. Owner: IndePark Holdings LLC.</div>
+              <div class="ai-score-row">
+                <div class="ai-score-tag" style="border-color:rgba(34,197,94,.3);color:var(--green)">Under Ceiling</div>
+                <div class="ai-score-tag" style="border-color:rgba(167,139,250,.3);color:var(--violet)">ML Score: 72</div>
+              </div>
+              <div class="ai-actions"><div class="ai-btn p">Open in Map</div><div class="ai-btn">Dismiss</div></div>
+            </div>
+          </div>
+          <div class="alert-item" style="opacity:.5">
+            <div class="ai-sev low"></div>
+            <div class="ai-body">
+              <div class="ai-head"><div class="ai-title">Weekly Digest — Gwinnett Industrial</div><div class="ai-time">Mon, Feb 10</div></div>
+              <div class="ai-addr">7 transfers · 2 rezonings · 4 permits · 2 listings</div>
+              <div class="ai-text">Active week. Notable: competitor activity up in 30043 zip. 2 new I-2 permits issued near Venture Dr corridor.</div>
+              <div class="ai-actions"><div class="ai-btn">View Digest</div><div class="ai-btn">Dismiss</div></div>
+            </div>
+          </div>
+        </div>
+        <!-- WATCH CONFIG PANEL -->
+        <div style="overflow-y:auto;padding:16px">
+          <div style="font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Active Watches (4)</div>
+          <div class="watch-card">
+            <div class="wc-map">
+              <div class="wc-polygon" style="left:15%;top:15%;width:55%;height:65%;border-color:rgba(249,115,22,.5);background:rgba(249,115,22,.06)"></div>
+              <div style="position:absolute;bottom:4px;left:6px;font-family:var(--mono);font-size:6.5px;color:rgba(249,115,22,.7)">30043 Industrial</div>
+            </div>
+            <div class="wc-body">
+              <div class="wc-name">30043 Industrial Corridor</div>
+              <div class="wc-criteria">I-1/I-2 · Min 2ac · Max $5M<br/>Trigger: transfers, rezonings, new listings</div>
+            </div>
+            <div class="wc-footer"><div class="wc-status" style="color:var(--green)">● Active · 1 new today</div><div class="wc-toggle"><div class="wc-toggle-dot"></div></div></div>
+          </div>
+          <div class="watch-card">
+            <div class="wc-map">
+              <div class="wc-polygon" style="left:25%;top:20%;width:50%;height:60%;border-color:rgba(167,139,250,.5);background:rgba(167,139,250,.06)"></div>
+              <div style="position:absolute;bottom:4px;left:6px;font-family:var(--mono);font-size:6.5px;color:rgba(167,139,250,.7)">Peachtree Corridor</div>
+            </div>
+            <div class="wc-body">
+              <div class="wc-name">Peachtree Ind. Corridor</div>
+              <div class="wc-criteria">Any commercial/industrial · Min 3ac<br/>Trigger: transfers, price drops below $3.5M</div>
+            </div>
+            <div class="wc-footer"><div class="wc-status" style="color:var(--green)">● Active · 1 new Mon</div><div class="wc-toggle" style="background:var(--violet)"><div class="wc-toggle-dot"></div></div></div>
+          </div>
+          <div class="watch-card">
+            <div class="wc-map">
+              <div class="wc-polygon" style="left:10%;top:25%;width:70%;height:50%;border-color:rgba(0,212,200,.4);background:rgba(0,212,200,.04)"></div>
+              <div style="position:absolute;bottom:4px;left:6px;font-family:var(--mono);font-size:6.5px;color:rgba(0,212,200,.6)">Sugarloaf Pkwy</div>
+            </div>
+            <div class="wc-body">
+              <div class="wc-name">Sugarloaf Pkwy Corridor</div>
+              <div class="wc-criteria">C-2/I-1 · Any size · Any price<br/>Trigger: all event types</div>
+            </div>
+            <div class="wc-footer"><div class="wc-status" style="color:var(--muted)">○ Paused</div><div class="wc-toggle" style="background:var(--muted)"><div class="wc-toggle-dot" style="left:2px;right:auto"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ann-strip">
+    <div class="chip"><div class="chip-dot" style="background:var(--orange)"></div><div class="chip-text">Alert left-border severity: orange = high (watch match + competitor), amber = medium, teal = info</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--violet)"></div><div class="chip-text">ML score shown on watch match alerts — model evaluates incoming parcels automatically</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">Watch polygon stored in PostGIS — nightly job runs ST_Within against new deed transfers</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--green)"></div><div class="chip-text">Toggle is real — fires PATCH /api/watches/:id · webhook fires on match if active</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">"Open in Map" deeplinks into the parcel map with that APN pre-selected and panel open</div></div>
+  </div>
+</div>
+
+<!-- ============================= -->
+<!-- DESKTOP 06: API CONSOLE -->
+<!-- ============================= -->
+<div class="sec">
+  <div class="sec-label">Desktop · 06</div>
+  <div class="sec-title">API & Webhook Console</div>
+  <div class="sec-desc">The developer-facing surface. The product becomes infrastructure. Left: documented REST endpoints — GET /parcels/:apn, POST /score-batch, GET /deals. Right: webhook configuration — event subscriptions with URL targets, active/inactive toggles, and HMAC secret display. This is what justifies enterprise pricing.</div>
+  <div class="state-pill"><div class="sp-dot"></div><div class="sp-text">route='/api' · plan='enterprise' · apiKeysCount=2 · webhooksCount=4</div></div>
+  <div class="frame">
+    <div class="frame-bar"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="fn">Desktop · API Console</span><span class="ftag tg">Enterprise</span></div>
+    <div class="canvas" style="height:520px;background:var(--ink2)">
+      <div class="sidebar"><div class="sb-logo" style="margin-bottom:16px">PD</div><div class="sb-icon tl" style="margin-bottom:6px"></div><div class="sb-icon" style="margin-bottom:6px"></div><div class="sb-icon" style="margin-bottom:6px"></div><div class="sb-icon" style="margin-bottom:6px"></div><div style="border-top:1px solid var(--line);width:100%;margin:6px 0;padding-top:6px"></div><div class="sb-icon on" style="margin-bottom:6px"></div><div class="sb-icon" style="margin-bottom:6px"></div><div style="flex:1"></div><div class="av" style="width:24px;height:24px;font-size:8px">JT</div></div>
+      <div class="dash-topbar narrow"><div class="dash-title">API & Webhooks</div><div class="dash-meta">Enterprise Plan · 2 keys · 4 webhooks configured</div><div class="dash-actions"><div class="dab dab-s">View Docs</div><div class="dab dab-p">+ New API Key</div></div></div>
+      <div style="position:absolute;top:48px;left:56px;right:0;bottom:0;display:grid;grid-template-columns:1fr 1fr;overflow:auto">
+        <!-- ENDPOINTS -->
+        <div style="padding:16px;border-right:1px solid var(--line);overflow-y:auto">
+          <div class="dl" style="margin-bottom:10px">REST Endpoints</div>
+          <!-- API key display -->
+          <div style="background:var(--ink3);border:1px solid var(--line2);border-radius:5px;padding:10px;margin-bottom:12px">
+            <div style="font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px">Production API Key</div>
+            <div style="font-family:var(--mono);font-size:9px;color:var(--teal);letter-spacing:.04em">pd_live_••••••••••••••••••••••••••••••••8f2a</div>
+            <div style="display:flex;gap:6px;margin-top:6px"><div class="dab dab-s" style="font-size:7px;height:22px">Copy</div><div class="dab dab-s" style="font-size:7px;height:22px">Rotate</div></div>
+          </div>
+          <div class="api-endpoint">
+            <div class="api-method get">GET</div>
+            <div class="api-path">/v1/parcels/{apn}</div>
+            <div class="api-arrow">→</div>
+          </div>
+          <div style="font-family:var(--mono);font-size:8px;color:var(--muted);padding:4px 12px 8px">Returns full parcel record with current scores</div>
+          <div class="api-endpoint">
+            <div class="api-method get">GET</div>
+            <div class="api-path">/v1/parcels/{apn}/score</div>
+            <div class="api-arrow">→</div>
+          </div>
+          <div style="font-family:var(--mono);font-size:8px;color:var(--muted);padding:4px 12px 8px">Returns composite + sub-scores + SHAP explanation</div>
+          <div class="api-endpoint">
+            <div class="api-method post">POST</div>
+            <div class="api-path">/v1/parcels/score-batch</div>
+            <div class="api-arrow">→</div>
+          </div>
+          <div style="font-family:var(--mono);font-size:8px;color:var(--muted);padding:4px 12px 8px">Score up to 100 parcels by APN array</div>
+          <div class="api-endpoint">
+            <div class="api-method get">GET</div>
+            <div class="api-path">/v1/deals</div>
+            <div class="api-arrow">→</div>
+          </div>
+          <div style="font-family:var(--mono);font-size:8px;color:var(--muted);padding:4px 12px 8px">Pipeline deals with filters: stage, score_min, user</div>
+          <div class="api-endpoint">
+            <div class="api-method post">POST</div>
+            <div class="api-path">/v1/deals/{id}/outcome</div>
+            <div class="api-arrow">→</div>
+          </div>
+          <div style="font-family:var(--mono);font-size:8px;color:var(--muted);padding:4px 12px 8px">Record deal outcome + tags (triggers model retraining data)</div>
+          <!-- Rate limits -->
+          <div style="background:var(--teal-dim);border:1px solid rgba(0,212,200,.2);border-radius:4px;padding:8px;margin-top:8px">
+            <div style="font-family:var(--mono);font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);margin-bottom:3px">Rate Limits · Enterprise</div>
+            <div style="font-family:var(--mono);font-size:8px;color:var(--mid);line-height:1.6">1,000 req/min · 100,000 req/day<br/>Batch scoring: 1,000 parcels/call</div>
+          </div>
+        </div>
+        <!-- WEBHOOKS -->
+        <div style="padding:16px;overflow-y:auto">
+          <div class="dl" style="margin-bottom:10px">Webhook Subscriptions</div>
+          <div style="background:var(--ink3);border:1px solid var(--line2);border-radius:5px;padding:10px;margin-bottom:12px">
+            <div style="font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px">HMAC Signing Secret</div>
+            <div style="font-family:var(--mono);font-size:9px;color:var(--violet);letter-spacing:.04em">whsec_••••••••••••••••••••••••••••••4d9c</div>
+            <div style="display:flex;gap:6px;margin-top:6px"><div class="dab dab-s" style="font-size:7px;height:22px">Reveal</div><div class="dab dab-s" style="font-size:7px;height:22px">Rotate</div></div>
+          </div>
+          <div class="webhook-row">
+            <div class="wh-status on"></div>
+            <div class="wh-event">deal.stage_changed</div>
+            <div class="wh-url">https://dethomas.io/hooks/pd</div>
+          </div>
+          <div class="webhook-row">
+            <div class="wh-status on"></div>
+            <div class="wh-event">site_alert.new_match</div>
+            <div class="wh-url">https://dethomas.io/hooks/pd</div>
+          </div>
+          <div class="webhook-row">
+            <div class="wh-status on"></div>
+            <div class="wh-event">model.retrained</div>
+            <div class="wh-url">https://dethomas.io/hooks/pd</div>
+          </div>
+          <div class="webhook-row">
+            <div class="wh-status off"></div>
+            <div class="wh-event">competitive.new_transfer</div>
+            <div class="wh-url" style="font-style:italic">not configured</div>
+          </div>
+          <div style="margin-top:8px;display:flex;gap:6px"><div class="dab dab-s" style="font-size:8px">+ Add Webhook</div></div>
+          <!-- payload example -->
+          <div style="margin-top:12px">
+            <div style="font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Example Payload · deal.stage_changed</div>
+            <div class="terminal" style="font-size:8px;line-height:1.7">
+              <div><span style="color:var(--muted)">{</span></div>
+              <div>&nbsp;&nbsp;<span style="color:var(--teal)">"event"</span>: <span style="color:var(--green)">"deal.stage_changed"</span>,</div>
+              <div>&nbsp;&nbsp;<span style="color:var(--teal)">"deal_id"</span>: <span style="color:var(--green)">"deal_8f2a9c"</span>,</div>
+              <div>&nbsp;&nbsp;<span style="color:var(--teal)">"apn"</span>: <span style="color:var(--green)">"R6055 001"</span>,</div>
+              <div>&nbsp;&nbsp;<span style="color:var(--teal)">"stage_from"</span>: <span style="color:var(--orange)">"evaluating"</span>,</div>
+              <div>&nbsp;&nbsp;<span style="color:var(--teal)">"stage_to"</span>: <span style="color:var(--orange)">"loi_signed"</span>,</div>
+              <div>&nbsp;&nbsp;<span style="color:var(--teal)">"ml_score"</span>: <span style="color:var(--violet)">91</span>,</div>
+              <div>&nbsp;&nbsp;<span style="color:var(--teal)">"timestamp"</span>: <span style="color:var(--green)">"2026-02-20T14:32:00Z"</span></div>
+              <div><span style="color:var(--muted)">}</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ann-strip">
+    <div class="chip"><div class="chip-dot" style="background:var(--green)"></div><div class="chip-text">API keys are Supabase-issued JWTs — scoped to org_id via RLS</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--violet)"></div><div class="chip-text">Webhooks are HMAC-SHA256 signed — payload verifiable at client</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--teal)"></div><div class="chip-text">deal.stage_changed carries ml_score — client can build their own dashboards from it</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">API console is what justifies $500+/month enterprise price — platform, not just tool</div></div>
+  </div>
+</div>
+
+<!-- ============================= -->
+<!-- MOBILE SCREENS -->
+<!-- ============================= -->
+<div class="sec">
+  <div class="sec-label">Mobile · Phase 4 States</div>
+  <div class="sec-title">Mobile — Four Phase 4 States</div>
+  <div class="sec-desc" style="margin-bottom:16px">On mobile the left sidebar collapses into the tab bar — Dashboard, Pipeline, Alerts, and Settings become tab bar items. The Pipeline becomes a vertically scrollable card list (not a board) with swipe-right to advance stage. Alert feed is a full-screen list. Dashboard shows a condensed KPI summary.</div>
+  <div class="mob-grid">
+
+    <!-- MOB 1: DASHBOARD -->
+    <div class="phone-wrap">
+      <div class="phone-cap">1 · Dashboard KPIs</div>
+      <div class="device">
+        <div class="screen" style="height:580px">
+          <div class="notch"></div>
+          <div class="sbar"><span class="stime">9:41</span></div>
+          <div class="mob-top"><div class="mob-logo">Pocket<span>Dev</span></div><div style="margin-left:auto;font-family:var(--mono);font-size:8px;color:var(--muted)">Q1 2026</div></div>
+          <div style="padding:12px;overflow-y:auto;max-height:480px">
+            <div style="font-family:var(--head);font-size:14px;letter-spacing:.04em;color:var(--bright);margin-bottom:10px">Dashboard</div>
+            <!-- KPI CARDS 2x2 -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+              <div style="background:var(--ink3);border:1px solid var(--line2);border-radius:6px;padding:10px">
+                <div style="font-family:var(--mono);font-size:7px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px">Pipeline</div>
+                <div style="font-family:var(--head);font-size:28px;color:var(--bright);line-height:1">23</div>
+                <div style="font-family:var(--mono);font-size:8px;color:var(--green)">↑ 4 from Q4</div>
+              </div>
+              <div style="background:var(--ink3);border:1px solid var(--line2);border-radius:6px;padding:10px">
+                <div style="font-family:var(--mono);font-size:7px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px">Value</div>
+                <div style="font-family:var(--head);font-size:28px;color:var(--bright);line-height:1">$74M</div>
+                <div style="font-family:var(--mono);font-size:8px;color:var(--green)">↑ 12% MoM</div>
+              </div>
+              <div style="background:var(--ink3);border:1px solid var(--line2);border-radius:6px;padding:10px">
+                <div style="font-family:var(--mono);font-size:7px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px">Model R²</div>
+                <div style="font-family:var(--head);font-size:28px;color:var(--bright);line-height:1">0.84</div>
+                <div style="font-family:var(--mono);font-size:8px;color:var(--green)">↑ from 0.78</div>
+              </div>
+              <div style="background:var(--ink3);border:1px solid var(--line2);border-radius:6px;padding:10px">
+                <div style="font-family:var(--mono);font-size:7px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px">Alerts</div>
+                <div style="font-family:var(--head);font-size:28px;color:var(--orange);line-height:1">3</div>
+                <div style="font-family:var(--mono);font-size:8px;color:var(--orange)">unread today</div>
+              </div>
+            </div>
+            <!-- Mini funnel -->
+            <div style="background:var(--ink3);border:1px solid var(--line2);border-radius:6px;padding:10px;margin-bottom:10px">
+              <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:7px">Pipeline by Stage</div>
+              <div style="display:flex;flex-direction:column;gap:5px">
+                <div style="display:flex;align-items:center;gap:6px"><div style="width:5px;height:5px;border-radius:50%;background:var(--teal);flex-shrink:0"></div><div style="font-family:var(--mono);font-size:8px;color:var(--mid);width:70px">Identified</div><div style="flex:1;height:4px;background:var(--ink4);border-radius:2px;overflow:hidden"><div style="height:100%;width:100%;background:var(--teal)"></div></div><div style="font-family:var(--mono);font-size:8px;color:var(--text);width:14px;text-align:right">8</div></div>
+                <div style="display:flex;align-items:center;gap:6px"><div style="width:5px;height:5px;border-radius:50%;background:var(--violet);flex-shrink:0"></div><div style="font-family:var(--mono);font-size:8px;color:var(--mid);width:70px">Evaluating</div><div style="flex:1;height:4px;background:var(--ink4);border-radius:2px;overflow:hidden"><div style="height:100%;width:62%;background:var(--violet)"></div></div><div style="font-family:var(--mono);font-size:8px;color:var(--text);width:14px;text-align:right">5</div></div>
+                <div style="display:flex;align-items:center;gap:6px"><div style="width:5px;height:5px;border-radius:50%;background:var(--orange);flex-shrink:0"></div><div style="font-family:var(--mono);font-size:8px;color:var(--mid);width:70px">LOI</div><div style="flex:1;height:4px;background:var(--ink4);border-radius:2px;overflow:hidden"><div style="height:100%;width:37%;background:var(--orange)"></div></div><div style="font-family:var(--mono);font-size:8px;color:var(--text);width:14px;text-align:right">3</div></div>
+                <div style="display:flex;align-items:center;gap:6px"><div style="width:5px;height:5px;border-radius:50%;background:var(--green);flex-shrink:0"></div><div style="font-family:var(--mono);font-size:8px;color:var(--mid);width:70px">Closed</div><div style="flex:1;height:4px;background:var(--ink4);border-radius:2px;overflow:hidden"><div style="height:100%;width:37%;background:var(--green)"></div></div><div style="font-family:var(--mono);font-size:8px;color:var(--text);width:14px;text-align:right">3</div></div>
+              </div>
+            </div>
+            <!-- latest alert preview -->
+            <div style="background:var(--ink3);border:1px solid var(--line2);border-left:3px solid var(--orange);border-radius:0 6px 6px 0;padding:8px 10px">
+              <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);margin-bottom:3px">Latest Alert</div>
+              <div style="font-family:var(--mono);font-size:8.5px;color:var(--text)">Deed transfer: 3800 Venture Dr — Stonegate Capital. Watch match.</div>
+              <div style="font-family:var(--mono);font-size:7.5px;color:var(--teal);margin-top:3px">→ View in Alerts</div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tbi"><div class="tbi-icon tl"></div><span class="tbi-lbl">Map</span></div>
+            <div class="tbi"><div class="tbi-icon on"></div><span class="tbi-lbl on">Dash</span></div>
+            <div class="tbi"><div class="tbi-icon" style="position:relative"><div style="position:absolute;top:-2px;right:-2px;width:6px;height:6px;border-radius:50%;background:var(--orange)"></div></div><span class="tbi-lbl">Pipeline</span></div>
+            <div class="tbi"><div class="tbi-icon"></div><span class="tbi-lbl">Alerts</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOB 2: PIPELINE LIST -->
+    <div class="phone-wrap">
+      <div class="phone-cap">2 · Pipeline List</div>
+      <div class="device">
+        <div class="screen" style="height:580px">
+          <div class="notch"></div>
+          <div class="sbar"><span class="stime">9:41</span></div>
+          <div class="mob-top"><div class="mob-logo">Pocket<span>Dev</span></div><div style="margin-left:auto;display:flex;gap:6px"><div style="font-family:var(--mono);font-size:7.5px;padding:3px 7px;border-radius:3px;background:var(--ink3);border:1px solid var(--line2);color:var(--muted)">All</div><div style="font-family:var(--mono);font-size:7.5px;padding:3px 7px;border-radius:3px;background:var(--violet-dim);border:1px solid rgba(167,139,250,.3);color:var(--violet)">Score ↓</div></div></div>
+          <!-- horizontal stage scroll -->
+          <div style="display:flex;gap:6px;padding:8px 12px;border-bottom:1px solid var(--line);overflow-x:auto">
+            <div style="font-family:var(--mono);font-size:7px;padding:3px 8px;border-radius:3px;background:var(--teal-dim);border:1px solid rgba(0,212,200,.3);color:var(--teal);white-space:nowrap">Identified (8)</div>
+            <div style="font-family:var(--mono);font-size:7px;padding:3px 8px;border-radius:3px;background:var(--violet-dim);border:1px solid rgba(167,139,250,.3);color:var(--violet);white-space:nowrap">Evaluating (5)</div>
+            <div style="font-family:var(--mono);font-size:7px;padding:3px 8px;border-radius:3px;background:var(--ink4);border:1px solid var(--line2);color:var(--muted);white-space:nowrap">LOI (3)</div>
+            <div style="font-family:var(--mono);font-size:7px;padding:3px 8px;border-radius:3px;background:var(--ink4);border:1px solid var(--line2);color:var(--muted);white-space:nowrap">DD (2)</div>
+          </div>
+          <div style="overflow-y:auto;max-height:440px;padding:10px 12px;display:flex;flex-direction:column;gap:7px">
+            <!-- PIPELINE CARDS (mobile vertical list) -->
+            <div style="background:var(--ink3);border:1px solid rgba(0,212,200,.2);border-radius:5px;padding:10px;position:relative;overflow:hidden">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--teal)"></div>
+              <div style="padding-left:8px">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px">
+                  <div style="font-family:var(--body);font-size:11px;font-weight:600;color:var(--bright)">4821 Buford Hwy NE</div>
+                  <div style="font-family:var(--mono);font-size:10px;font-weight:500;color:var(--green)">87%</div>
+                </div>
+                <div style="font-family:var(--mono);font-size:7.5px;color:var(--muted);margin-bottom:5px">2.14ac · C-2 · Identified</div>
+                <div style="font-family:var(--mono);font-size:7.5px;color:var(--muted)">↑ Power score (0.31 SHAP)</div>
+                <div style="display:flex;gap:4px;margin-top:6px"><div style="flex:1;height:22px;border-radius:3px;background:var(--violet-dim);border:1px solid rgba(167,139,250,.3);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:7px;color:var(--violet)">Open</div><div style="flex:1;height:22px;border-radius:3px;background:var(--ink4);border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:7px;color:var(--muted)">Move →</div></div>
+              </div>
+            </div>
+            <div style="background:var(--ink3);border:1px solid rgba(0,212,200,.15);border-radius:5px;padding:10px;position:relative;overflow:hidden;opacity:.85">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--teal)"></div>
+              <div style="padding-left:8px">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px">
+                  <div style="font-family:var(--body);font-size:11px;font-weight:600;color:var(--bright)">900 Peachtree Ind Blvd</div>
+                  <div style="font-family:var(--mono);font-size:10px;font-weight:500;color:var(--amber)">72%</div>
+                </div>
+                <div style="font-family:var(--mono);font-size:7.5px;color:var(--muted);margin-bottom:5px">3.60ac · I-1 · Identified</div>
+                <div style="font-family:var(--mono);font-size:7.5px;color:var(--muted)">↑ Lot size (0.18 SHAP)</div>
+                <div style="display:flex;gap:4px;margin-top:6px"><div style="flex:1;height:22px;border-radius:3px;background:var(--violet-dim);border:1px solid rgba(167,139,250,.3);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:7px;color:var(--violet)">Open</div><div style="flex:1;height:22px;border-radius:3px;background:var(--ink4);border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:7px;color:var(--muted)">Move →</div></div>
+              </div>
+            </div>
+            <div style="background:var(--ink3);border:1px solid rgba(167,139,250,.2);border-radius:5px;padding:10px;position:relative;overflow:hidden">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--violet)"></div>
+              <div style="padding-left:8px">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px">
+                  <div style="font-family:var(--body);font-size:11px;font-weight:600;color:var(--bright)">3800 Venture Dr NW</div>
+                  <div style="font-family:var(--mono);font-size:10px;font-weight:500;color:var(--green)">79%</div>
+                </div>
+                <div style="font-family:var(--mono);font-size:7.5px;color:var(--muted);margin-bottom:5px">8.40ac · I-2 · Evaluating</div>
+                <div style="font-family:var(--mono);font-size:7.5px;color:var(--muted)">↑ Lot size, ↓ Fiber</div>
+                <div style="display:flex;gap:4px;margin-top:6px"><div style="flex:1;height:22px;border-radius:3px;background:var(--violet-dim);border:1px solid rgba(167,139,250,.3);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:7px;color:var(--violet)">Open</div><div style="flex:1;height:22px;border-radius:3px;background:var(--ink4);border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:7px;color:var(--muted)">Move →</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tbi"><div class="tbi-icon tl"></div><span class="tbi-lbl">Map</span></div>
+            <div class="tbi"><div class="tbi-icon"></div><span class="tbi-lbl">Dash</span></div>
+            <div class="tbi"><div class="tbi-icon on"></div><span class="tbi-lbl on">Pipeline</span></div>
+            <div class="tbi"><div class="tbi-icon"></div><span class="tbi-lbl">Alerts</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOB 3: ALERT FEED -->
+    <div class="phone-wrap">
+      <div class="phone-cap">3 · Alert Feed</div>
+      <div class="device">
+        <div class="screen" style="height:580px">
+          <div class="notch"></div>
+          <div class="sbar"><span class="stime">9:41</span></div>
+          <div class="mob-top"><div class="mob-logo">Pocket<span>Dev</span></div><div style="margin-left:auto;font-family:var(--mono);font-size:8px;padding:2px 8px;border-radius:3px;background:var(--orange-dim);border:1px solid rgba(249,115,22,.3);color:var(--orange)">3 unread</div></div>
+          <div style="overflow-y:auto;max-height:490px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
+            <div style="font-family:var(--head);font-size:14px;letter-spacing:.04em;color:var(--bright);margin-bottom:4px">Site Watch Alerts</div>
+            <div style="background:var(--ink3);border:1px solid var(--line2);border-radius:6px;overflow:hidden">
+              <div style="height:3px;background:var(--orange)"></div>
+              <div style="padding:10px">
+                <div style="display:flex;justify-content:space-between;margin-bottom:3px"><div style="font-family:var(--body);font-size:11px;font-weight:600;color:var(--bright)">New Land Transfer</div><div style="font-family:var(--mono);font-size:7.5px;color:var(--muted)">Today 06:14</div></div>
+                <div style="font-family:var(--mono);font-size:8.5px;color:var(--teal);margin-bottom:3px">3800 Venture Dr · 8.40ac</div>
+                <div style="font-family:var(--mono);font-size:8.5px;color:var(--mid);line-height:1.5;margin-bottom:7px">Acquired by Stonegate Capital LLC. Matches "30043 Industrial" watch. ML score: 71.</div>
+                <div style="display:flex;gap:4px"><div style="flex:1;height:22px;border-radius:3px;background:var(--violet-dim);border:1px solid rgba(167,139,250,.3);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:7px;color:var(--violet)">Open Map</div><div style="flex:1;height:22px;border-radius:3px;background:var(--ink4);border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:7px;color:var(--muted)">Brief</div></div>
+              </div>
+            </div>
+            <div style="background:var(--ink3);border:1px solid var(--line2);border-radius:6px;overflow:hidden">
+              <div style="height:3px;background:var(--orange)"></div>
+              <div style="padding:10px">
+                <div style="display:flex;justify-content:space-between;margin-bottom:3px"><div style="font-family:var(--body);font-size:11px;font-weight:600;color:var(--bright)">Rezoning Filed</div><div style="font-family:var(--mono);font-size:7.5px;color:var(--muted)">Yesterday</div></div>
+                <div style="font-family:var(--mono);font-size:8.5px;color:var(--teal);margin-bottom:3px">2121 Pleasant Hill Rd</div>
+                <div style="font-family:var(--mono);font-size:8.5px;color:var(--mid);line-height:1.5;margin-bottom:7px">C-2→I-2. BOC hearing Apr 14. Proj. score +14pts (58→72).</div>
+                <div style="display:flex;gap:4px"><div style="flex:1;height:22px;border-radius:3px;background:var(--violet-dim);border:1px solid rgba(167,139,250,.3);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:7px;color:var(--violet)">Open Map</div><div style="flex:1;height:22px;border-radius:3px;background:var(--ink4);border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:7px;color:var(--muted)">Remind</div></div>
+              </div>
+            </div>
+            <div style="background:var(--ink3);border:1px solid var(--line2);border-radius:6px;overflow:hidden;opacity:.7">
+              <div style="height:3px;background:var(--amber)"></div>
+              <div style="padding:10px">
+                <div style="display:flex;justify-content:space-between;margin-bottom:3px"><div style="font-family:var(--body);font-size:11px;font-weight:600;color:var(--bright)">Price Drop · New Listing</div><div style="font-family:var(--mono);font-size:7.5px;color:var(--muted)">Mon Feb 17</div></div>
+                <div style="font-family:var(--mono);font-size:8.5px;color:var(--teal);margin-bottom:3px">900 Peachtree Ind · $2.8M</div>
+                <div style="font-family:var(--mono);font-size:8.5px;color:var(--mid);line-height:1.5;margin-bottom:7px">Under your $3.5M ceiling. Score 72. IndePark Holdings LLC.</div>
+                <div style="display:flex;gap:4px"><div style="flex:1;height:22px;border-radius:3px;background:var(--violet-dim);border:1px solid rgba(167,139,250,.3);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:7px;color:var(--violet)">Open Map</div><div style="flex:1;height:22px;border-radius:3px;background:var(--ink4);border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:7px;color:var(--muted)">Dismiss</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tbi"><div class="tbi-icon tl"></div><span class="tbi-lbl">Map</span></div>
+            <div class="tbi"><div class="tbi-icon"></div><span class="tbi-lbl">Dash</span></div>
+            <div class="tbi"><div class="tbi-icon"></div><span class="tbi-lbl">Pipeline</span></div>
+            <div class="tbi"><div class="tbi-icon on"></div><span class="tbi-lbl on">Alerts</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOB 4: OUTCOME MODAL MOBILE -->
+    <div class="phone-wrap">
+      <div class="phone-cap">4 · Outcome Modal</div>
+      <div class="device">
+        <div class="screen" style="height:580px">
+          <div class="notch"></div>
+          <div class="sbar"><span class="stime">9:41</span></div>
+          <!-- outcome modal full-screen on mobile -->
+          <div style="position:absolute;inset:30px 0 0;background:var(--ink2);z-index:20;display:flex;flex-direction:column">
+            <div style="padding:12px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+              <div style="font-family:var(--head);font-size:16px;letter-spacing:.04em;color:var(--bright)">Record Outcome</div>
+              <div style="font-family:var(--mono);font-size:9px;color:var(--muted)">Cancel</div>
+            </div>
+            <div style="padding:12px 14px;border-bottom:1px solid var(--line);flex-shrink:0">
+              <div style="font-family:var(--mono);font-size:9px;color:var(--bright)">3800 Venture Dr NW</div>
+              <div style="font-family:var(--mono);font-size:8px;color:var(--muted)">8.40ac · I-2 · Moving to Passed</div>
+            </div>
+            <div style="flex:1;overflow-y:auto;padding:12px 14px">
+              <div style="font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Outcome Type</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px">
+                <div style="padding:7px;border-radius:4px;border:1px solid var(--violet);background:var(--violet-dim);display:flex;align-items:center;gap:5px"><div style="width:7px;height:7px;border-radius:50%;background:var(--mid)"></div><div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;color:var(--violet)">Passed</div></div>
+                <div style="padding:7px;border-radius:4px;border:1px solid var(--line2);display:flex;align-items:center;gap:5px"><div style="width:7px;height:7px;border-radius:50%;background:var(--red)"></div><div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;color:var(--mid)">Lost</div></div>
+                <div style="padding:7px;border-radius:4px;border:1px solid var(--line2);display:flex;align-items:center;gap:5px"><div style="width:7px;height:7px;border-radius:50%;background:var(--green)"></div><div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;color:var(--mid)">Closed</div></div>
+                <div style="padding:7px;border-radius:4px;border:1px solid var(--line2);display:flex;align-items:center;gap:5px"><div style="width:7px;height:7px;border-radius:50%;background:var(--amber)"></div><div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;color:var(--mid)">LOI</div></div>
+              </div>
+              <div style="font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Reason Tags</div>
+              <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px">
+                <div style="padding:4px 8px;border-radius:3px;border:1px solid var(--violet);background:var(--violet-dim);font-family:var(--mono);font-size:8px;color:var(--violet)">price_too_high</div>
+                <div style="padding:4px 8px;border-radius:3px;border:1px solid var(--violet);background:var(--violet-dim);font-family:var(--mono);font-size:8px;color:var(--violet)">ownership_unwilling</div>
+                <div style="padding:4px 8px;border-radius:3px;border:1px solid var(--line2);font-family:var(--mono);font-size:8px;color:var(--muted)">zoning_incompatible</div>
+                <div style="padding:4px 8px;border-radius:3px;border:1px solid var(--line2);font-family:var(--mono);font-size:8px;color:var(--muted)">environmental_issue</div>
+                <div style="padding:4px 8px;border-radius:3px;border:1px solid var(--line2);font-family:var(--mono);font-size:8px;color:var(--muted)">financing_unavailable</div>
+              </div>
+              <div style="background:var(--violet-dim);border:1px solid rgba(167,139,250,.2);border-radius:4px;padding:8px;margin-bottom:12px">
+                <div style="font-family:var(--mono);font-size:8px;color:var(--violet);line-height:1.55">This outcome will be added to model training data tonight at 02:00 EST.</div>
+              </div>
+            </div>
+            <div style="padding:10px 14px;border-top:1px solid var(--line);display:flex;gap:7px;flex-shrink:0">
+              <div style="flex:1;height:36px;border-radius:4px;background:var(--ink4);border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;color:var(--mid)">Cancel</div>
+              <div style="flex:2;height:36px;border-radius:4px;background:var(--violet);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;color:var(--ink);font-weight:600;letter-spacing:.06em;text-transform:uppercase">Save Outcome</div>
+            </div>
+          </div>
+          <div class="tabbar"><div class="tbi"><div class="tbi-icon tl"></div><span class="tbi-lbl">Map</span></div><div class="tbi"><div class="tbi-icon"></div><span class="tbi-lbl">Dash</span></div><div class="tbi"><div class="tbi-icon on"></div><span class="tbi-lbl on">Pipeline</span></div><div class="tbi"><div class="tbi-icon"></div><span class="tbi-lbl">Alerts</span></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end mob-grid -->
+
+  <div class="ann-strip" style="margin-top:24px">
+    <div class="chip"><div class="chip-dot" style="background:var(--violet)"></div><div class="chip-text">Mobile tab bar replaces the desktop left sidebar — Map / Dash / Pipeline / Alerts</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--violet)"></div><div class="chip-text">Pipeline is a vertical list on mobile — no Kanban board, swipe "Move →" to advance stage</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--orange)"></div><div class="chip-text">Alert cards get a top color bar instead of left border — same severity system, different geometry</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--violet)"></div><div class="chip-text">Outcome modal is full-screen on mobile — too many touch targets for a bottom sheet</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">API console is desktop-only — too developer-focused for mobile priority</div></div>
+  </div>
+</div>
+
+</div><!-- end page -->
+</body>
+</html>

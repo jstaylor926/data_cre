@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pocket Developer — Phase 3 Wireframes</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0d0f12;--ink2:#141720;--ink3:#1b1f2a;--ink4:#232838;--ink5:#2a3040;
+  --line:#252b3b;--line2:#2e3547;--muted:#3d4760;--mid:#6b7898;
+  --text:#c8d0e0;--bright:#e8edf8;
+  --teal:#00d4c8;--teal-dim:rgba(0,212,200,.1);
+  --violet:#a78bfa;--violet-dim:rgba(167,139,250,.12);
+  --orange:#f97316;--orange-dim:rgba(249,115,22,.12);--orange-glow:rgba(249,115,22,.2);
+  --v-500:#ef4444;--v-230:#eab308;--v-115:#22c55e;--v-69:#3b82f6;
+  --fiber:#06b6d4;
+  --green:#22c55e;--green-dim:rgba(34,197,94,.1);
+  --amber:#f5a623;--amber-dim:rgba(245,166,35,.12);
+  --red:#ef4444;--red-dim:rgba(239,68,68,.12);
+  --mono:'IBM Plex Mono',monospace;--head:'Bebas Neue',sans-serif;--body:'Barlow',sans-serif;
+}
+body{background:#080a0d;font-family:var(--body);color:var(--text);min-height:100vh}
+.page{max-width:1680px;margin:0 auto;padding:48px 48px 96px}
+
+.doc-header{margin-bottom:56px;padding-bottom:32px;border-bottom:1px solid var(--line);display:flex;align-items:flex-end;justify-content:space-between}
+.doc-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:8px}
+.doc-title{font-family:var(--head);font-size:52px;letter-spacing:.04em;color:var(--bright);line-height:1}
+.doc-title span{color:var(--orange)}
+.doc-meta{display:flex;gap:12px}
+.meta-pill{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border:1px solid var(--line2);border-radius:3px;color:var(--mid)}
+
+.sec{margin-bottom:80px}
+.sec-label{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:10px}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--line);max-width:80px}
+.sec-title{font-family:var(--head);font-size:28px;letter-spacing:.04em;color:var(--bright);margin-bottom:4px}
+.sec-desc{font-size:13px;color:var(--mid);max-width:580px;line-height:1.65}
+
+.state-pill{display:inline-flex;align-items:center;gap:8px;background:var(--orange-dim);border:1px solid rgba(249,115,22,.25);border-radius:4px;padding:8px 14px;margin-bottom:18px}
+.sp-dot{width:6px;height:6px;border-radius:50%;background:var(--orange);flex-shrink:0}
+.sp-text{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--orange)}
+
+.frame{background:var(--ink2);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.frame-bar{padding:10px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;background:var(--ink)}
+.dots{display:flex;gap:5px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.fn{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-left:6px}
+.ftag{margin-left:auto;font-family:var(--mono);font-size:9px;letter-spacing:.08em;padding:3px 8px;border-radius:3px;text-transform:uppercase}
+.to{background:var(--orange-dim);color:var(--orange)}
+.ts{background:rgba(167,139,250,.12);color:var(--violet)}
+.fcrit{background:var(--red-dim);color:var(--red)}
+
+.canvas{position:relative;overflow:hidden}
+.map-dc{position:absolute;inset:0;background:#141310;background-image:linear-gradient(rgba(249,115,22,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(249,115,22,.05) 1px,transparent 1px);background-size:32px 32px}
+.road-h{position:absolute;left:0;right:0;background:#1c2028}
+.road-v{position:absolute;top:0;bottom:0;background:#1c2028}
+.parcel{position:absolute;border:1px solid rgba(0,212,200,.15);border-radius:2px}
+.p-sel{border-color:var(--orange);background:var(--orange-dim);box-shadow:0 0 0 2px var(--orange-glow)}
+.p-comp{border-color:var(--violet);background:rgba(167,139,250,.07)}
+.tx-line{position:absolute;height:2px;transform-origin:left center;z-index:3}
+.tx-v{position:absolute;width:2px;z-index:3}
+.tx-500{background:var(--v-500)}
+.tx-230{background:var(--v-230)}
+.tx-115{background:var(--v-115)}
+.tx-69{background:var(--v-69)}
+.sub{position:absolute;z-index:6;display:flex;flex-direction:column;align-items:center;gap:2px}
+.sub-icon{border:2px solid;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:7px}
+.sub-label{font-family:var(--mono);font-size:7px;padding:1px 4px;border-radius:2px;white-space:nowrap}
+.sub-500 .sub-icon{width:18px;height:18px;border-color:var(--v-500);background:rgba(239,68,68,.15);color:var(--v-500)}
+.sub-500 .sub-label{background:rgba(239,68,68,.1);color:var(--v-500)}
+.sub-230 .sub-icon{width:14px;height:14px;border-color:var(--v-230);background:rgba(234,179,8,.12);color:var(--v-230)}
+.sub-230 .sub-label{background:rgba(234,179,8,.1);color:var(--v-230)}
+.sub-115 .sub-icon{width:11px;height:11px;border-color:var(--v-115);background:rgba(34,197,94,.1);color:var(--v-115);font-size:5px}
+.sub-115 .sub-label{background:rgba(34,197,94,.08);color:var(--v-115)}
+.territory{position:absolute;border:1px dashed;border-radius:4px}
+
+.topbar{position:absolute;top:0;left:0;right:0;height:48px;background:rgba(13,15,18,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 14px;gap:10px;z-index:10}
+.logo{font-family:var(--head);font-size:16px;letter-spacing:.06em;color:var(--bright)}
+.logo span{color:var(--teal)}
+.searchbar{flex:1;max-width:280px;height:32px;background:var(--ink3);border:1px solid var(--line2);border-radius:4px;display:flex;align-items:center;padding:0 10px;gap:6px}
+.si{width:11px;height:11px;border:1.5px solid var(--muted);border-radius:50%;position:relative;flex-shrink:0}
+.si::after{content:'';position:absolute;bottom:-3px;right:-3px;width:4px;height:1.5px;background:var(--muted);transform:rotate(45deg)}
+.sph{font-family:var(--mono);font-size:10px;color:var(--muted)}
+.mode-toggle{display:flex;background:var(--ink3);border:1px solid var(--line2);border-radius:5px;overflow:hidden}
+.mt-opt{font-family:var(--mono);font-size:9px;letter-spacing:.07em;text-transform:uppercase;padding:5px 12px;color:var(--muted)}
+.mt-dc{background:var(--orange-dim);color:var(--orange)}
+.av{width:28px;height:28px;border-radius:50%;background:var(--ink4);border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;color:var(--teal);flex-shrink:0}
+
+.panel{position:absolute;right:0;top:0;bottom:0;background:rgba(13,15,18,.97);border-left:1px solid var(--line);display:flex;flex-direction:column;z-index:10}
+.ph{padding:12px 16px 0;border-bottom:1px solid var(--line);flex-shrink:0}
+.pa{font-family:var(--body);font-size:13px;font-weight:600;color:var(--bright)}
+.psub{font-family:var(--mono);font-size:9px;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;margin-top:1px}
+.ptabs{display:flex;border-top:1px solid var(--line);margin-top:8px;overflow-x:auto}
+.pt{font-family:var(--mono);font-size:8px;letter-spacing:.07em;text-transform:uppercase;padding:7px 9px;color:var(--muted);border-bottom:2px solid transparent;flex-shrink:0}
+.pt.on{color:var(--orange);border-bottom-color:var(--orange)}
+.pt.crit{color:var(--red)}
+.pb{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.abar{padding:10px 14px;border-top:1px solid var(--line);display:flex;gap:6px;flex-shrink:0}
+.btn{flex:1;height:30px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:8px;letter-spacing:.08em;text-transform:uppercase}
+.btn-o{background:var(--orange);color:var(--ink);font-weight:600}
+.btn-s{background:var(--ink4);border:1px solid var(--line2);color:var(--mid)}
+.btn-dis{border:1px solid var(--line);color:var(--muted);opacity:.45;cursor:not-allowed}
+
+.dl{font-family:var(--mono);font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;padding-bottom:4px;border-bottom:1px solid var(--line)}
+.dr{display:flex;justify-content:space-between;align-items:baseline;padding:3px 0;border-bottom:1px solid var(--line)}
+.dr:last-child{border-bottom:none}
+.dk{font-family:var(--mono);font-size:9px;letter-spacing:.05em;color:var(--mid);text-transform:uppercase}
+.dv{font-family:var(--mono);font-size:10px;color:var(--bright);font-weight:500;text-align:right}
+.dv.g{color:var(--green)}.dv.or{color:var(--orange)}.dv.r{color:var(--red)}
+
+/* MW SLIDER */
+.mw-section{background:var(--orange-dim);border:1px solid rgba(249,115,22,.2);border-radius:6px;padding:12px}
+.mw-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.mw-lbl{font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--orange)}
+.mw-val{font-family:var(--head);font-size:28px;letter-spacing:.04em;color:var(--orange);line-height:1}
+.mw-unit{font-family:var(--mono);font-size:10px;color:var(--mid)}
+.mw-track{height:8px;background:var(--ink4);border-radius:4px;position:relative;margin-bottom:6px}
+.mw-fill{height:100%;background:linear-gradient(90deg,var(--orange),#fb923c);border-radius:4px}
+.mw-thumb{position:absolute;width:18px;height:18px;border-radius:50%;background:var(--orange);border:2px solid var(--ink);top:50%;transform:translate(-50%,-50%);box-shadow:0 0 0 3px var(--orange-glow)}
+.mw-marks{display:flex;justify-content:space-between;font-family:var(--mono);font-size:7px;color:var(--muted)}
+.mw-tier-tags{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap}
+.mw-tag{font-family:var(--mono);font-size:7px;padding:2px 6px;border-radius:3px;border:1px solid}
+
+/* DC SCORE */
+.dc-score-row{display:flex;align-items:center;gap:14px;padding:12px;background:var(--ink3);border:1px solid var(--line2);border-radius:6px}
+.dc-num{font-family:var(--head);font-size:56px;line-height:1;color:var(--orange)}
+.dc-right{flex:1}
+.dc-lbl{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);margin-bottom:4px}
+.dc-tier{display:inline-flex;align-items:center;background:var(--orange-dim);border:1px solid var(--orange);border-radius:3px;padding:2px 8px;margin-bottom:8px}
+.dc-tier span{font-family:var(--mono);font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--orange)}
+.sub-scores{display:flex;flex-direction:column;gap:5px}
+.ss-row{display:flex;align-items:center;gap:6px}
+.ss-name{font-family:var(--mono);font-size:8px;color:var(--mid);text-transform:uppercase;width:84px;flex-shrink:0}
+.ss-track{flex:1;height:5px;background:var(--ink4);border-radius:3px;overflow:hidden}
+.ss-fill{height:100%;border-radius:3px}
+.ss-val{font-family:var(--mono);font-size:8px;color:var(--text);width:28px;text-align:right}
+
+/* DISQUALIFIED */
+.disq-hero{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.35);border-radius:8px;padding:16px;text-align:center}
+.disq-text{font-family:var(--head);font-size:32px;letter-spacing:.06em;color:var(--red);line-height:1;margin-bottom:4px}
+.disq-sub{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:rgba(239,68,68,.7)}
+.disq-detail{font-family:var(--mono);font-size:9px;color:var(--mid);line-height:1.55;margin-top:10px}
+
+/* CRITICAL FLAG */
+.crit-flag{background:var(--red-dim);border:1px solid rgba(239,68,68,.35);border-radius:6px;padding:10px;display:flex;gap:8px}
+.cf-body{}
+.cf-title{font-family:var(--mono);font-size:9px;font-weight:500;color:var(--red);margin-bottom:3px}
+.cf-text{font-family:var(--mono);font-size:8px;color:var(--mid);line-height:1.5}
+.cf-source{font-family:var(--mono);font-size:7px;color:rgba(239,68,68,.5);margin-top:4px}
+
+/* ENV FLAGS */
+.env-flag{display:flex;align-items:flex-start;gap:7px;padding:7px 9px;border-radius:5px;margin-bottom:5px}
+.ef-crit{background:var(--red-dim);border:1px solid rgba(239,68,68,.2)}
+.ef-clear{background:var(--green-dim);border:1px solid rgba(34,197,94,.15)}
+.ef-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:2px}
+.ef-title{font-family:var(--mono);font-size:8px;font-weight:500;margin-bottom:1px}
+.ef-text{font-family:var(--mono);font-size:8px;color:var(--mid);line-height:1.45}
+
+/* POWER TAB */
+.power-subscore{background:var(--ink3);border:1px solid var(--line2);border-radius:6px;padding:10px;margin-bottom:6px}
+.ps-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.ps-lbl{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--orange)}
+.ps-num{font-family:var(--head);font-size:22px;color:var(--green)}
+.ps-num sup{font-family:var(--mono);font-size:11px;color:var(--muted)}
+
+.sub-row{background:var(--ink4);border:1px solid var(--line2);border-radius:4px;padding:7px 9px;display:flex;align-items:center;gap:8px;margin-bottom:4px;cursor:pointer}
+.sub-row.selected{border-color:var(--orange-glow);background:rgba(249,115,22,.06)}
+.sub-row-icon{flex-shrink:0;border:2px solid;border-radius:2px;display:flex;align-items:center;justify-content:center}
+.sub-row-name{flex:1}
+.sub-row-name div:first-child{font-family:var(--mono);font-size:9px;color:var(--bright)}
+.sub-row-name div:last-child{font-family:var(--mono);font-size:8px;color:var(--muted)}
+.sub-row-dist{font-family:var(--mono);font-size:9px;font-weight:500}
+.sub-row-arr{font-family:var(--mono);font-size:9px;color:var(--teal)}
+
+.redund-box{background:var(--green-dim);border:1px solid rgba(34,197,94,.2);border-radius:5px;padding:9px}
+.redund-lbl{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:4px}
+.redund-text{font-family:var(--mono);font-size:9px;color:var(--text);line-height:1.55}
+
+/* COMPARISON */
+.comp-tray{position:absolute;bottom:0;left:0;background:rgba(13,15,18,.96);border-top:1px solid var(--line);z-index:10;display:flex;align-items:stretch;padding:0 14px}
+.ct-head{display:flex;align-items:center;gap:8px;padding:8px 0;border-right:1px solid var(--line);padding-right:12px;flex-shrink:0}
+.ct-lbl{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.ct-cnt{font-family:var(--mono);font-size:8px;padding:2px 6px;border-radius:2px;background:var(--orange-dim);color:var(--orange);border:1px solid rgba(249,115,22,.3)}
+.ct-slots{display:flex;gap:8px;padding:8px 14px;flex:1;align-items:center}
+.ct-slot{display:flex;align-items:center;gap:6px;background:var(--ink3);border:1px solid var(--line2);border-radius:5px;padding:5px 10px}
+.ct-score{font-family:var(--mono);font-size:9px;font-weight:500;padding:1px 5px;border-radius:2px;background:var(--orange-dim);color:var(--orange)}
+.ct-score.disq{background:var(--red-dim);color:var(--red)}
+.ct-empty{width:86px;height:30px;border:1px dashed var(--line2);border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:8px;color:var(--muted)}
+.ct-btn{margin-left:auto;height:30px;padding:0 14px;background:var(--orange);border-radius:4px;display:flex;align-items:center;font-family:var(--mono);font-size:8px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);font-weight:600;flex-shrink:0;white-space:nowrap}
+
+/* COMPARISON OVERLAY */
+.comp-ov{position:absolute;inset:0;background:rgba(8,10,13,.97);z-index:20;display:flex;flex-direction:column}
+.comp-tb{height:52px;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 24px;gap:14px;flex-shrink:0}
+.comp-title{font-family:var(--head);font-size:18px;letter-spacing:.04em;color:var(--bright)}
+.comp-title span{color:var(--orange)}
+.comp-close{margin-left:auto;font-family:var(--mono);font-size:9px;color:var(--muted)}
+.comp-tw{flex:1;overflow:auto;padding:24px}
+.comp-table{width:100%;border-collapse:collapse}
+.comp-table th{padding:10px 14px;text-align:left;font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);font-weight:400}
+.comp-table th.site{font-size:10px;color:var(--bright)}
+.comp-table th.active-site{color:var(--orange)}
+.comp-table td{padding:8px 14px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:10px}
+.comp-table .rl{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--mid)}
+.cell-best{color:var(--green);background:rgba(34,197,94,.05)}
+.cell-worst{color:var(--red);background:rgba(239,68,68,.05)}
+.cell-mid{color:var(--text)}
+.cell-disq{color:var(--red);font-weight:500}
+.score-cell{font-family:var(--head);font-size:24px;letter-spacing:.04em}
+.comp-ai{margin:0 24px 24px;padding:14px 18px;background:var(--ink3);border:1px solid var(--line2);border-left:3px solid var(--orange);border-radius:0 6px 6px 0}
+.ai-lbl{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--orange);margin-bottom:6px}
+.ai-text{font-family:var(--mono);font-size:10px;color:var(--text);line-height:1.65}
+.ai-rec{display:inline-flex;align-items:center;gap:5px;background:var(--orange-dim);border:1px solid rgba(249,115,22,.3);border-radius:3px;padding:4px 10px;margin-top:8px}
+.ai-rec span{font-family:var(--mono);font-size:9px;color:var(--orange)}
+
+/* MAP LEGEND */
+.map-legend{position:absolute;background:rgba(13,15,18,.92);border:1px solid var(--line2);border-radius:6px;padding:10px;z-index:10}
+.ml-title{font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.ml-row{display:flex;align-items:center;gap:7px;margin-bottom:5px}
+.ml-line{height:2px;width:20px;flex-shrink:0;border-radius:1px}
+.ml-swatch{width:12px;height:12px;border-radius:2px;flex-shrink:0;border:1.5px solid}
+.ml-lbl{font-family:var(--mono);font-size:8px;color:var(--mid)}
+
+.hud-bl{position:absolute;bottom:14px;left:14px;background:rgba(13,15,18,.85);border:1px solid var(--line);border-radius:3px;padding:4px 8px;font-family:var(--mono);font-size:8px;color:var(--muted);z-index:10}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+
+.ann-strip{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.chip{display:flex;align-items:center;gap:5px;background:rgba(13,15,18,.8);border:1px solid var(--line);border-radius:4px;padding:4px 10px}
+.chip-dot{width:5px;height:5px;border-radius:50%}
+.chip-text{font-family:var(--mono);font-size:9px;color:var(--mid)}
+
+/* ─── MOBILE ─── */
+.mob-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;justify-items:center;align-items:start}
+.phone-wrap{display:flex;flex-direction:column;align-items:center;gap:14px}
+.phone-cap{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center}
+.device{background:#000;border-radius:38px;padding:10px;border:2px solid #222;box-shadow:0 0 0 1px #333,0 20px 50px rgba(0,0,0,.6);width:282px}
+.screen{border-radius:30px;overflow:hidden;position:relative;background:var(--ink2)}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:78px;height:22px;background:#000;border-radius:0 0 14px 14px;z-index:100}
+.sbar{height:30px;background:var(--ink);display:flex;align-items:flex-end;padding:0 14px 4px}
+.stime{font-family:var(--mono);font-size:10px;font-weight:500;color:var(--bright)}
+.mob-top{background:rgba(13,15,18,.95);padding:6px 10px;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--line)}
+.mob-logo{font-family:var(--head);font-size:13px;letter-spacing:.05em;color:var(--bright)}
+.mob-logo span{color:var(--teal)}
+.mob-mode-tog{display:flex;background:var(--ink3);border:1px solid var(--line2);border-radius:4px;overflow:hidden;flex-shrink:0}
+.mmt{font-family:var(--mono);font-size:7px;letter-spacing:.05em;text-transform:uppercase;padding:3px 6px;color:var(--muted)}
+.mmt.dc{background:var(--orange-dim);color:var(--orange)}
+.mob-search{flex:1;height:24px;background:var(--ink3);border:1px solid var(--line2);border-radius:4px;display:flex;align-items:center;padding:0 6px}
+.mob-ph{font-family:var(--mono);font-size:7px;color:var(--muted)}
+.mob-map{position:relative;background:#141310;background-image:linear-gradient(rgba(249,115,22,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(249,115,22,.05) 1px,transparent 1px);background-size:24px 24px}
+.mob-sheet{background:rgba(13,15,18,.98);border-top:1px solid var(--line)}
+.sh-handle{width:30px;height:3px;background:var(--line2);border-radius:2px;margin:7px auto 0}
+.sh-hdr{padding:8px 14px 0}
+.sh-addr{font-size:12px;font-weight:600;color:var(--bright);margin-bottom:1px}
+.sh-meta{font-family:var(--mono);font-size:7.5px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+.mob-tabs{display:flex;border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow-x:auto}
+.mtab{flex-shrink:0;padding:5px 8px;font-family:var(--mono);font-size:7px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:2px solid transparent}
+.mtab.on{color:var(--orange);border-bottom-color:var(--orange)}
+.mtab.crit{color:var(--red)}
+.sh-body{padding:8px 14px;overflow-y:auto}
+.mob-actions{padding:6px 14px 10px;display:flex;gap:5px;border-top:1px solid var(--line)}
+.mbtn{flex:1;height:26px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:7px;letter-spacing:.05em;text-transform:uppercase}
+.mbtn-o{background:var(--orange);color:var(--ink);font-weight:600}
+.mbtn-s{background:var(--ink4);border:1px solid var(--line2);color:var(--mid)}
+.mbtn-dis{border:1px solid var(--line);color:var(--muted);opacity:.4}
+.tabbar{background:rgba(13,15,18,.98);border-top:1px solid var(--line);display:flex;padding:5px 0 10px}
+.tbi{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px}
+.tbi-icon{width:17px;height:17px;border:1.5px solid var(--muted);border-radius:3px}
+.tbi-icon.on{border-color:var(--teal);background:var(--teal-dim)}
+.tbi-icon.circ{border-radius:50%}
+.tbi-lbl{font-family:var(--mono);font-size:6.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.tbi-lbl.on{color:var(--teal)}
+
+/* Mob comp tray */
+.mob-comp-tray{background:rgba(13,15,18,.97);border-top:1px solid var(--orange);padding:5px 12px;display:flex;align-items:center;gap:8px}
+.mct-lbl{font-family:var(--mono);font-size:7px;letter-spacing:.08em;text-transform:uppercase;color:var(--orange)}
+.mct-site{font-family:var(--mono);font-size:7.5px;background:var(--ink3);border:1px solid var(--line2);border-radius:3px;padding:2px 6px;color:var(--text)}
+.mct-score{font-family:var(--mono);font-size:7px;background:var(--orange-dim);color:var(--orange);padding:1px 4px;border-radius:2px}
+.mct-btn{margin-left:auto;background:var(--orange);border-radius:3px;padding:3px 8px;font-family:var(--mono);font-size:7px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink);font-weight:600;white-space:nowrap;flex-shrink:0}
+
+@media(max-width:1300px){.mob-grid{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="doc-header">
+  <div>
+    <div class="doc-eyebrow">Pocket Developer · Design Ref</div>
+    <div class="doc-title">Phase 3<span>.</span> Data Center</div>
+  </div>
+  <div class="doc-meta">
+    <div class="meta-pill">Desktop + Mobile</div>
+    <div class="meta-pill">11 Screens</div>
+    <div class="meta-pill">Orange · Power System</div>
+  </div>
+</div>
+
+<!-- INTRO NOTE -->
+<div style="background:var(--orange-dim);border:1px solid rgba(249,115,22,.2);border-radius:6px;padding:16px 20px;margin-bottom:56px;display:flex;gap:12px">
+  <div style="width:6px;height:6px;border-radius:50%;background:var(--orange);flex-shrink:0;margin-top:5px"></div>
+  <div>
+    <div style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--orange);margin-bottom:4px">Design System · Phase 3</div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--mid);line-height:1.7">Phase 3 introduces a second app <span style="color:var(--bright)">operating mode</span>. A toggle in the topbar switches between <span style="color:var(--teal)">Development</span> and <span style="color:var(--orange)">Data Center</span> mode — transforming the map layers, panel tabs, and scoring engine simultaneously. <span style="color:var(--orange)">Orange (#f97316)</span> is the Phase 3 system color. The MW slider is the defining interaction — drag from 1MW to 500MW, all four infrastructure scores recalculate. <span style="color:var(--red)">CRITICAL environmental flags suppress the composite score entirely</span> and show DISQUALIFIED — this cannot be overridden. Voltage-tiered colors key the power infrastructure: <span style="color:var(--v-500)">red = 500kV</span>, <span style="color:var(--v-230)">yellow = 230kV</span>, <span style="color:var(--v-115)">green = 115kV</span>, <span style="color:var(--v-69)">blue = 69kV</span>.</div>
+  </div>
+</div>
+
+<!-- ========== DESKTOP 01: DC MAP MODE ========== -->
+<div class="sec">
+  <div class="sec-label">Desktop · 01</div>
+  <div class="sec-title">Data Center Mode — Map View</div>
+  <div class="sec-desc" style="margin-bottom:16px">User clicks the mode toggle. Map re-renders with infrastructure layers: voltage-tiered transmission lines, substation icons scaled by voltage, utility territory polygons, and cyan fiber routes. All Phase 1 parcel boundaries remain.</div>
+  <div class="state-pill"><div class="sp-dot"></div><div class="sp-text">appMode = 'datacenter' · layers = ['substations','tx_lines','fiber','territories'] · selectedParcel = null</div></div>
+  <div class="frame">
+    <div class="frame-bar"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="fn">Desktop · DC Map Mode</span><span class="ftag to">DC Mode</span></div>
+    <div class="canvas" style="height:520px">
+      <div class="map-dc" style="position:absolute;inset:0"></div>
+      <!-- territory overlays -->
+      <div class="territory" style="left:0;top:0;width:52%;height:100%;border-color:rgba(249,115,22,.15);background:rgba(249,115,22,.025)"></div>
+      <div class="territory" style="left:52%;top:0;right:0;height:100%;border-color:rgba(59,130,246,.12);background:rgba(59,130,246,.018)"></div>
+      <div style="position:absolute;left:14px;top:62px;font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:rgba(249,115,22,.5);z-index:5">Georgia Power</div>
+      <div style="position:absolute;left:56%;top:62px;font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:rgba(59,130,246,.5);z-index:5">Sawnee EMC</div>
+      <!-- roads -->
+      <div class="road-h" style="top:38%;height:8px;background:#1f2530"></div>
+      <div class="road-h" style="top:62%;height:5px"></div>
+      <div class="road-v" style="left:30%;width:7px;background:#1f2530"></div>
+      <div class="road-v" style="left:58%;width:5px"></div>
+      <!-- parcels -->
+      <div class="parcel" style="left:5%;top:12%;width:8%;height:16%"></div>
+      <div class="parcel" style="left:13%;top:12%;width:6%;height:16%"></div>
+      <div class="parcel" style="left:32%;top:8%;width:9%;height:22%"></div>
+      <div class="parcel" style="left:41%;top:8%;width:7%;height:11%"></div>
+      <div class="parcel" style="left:62%;top:10%;width:14%;height:20%"></div>
+      <div class="parcel" style="left:5%;top:66%;width:15%;height:14%"></div>
+      <!-- TX LINES 500kV -->
+      <div class="tx-line tx-500" style="left:0;top:20%;width:34%;transform:rotate(8deg)"></div>
+      <div class="tx-line tx-500" style="left:32%;top:23%;width:42%;transform:rotate(-2deg)"></div>
+      <div class="tx-line tx-500" style="left:72%;top:22%;width:28%"></div>
+      <!-- TX 230kV -->
+      <div class="tx-line tx-230" style="left:0;top:44%;width:34%;transform:rotate(4deg)"></div>
+      <div class="tx-line tx-230" style="left:32%;top:46%;width:28%"></div>
+      <!-- TX 115kV vertical -->
+      <div class="tx-v tx-115" style="left:29%;top:28%;height:44%"></div>
+      <div class="tx-v tx-115" style="left:57%;top:16%;height:48%"></div>
+      <!-- TX 69kV -->
+      <div class="tx-line tx-69" style="left:29%;top:68%;width:30%;transform:rotate(-2deg)"></div>
+      <!-- FIBER ROUTES -->
+      <div class="tx-line" style="left:0;top:55%;width:100%;background:rgba(6,182,212,.35);height:2px"></div>
+      <div class="tx-v" style="left:44%;top:0;height:100%;background:rgba(6,182,212,.3);width:2px"></div>
+      <!-- SUBSTATIONS -->
+      <div class="sub sub-500" style="left:29%;top:16%"><div class="sub-icon">⚡</div><div class="sub-label">500kV</div></div>
+      <div class="sub sub-500" style="left:70%;top:17%"><div class="sub-icon">⚡</div><div class="sub-label">500kV</div></div>
+      <div class="sub sub-230" style="left:55%;top:42%"><div class="sub-icon">⚡</div><div class="sub-label">230kV</div></div>
+      <div class="sub sub-230" style="left:11%;top:41%"><div class="sub-icon">⚡</div><div class="sub-label">230kV</div></div>
+      <div class="sub sub-115" style="left:27%;top:65%"><div class="sub-icon">S</div><div class="sub-label">115kV</div></div>
+      <!-- topbar -->
+      <div class="topbar">
+        <div class="logo">Pocket<span>Dev</span></div>
+        <div class="searchbar"><div class="si"></div><span class="sph">Search address or APN…</span></div>
+        <div class="mode-toggle" style="margin-left:auto">
+          <div class="mt-opt">Dev</div>
+          <div class="mt-opt mt-dc">Data Center</div>
+        </div>
+        <div class="av">JT</div>
+      </div>
+      <!-- legend -->
+      <div class="map-legend" style="right:14px;top:60px">
+        <div class="ml-title">Infrastructure Layers</div>
+        <div class="ml-row"><div class="ml-line" style="background:var(--v-500)"></div><div class="ml-lbl">500kV Transmission</div></div>
+        <div class="ml-row"><div class="ml-line" style="background:var(--v-230)"></div><div class="ml-lbl">230kV Transmission</div></div>
+        <div class="ml-row"><div class="ml-line" style="background:var(--v-115)"></div><div class="ml-lbl">115kV Transmission</div></div>
+        <div class="ml-row"><div class="ml-line" style="background:var(--v-69)"></div><div class="ml-lbl">69kV Transmission</div></div>
+        <div style="height:1px;background:var(--line);margin:6px 0"></div>
+        <div class="ml-row"><div class="ml-swatch" style="border-color:var(--v-500);background:rgba(239,68,68,.15)"></div><div class="ml-lbl">Substation 500kV</div></div>
+        <div class="ml-row"><div class="ml-swatch" style="border-color:var(--v-230);background:rgba(234,179,8,.12)"></div><div class="ml-lbl">Substation 230kV</div></div>
+        <div class="ml-row"><div class="ml-swatch" style="border-color:var(--v-115);background:rgba(34,197,94,.1)"></div><div class="ml-lbl">Substation 115kV</div></div>
+        <div style="height:1px;background:var(--line);margin:6px 0"></div>
+        <div class="ml-row"><div class="ml-line" style="background:rgba(6,182,212,.6)"></div><div class="ml-lbl">Fiber Routes</div></div>
+        <div class="ml-row"><div style="width:16px;height:10px;border:1px dashed rgba(249,115,22,.5);border-radius:2px;flex-shrink:0"></div><div class="ml-lbl">Utility Territory</div></div>
+      </div>
+      <div class="hud-bl">33.9519° N · 84.1142° W · DATA CENTER MODE</div>
+    </div>
+  </div>
+  <div class="ann-strip">
+    <div class="chip"><div class="chip-dot" style="background:var(--orange)"></div><div class="chip-text">Mode toggle replaces nav pills — single click switches full scoring engine + layers</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--v-500)"></div><div class="chip-text">TX line colors key voltage: red 500kV → yellow 230kV → green 115kV → blue 69kV</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--v-500)"></div><div class="chip-text">Substation icon size scales with voltage — 500kV 18×18px, 115kV 11×11px</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--fiber)"></div><div class="chip-text">Cyan fiber routes from FCC BDC + NTIA middle-mile data via Mapbox custom source</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--orange)"></div><div class="chip-text">Territory polygon alpha is subtle — map legibility comes first, overlay is context only</div></div>
+  </div>
+</div>
+
+<!-- ========== DESKTOP 02 + 03: DC SCORE + DISQUALIFIED ========== -->
+<div class="sec">
+  <div class="sec-label">Desktop · 02 + 03</div>
+  <div class="sec-title">DC Score Panel · DISQUALIFIED State</div>
+  <div class="sec-desc" style="margin-bottom:16px">Two critical panel states: normal score with MW slider, and the DISQUALIFIED override. When a CRITICAL environmental flag is present, the composite score is suppressed entirely — shown as DISQUALIFIED, not 0. Action bar buttons disable.</div>
+  <div class="grid2">
+
+    <!-- DC SCORE NORMAL -->
+    <div>
+      <div class="state-pill"><div class="sp-dot"></div><div class="sp-text">dcTab='score' · mwTarget=10 · envCritical=false · score=82</div></div>
+      <div class="frame">
+        <div class="frame-bar"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="fn">DC Score · Normal</span><span class="ftag to">DC Mode</span></div>
+        <div class="canvas" style="height:560px">
+          <div class="map-dc" style="position:absolute;inset:0;right:420px"></div>
+          <div class="road-h" style="top:38%;height:7px;right:420px;background:#1f2530"></div>
+          <div class="tx-line tx-500" style="left:0;top:22%;right:420px;width:35%;transform:rotate(6deg)"></div>
+          <div class="tx-line tx-230" style="left:0;top:44%;right:420px;width:30%"></div>
+          <div class="sub sub-500" style="left:28%;top:16%"><div class="sub-icon">⚡</div><div class="sub-label">500kV · 1.2mi</div></div>
+          <div class="parcel p-sel" style="left:32%;top:20%;width:7%;height:11%"></div>
+          <div class="parcel" style="left:11%;top:12%;width:6%;height:16%"></div>
+          <div class="topbar" style="opacity:.5"><div class="logo">Pocket<span>Dev</span></div><div class="mode-toggle" style="margin-left:auto"><div class="mt-opt">Dev</div><div class="mt-opt mt-dc">DC</div></div></div>
+          <div class="panel" style="width:420px">
+            <div class="ph">
+              <div style="margin-bottom:4px"><div class="pa">4821 Buford Hwy NE</div><div class="psub">2.14ac · C-2 · Gwinnett · <span style="color:var(--orange)">DC Mode</span></div></div>
+              <div class="ptabs"><div class="pt on">DC Score</div><div class="pt">Power</div><div class="pt">Fiber</div><div class="pt">Water</div><div class="pt">Environ.</div></div>
+            </div>
+            <div class="pb">
+              <!-- MW SLIDER -->
+              <div class="mw-section">
+                <div class="mw-head">
+                  <div><div class="mw-lbl">Target Capacity</div>
+                  <div class="mw-tier-tags" style="margin-top:6px">
+                    <div class="mw-tag" style="border-color:var(--green);color:var(--green);background:var(--green-dim)">Edge &lt;1MW</div>
+                    <div class="mw-tag" style="border-color:var(--orange);color:var(--orange);background:var(--orange-dim);font-weight:600">● Enterprise 10MW</div>
+                    <div class="mw-tag" style="border-color:var(--muted);color:var(--muted)">Hyperscale &gt;100MW</div>
+                  </div></div>
+                  <div style="text-align:right"><div class="mw-val">10<span class="mw-unit"> MW</span></div><div style="font-family:var(--mono);font-size:8px;color:var(--muted)">Enterprise tier</div></div>
+                </div>
+                <div class="mw-track"><div class="mw-fill" style="width:22%"></div><div class="mw-thumb" style="left:22%"></div></div>
+                <div class="mw-marks"><span>1MW</span><span>10MW</span><span>50MW</span><span>100MW</span><span>500MW</span></div>
+              </div>
+              <!-- SCORE -->
+              <div class="dc-score-row">
+                <div class="dc-num">82</div>
+                <div class="dc-right">
+                  <div class="dc-lbl">Data Center Site Score · 10MW</div>
+                  <div><div class="dc-tier"><span>Tier II Capable</span></div></div>
+                  <div class="sub-scores" style="margin-top:8px">
+                    <div class="ss-row"><span class="ss-name">Power (40%)</span><div class="ss-track"><div class="ss-fill" style="width:87%;background:var(--green)"></div></div><span class="ss-val" style="color:var(--green)">35</span></div>
+                    <div class="ss-row"><span class="ss-name">Fiber (30%)</span><div class="ss-track"><div class="ss-fill" style="width:77%;background:var(--orange)"></div></div><span class="ss-val">23</span></div>
+                    <div class="ss-row"><span class="ss-name">Water (20%)</span><div class="ss-track"><div class="ss-fill" style="width:70%;background:var(--teal)"></div></div><span class="ss-val">14</span></div>
+                    <div class="ss-row"><span class="ss-name">Environ. (10%)</span><div class="ss-track"><div class="ss-fill" style="width:100%;background:var(--green)"></div></div><span class="ss-val" style="color:var(--green)">10</span></div>
+                  </div>
+                </div>
+              </div>
+              <!-- Quick stats -->
+              <div>
+                <div class="dl">Nearest Infrastructure</div>
+                <div class="dr"><span class="dk">500kV Sub</span><span class="dv g">1.2 mi</span></div>
+                <div class="dr"><span class="dk">230kV Sub</span><span class="dv">2.8 mi</span></div>
+                <div class="dr"><span class="dk">Utility Territory</span><span class="dv or">Georgia Power</span></div>
+                <div class="dr"><span class="dk">Fiber Carriers</span><span class="dv">AT&amp;T · Lumen · Zayo</span></div>
+                <div class="dr"><span class="dk">TIE Atlanta Dist.</span><span class="dv g">8.3 mi</span></div>
+                <div class="dr"><span class="dk">Water Capacity</span><span class="dv">14.2 MGD</span></div>
+              </div>
+            </div>
+            <div class="abar"><div class="btn btn-s">+ Compare</div><div class="btn btn-o">DC Brief</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="ann-strip">
+        <div class="chip"><div class="chip-dot" style="background:var(--orange)"></div><div class="chip-text">MW slider debounced 500ms — recalculates all 4 sub-scores, no API round-trip</div></div>
+        <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">Tier classification tag (Edge / Enterprise / Hyperscale) updates with slider position</div></div>
+        <div class="chip"><div class="chip-dot" style="background:var(--green)"></div><div class="chip-text">Power gets 40% weight — nearest 500kV sub distance is single biggest score driver</div></div>
+      </div>
+    </div>
+
+    <!-- DISQUALIFIED -->
+    <div>
+      <div class="state-pill" style="background:var(--red-dim);border-color:rgba(239,68,68,.25)"><div class="sp-dot" style="background:var(--red)"></div><div class="sp-text" style="color:var(--red)">envCritical=true · criticalFlag='FLOOD_100YR' · score=DISQUALIFIED</div></div>
+      <div class="frame">
+        <div class="frame-bar"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="fn">DC Score · DISQUALIFIED</span><span class="ftag fcrit">Critical Flag</span></div>
+        <div class="canvas" style="height:560px">
+          <div class="map-dc" style="position:absolute;inset:0;right:420px"></div>
+          <!-- flood zone -->
+          <div style="position:absolute;inset:0;right:420px;background:rgba(239,68,68,.07);z-index:2"></div>
+          <div style="position:absolute;left:5%;top:24%;right:30%;bottom:28%;background:rgba(239,68,68,.12);border:1px dashed rgba(239,68,68,.4);border-radius:3px;z-index:3"></div>
+          <div style="position:absolute;left:8%;top:44%;font-family:var(--mono);font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:rgba(239,68,68,.65);z-index:4">FEMA Zone AE · 100-yr Flood</div>
+          <div class="road-h" style="top:38%;height:7px;right:420px;background:#1f2530"></div>
+          <div class="parcel" style="left:32%;top:20%;width:7%;height:11%;border-color:var(--red);background:rgba(239,68,68,.12);box-shadow:0 0 0 2px rgba(239,68,68,.25)"></div>
+          <div class="topbar" style="opacity:.5"><div class="logo">Pocket<span>Dev</span></div><div class="mode-toggle" style="margin-left:auto"><div class="mt-opt">Dev</div><div class="mt-opt mt-dc">DC</div></div></div>
+          <div class="panel" style="width:420px">
+            <div class="ph">
+              <div style="margin-bottom:4px"><div class="pa">1200 Satellite Blvd NW</div><div class="psub">5.60ac · I-2 · Gwinnett · <span style="color:var(--orange)">DC Mode</span></div></div>
+              <div class="ptabs"><div class="pt on" style="color:var(--red);border-bottom-color:var(--red)">DC Score</div><div class="pt">Power</div><div class="pt">Fiber</div><div class="pt">Water</div><div class="pt crit">⚠ Environ.</div></div>
+            </div>
+            <div class="pb">
+              <!-- DISQUALIFIED HERO -->
+              <div class="disq-hero">
+                <div class="disq-text">DISQUALIFIED</div>
+                <div class="disq-sub">Critical Environmental Condition</div>
+                <div class="disq-detail">Site is within the FEMA 100-year floodplain. Data center electrical infrastructure cannot be insured at this location. Score suppressed.</div>
+              </div>
+              <!-- CRITICAL FLAG -->
+              <div class="crit-flag">
+                <div style="font-size:14px;line-height:1;flex-shrink:0">🚫</div>
+                <div class="cf-body">
+                  <div class="cf-title">CRITICAL · FEMA 100-Year Floodplain</div>
+                  <div class="cf-text">Parcel centroid in FEMA Zone AE. Data center underwriting requires disqualification regardless of all other scores. Cannot be mitigated by engineering alone.</div>
+                  <div class="cf-source">Source: FEMA NFHL · Panel 13135C0148G · Zone AE</div>
+                </div>
+              </div>
+              <!-- remaining env flags -->
+              <div>
+                <div class="dl">Environmental Flags · All</div>
+                <div class="env-flag ef-crit">
+                  <div class="ef-dot" style="background:var(--red)"></div>
+                  <div><div class="ef-title" style="color:var(--red)">CRITICAL · FEMA 100-yr Floodplain</div><div class="ef-text">Zone AE — disqualifying for data center use</div></div>
+                </div>
+                <div class="env-flag ef-clear">
+                  <div class="ef-dot" style="background:var(--green)"></div>
+                  <div><div class="ef-title" style="color:var(--green)">Clear · Wetlands</div><div class="ef-text">&lt;2% NWI wetland coverage — no Section 404 concern</div></div>
+                </div>
+                <div class="env-flag ef-clear">
+                  <div class="ef-dot" style="background:var(--green)"></div>
+                  <div><div class="ef-title" style="color:var(--green)">Clear · EPA Contamination</div><div class="ef-text">No EPA FRS sites within 1,000 ft</div></div>
+                </div>
+              </div>
+            </div>
+            <div class="abar"><div class="btn btn-dis">+ Compare</div><div class="btn btn-dis">Brief Unavailable</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="ann-strip">
+        <div class="chip"><div class="chip-dot" style="background:var(--red)"></div><div class="chip-text">CRITICAL = score NEVER shown, not 0 — DISQUALIFIED replaces numeric entirely</div></div>
+        <div class="chip"><div class="chip-dot" style="background:var(--red)"></div><div class="chip-text">Flood zone fill renders on map — visual geographic confirmation of data</div></div>
+        <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">Action buttons disabled — grayed, cursor not-allowed, no tooltips needed</div></div>
+        <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">Non-critical flags still shown below — completeness matters even when disqualified</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== DESKTOP 04: POWER DETAIL ========== -->
+<div class="sec">
+  <div class="sec-label">Desktop · 04</div>
+  <div class="sec-title">Power Infrastructure — Detail Tab</div>
+  <div class="sec-desc" style="margin-bottom:16px">The Power tab shows all substations within a configurable radius ranked by voltage and distance, a score breakdown by component, and a redundancy analysis. Clicking a substation row highlights it on the map with a dashed connector line.</div>
+  <div class="state-pill"><div class="sp-dot"></div><div class="sp-text">dcTab='power' · mwTarget=10 · radius=10mi · substations=[4]</div></div>
+  <div class="frame" style="max-width:920px">
+    <div class="frame-bar"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="fn">Desktop · Power Detail Tab</span><span class="ftag to">DC Mode</span></div>
+    <div class="canvas" style="height:520px">
+      <div class="map-dc" style="position:absolute;inset:0;right:420px"></div>
+      <!-- radius circle -->
+      <div style="position:absolute;left:10%;top:4%;width:46%;height:80%;border:1px dashed rgba(249,115,22,.35);border-radius:50%;z-index:4"></div>
+      <div style="position:absolute;left:30%;top:26%;font-family:var(--mono);font-size:8px;color:rgba(249,115,22,.5);z-index:5">10mi radius</div>
+      <!-- TX lines -->
+      <div class="tx-line tx-500" style="left:0;top:22%;width:35%;transform:rotate(8deg)"></div>
+      <div class="tx-line tx-500" style="left:33%;top:24%;width:40%"></div>
+      <div class="tx-line tx-230" style="left:0;top:46%;width:32%"></div>
+      <div class="tx-v tx-115" style="left:28%;top:26%;height:52%"></div>
+      <!-- connector line from parcel to nearest sub -->
+      <div style="position:absolute;left:35%;top:30%;width:1px;height:70px;background:rgba(249,115,22,.35);z-index:4;transform-origin:top;transform:rotate(-26deg)"></div>
+      <!-- parcels + substations -->
+      <div class="parcel p-sel" style="left:32%;top:26%;width:7%;height:11%"></div>
+      <div class="parcel" style="left:11%;top:12%;width:6%;height:16%"></div>
+      <div class="sub sub-500" style="left:28%;top:16%"><div class="sub-icon">⚡</div><div class="sub-label">500kV · 1.2mi ★</div></div>
+      <div class="sub sub-500" style="left:68%;top:17%"><div class="sub-icon">⚡</div><div class="sub-label">500kV · 8.4mi</div></div>
+      <div class="sub sub-230" style="left:11%;top:42%"><div class="sub-icon">⚡</div><div class="sub-label">230kV · 3.1mi</div></div>
+      <div class="sub sub-115" style="left:27%;top:66%"><div class="sub-icon">S</div><div class="sub-label">115kV · 4.7mi</div></div>
+      <div class="topbar" style="opacity:.5"><div class="logo">Pocket<span>Dev</span></div><div class="mode-toggle" style="margin-left:auto"><div class="mt-opt">Dev</div><div class="mt-opt mt-dc">DC</div></div></div>
+      <div class="panel" style="width:420px">
+        <div class="ph">
+          <div style="margin-bottom:4px"><div class="pa">4821 Buford Hwy NE</div><div class="psub">10MW · Power Score: <span style="color:var(--green)">35/40</span></div></div>
+          <div class="ptabs"><div class="pt">DC Score</div><div class="pt on">Power</div><div class="pt">Fiber</div><div class="pt">Water</div><div class="pt">Environ.</div></div>
+        </div>
+        <div class="pb">
+          <div class="power-subscore">
+            <div class="ps-head"><div class="ps-lbl">Power Score Breakdown</div><div class="ps-num">35<sup>/40</sup></div></div>
+            <div class="ss-row" style="margin-bottom:5px"><span class="ss-name" style="width:120px;font-size:8px">Sub Distance</span><div class="ss-track"><div class="ss-fill" style="width:100%;background:var(--green)"></div></div><span class="ss-val" style="color:var(--green)">+8</span></div>
+            <div class="ss-row" style="margin-bottom:5px"><span class="ss-name" style="width:120px;font-size:8px">Voltage Capacity</span><div class="ss-track"><div class="ss-fill" style="width:100%;background:var(--green)"></div></div><span class="ss-val" style="color:var(--green)">+6</span></div>
+            <div class="ss-row" style="margin-bottom:5px"><span class="ss-name" style="width:120px;font-size:8px">Redundant Feed</span><div class="ss-track"><div class="ss-fill" style="width:100%;background:var(--green)"></div></div><span class="ss-val" style="color:var(--green)">+4</span></div>
+            <div class="ss-row"><span class="ss-name" style="width:120px;font-size:8px">TX Line Proximity</span><div class="ss-track"><div class="ss-fill" style="width:85%;background:var(--amber)"></div></div><span class="ss-val" style="color:var(--amber)">+17</span></div>
+          </div>
+          <div>
+            <div class="dl">Substations Within 10mi (4)</div>
+            <div class="sub-row selected">
+              <div class="sub-row-icon" style="width:15px;height:15px;border-color:var(--v-500);background:rgba(239,68,68,.15);color:var(--v-500);font-size:7px">⚡</div>
+              <div class="sub-row-name"><div>Peachtree Ind. Substation</div><div>500kV · Georgia Power</div></div>
+              <div class="sub-row-dist" style="color:var(--green)">1.2 mi</div>
+              <div class="sub-row-arr">→</div>
+            </div>
+            <div class="sub-row">
+              <div class="sub-row-icon" style="width:13px;height:13px;border-color:var(--v-230);background:rgba(234,179,8,.12);color:var(--v-230);font-size:6px">⚡</div>
+              <div class="sub-row-name"><div>Buford Hwy Substation</div><div>230kV · Georgia Power</div></div>
+              <div class="sub-row-dist" style="color:var(--text)">3.1 mi</div>
+              <div class="sub-row-arr">→</div>
+            </div>
+            <div class="sub-row" style="opacity:.7">
+              <div class="sub-row-icon" style="width:11px;height:11px;border-color:var(--v-115);background:rgba(34,197,94,.1);color:var(--v-115);font-size:5px">S</div>
+              <div class="sub-row-name"><div>Old Norcross Substation</div><div>115kV · Sawnee EMC</div></div>
+              <div class="sub-row-dist" style="color:var(--mid)">4.7 mi</div>
+              <div class="sub-row-arr">→</div>
+            </div>
+            <div class="sub-row" style="opacity:.5">
+              <div class="sub-row-icon" style="width:15px;height:15px;border-color:var(--v-500);background:rgba(239,68,68,.15);color:var(--v-500);font-size:7px">⚡</div>
+              <div class="sub-row-name"><div>Suwanee 500kV Substation</div><div>500kV · Georgia Power</div></div>
+              <div class="sub-row-dist" style="color:var(--mid)">8.4 mi</div>
+              <div class="sub-row-arr">→</div>
+            </div>
+          </div>
+          <div class="redund-box">
+            <div class="redund-lbl">Redundancy Analysis</div>
+            <div class="redund-text">2 substations within 5mi (500kV + 230kV) enable dual-feed configuration from separate switching stations — meets Tier II redundancy requirement at 10MW target.</div>
+          </div>
+        </div>
+        <div class="abar"><div class="btn btn-s">+ Compare</div><div class="btn btn-o">DC Brief</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="ann-strip">
+    <div class="chip"><div class="chip-dot" style="background:var(--orange)"></div><div class="chip-text">★ marks nearest substation — clicking row highlights it on map with connector line</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--orange)"></div><div class="chip-text">Radius circle scales with MW target — hyperscale widens radius automatically</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--green)"></div><div class="chip-text">Redundancy analysis generates from dual-substation proximity logic — no LLM</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">Score breakdown: Distance (0–8pts) + Voltage (0–6pts) + Redundancy (0–4pts) + TX (0–2pts)</div></div>
+  </div>
+</div>
+
+<!-- ========== DESKTOP 05 + 06: COMPARISON TRAY + TABLE ========== -->
+<div class="sec">
+  <div class="sec-label">Desktop · 05 + 06</div>
+  <div class="sec-title">Site Comparison — Tray + Full-Screen Table</div>
+  <div class="sec-desc" style="margin-bottom:16px">The comparison tray docks at the bottom (max 4 sites, persists across navigation). Clicking "Compare Sites" opens a full-screen overlay with a color-coded table and LLM recommendation. Disqualified sites show a DISQ column — no scores, no actionable cells.</div>
+
+  <!-- TRAY STATE -->
+  <div style="margin-bottom:20px">
+    <div style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">State A — Comparison Tray</div>
+    <div class="frame">
+      <div class="frame-bar"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="fn">Desktop · Comparison Tray</span><span class="ftag to">DC Mode</span></div>
+      <div class="canvas" style="height:300px">
+        <div class="map-dc" style="position:absolute;inset:0"></div>
+        <div class="road-h" style="top:40%;height:7px;background:#1f2530"></div>
+        <div class="road-v" style="left:35%;width:6px;background:#1f2530"></div>
+        <div class="parcel p-sel" style="left:38%;top:18%;width:7%;height:11%"></div>
+        <div class="parcel p-comp" style="left:10%;top:12%;width:8%;height:16%"></div>
+        <div class="parcel p-comp" style="left:60%;top:14%;width:9%;height:14%"></div>
+        <!-- numbered circles on map -->
+        <div style="position:absolute;left:11%;top:10%;width:20px;height:20px;background:var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;color:var(--ink);font-weight:600;z-index:6">1</div>
+        <div style="position:absolute;left:39%;top:16%;width:20px;height:20px;background:var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;color:var(--ink);font-weight:600;z-index:6">2</div>
+        <div style="position:absolute;left:61%;top:12%;width:20px;height:20px;background:var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;color:var(--ink);font-weight:600;z-index:6">3</div>
+        <div class="tx-line tx-500" style="left:0;top:22%;width:40%;transform:rotate(5deg)"></div>
+        <div class="tx-line tx-230" style="left:30%;top:44%;width:35%"></div>
+        <div class="sub sub-500" style="left:25%;top:16%"><div class="sub-icon">⚡</div><div class="sub-label">500kV</div></div>
+        <div class="topbar" style="opacity:.6"><div class="logo">Pocket<span>Dev</span></div><div class="mode-toggle" style="margin-left:auto"><div class="mt-opt">Dev</div><div class="mt-opt mt-dc">DC</div></div><div class="av">JT</div></div>
+        <!-- COMPARISON TRAY -->
+        <div class="comp-tray" style="right:0">
+          <div class="ct-head"><div class="ct-lbl">Compare</div><div class="ct-cnt">3/4</div></div>
+          <div class="ct-slots">
+            <div class="ct-slot"><span style="font-family:var(--mono);font-size:8px;color:var(--orange);font-weight:600">①</span><span style="font-family:var(--mono);font-size:9px;color:var(--text)">4821 Buford Hwy</span><span class="ct-score">82</span><span style="font-family:var(--mono);font-size:10px;color:var(--muted)">×</span></div>
+            <div class="ct-slot"><span style="font-family:var(--mono);font-size:8px;color:var(--orange);font-weight:600">②</span><span style="font-family:var(--mono);font-size:9px;color:var(--text)">1200 Satellite Blvd</span><span class="ct-score disq">DISQ</span><span style="font-family:var(--mono);font-size:10px;color:var(--muted)">×</span></div>
+            <div class="ct-slot"><span style="font-family:var(--mono);font-size:8px;color:var(--orange);font-weight:600">③</span><span style="font-family:var(--mono);font-size:9px;color:var(--text)">3800 Venture Dr</span><span class="ct-score">71</span><span style="font-family:var(--mono);font-size:10px;color:var(--muted)">×</span></div>
+            <div class="ct-empty">+ Add Site</div>
+          </div>
+          <div class="ct-btn">Compare Sites →</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FULL TABLE -->
+  <div style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">State B — Full-Screen Comparison Table</div>
+  <div class="frame">
+    <div class="frame-bar"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="fn">Desktop · Comparison Table Overlay</span><span class="ftag ts">Full-Screen Overlay</span></div>
+    <div class="canvas" style="height:520px">
+      <div class="comp-ov">
+        <div class="comp-tb">
+          <div class="comp-title">Site <span>Comparison</span></div>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--muted)">3 sites · 10MW · Data Center Mode</div>
+          <div class="comp-close">✕ Close</div>
+        </div>
+        <div class="comp-tw" style="padding-bottom:0">
+          <table class="comp-table" style="width:100%">
+            <thead>
+              <tr>
+                <th style="width:150px">Metric</th>
+                <th class="site active-site">① 4821 Buford Hwy</th>
+                <th class="site">② 1200 Satellite Blvd</th>
+                <th class="site">③ 3800 Venture Dr</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="rl">DC Score</td><td><div class="score-cell" style="color:var(--orange)">82</div></td><td><div class="score-cell cell-disq">DISQ</div></td><td><div class="score-cell" style="color:var(--mid)">71</div></td></tr>
+              <tr><td class="rl">Power Score</td><td class="cell-best">35 / 40</td><td class="cell-disq">—</td><td class="cell-worst">28 / 40</td></tr>
+              <tr><td class="rl">Nearest 500kV</td><td class="cell-best">1.2 mi</td><td class="cell-disq">—</td><td class="cell-mid">4.8 mi</td></tr>
+              <tr><td class="rl">Voltage Tier</td><td class="cell-best">500kV</td><td class="cell-disq">—</td><td class="cell-mid">230kV</td></tr>
+              <tr><td class="rl">Fiber Score</td><td class="cell-best">23 / 30</td><td class="cell-disq">—</td><td class="cell-worst">14 / 30</td></tr>
+              <tr><td class="rl">TIE Atlanta</td><td class="cell-best">8.3 mi</td><td class="cell-disq">—</td><td class="cell-worst">22.1 mi</td></tr>
+              <tr><td class="rl">Fiber Carriers</td><td class="cell-best">AT&amp;T · Lumen · Zayo</td><td class="cell-disq">—</td><td class="cell-worst">AT&amp;T only</td></tr>
+              <tr><td class="rl">Water Score</td><td class="cell-best">14 / 20</td><td class="cell-disq">—</td><td class="cell-mid">12 / 20</td></tr>
+              <tr><td class="rl">Environ. Score</td><td class="cell-best">10 / 10</td><td class="cell-disq">0 — FLOOD</td><td class="cell-best">10 / 10</td></tr>
+              <tr><td class="rl">Utility Territory</td><td class="cell-mid">Georgia Power</td><td class="cell-disq">—</td><td class="cell-mid">Georgia Power</td></tr>
+              <tr><td class="rl">Lot Size</td><td class="cell-mid">2.14 ac</td><td class="cell-disq">—</td><td class="cell-best">8.40 ac</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="comp-ai">
+          <div class="ai-lbl">AI Site Recommendation · 10MW Enterprise</div>
+          <div class="ai-text">Site ① (4821 Buford Hwy) is the clear choice. It scores 82/100 vs. Site ③'s 71, driven by superior power infrastructure — the 500kV Peachtree Industrial substation at 1.2mi enables dual-feed redundancy unavailable at Site ③. Site ③'s single AT&amp;T fiber carrier and 22-mile TIE distance introduce unacceptable latency risk for colocation. Site ② is disqualified. Recommend immediate outreach to Meridian Holdings LLC for Site ①.</div>
+          <div class="ai-rec"><span>→ Recommended: Site ① · Pursue outreach</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ann-strip">
+    <div class="chip"><div class="chip-dot" style="background:var(--orange)"></div><div class="chip-text">Numbered orange circles on map match comparison table column headers</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--green)"></div><div class="chip-text">Green cells = row best · Red = row worst — computed per-row, not absolute</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--red)"></div><div class="chip-text">Disqualified column shows "—" for all scored metrics — no values to compare</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">Tray persists across panel state, map panning, and tab changes within DC mode</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--orange)"></div><div class="chip-text">AI recommendation costs ~$0.20/comparison — fires on "Compare Sites" click, not on tray add</div></div>
+  </div>
+</div>
+
+<!-- ========== MOBILE ========== -->
+<div class="sec">
+  <div class="sec-label">Mobile · Phase 3 States</div>
+  <div class="sec-title">Mobile — Five Phase 3 States</div>
+  <div class="sec-desc" style="margin-bottom:16px">Mode toggle is inline in the top bar on mobile. Infrastructure layers render identically to desktop at the tile level. DC Score tab is the default when a parcel is tapped in DC mode. Comparison tray is a sticky strip above the tab bar. Comparison table is a full-screen horizontal-scroll view.</div>
+  <div class="mob-grid">
+
+    <!-- MOB 1: DC MAP MODE -->
+    <div class="phone-wrap">
+      <div class="phone-cap">1 · DC Map Mode</div>
+      <div class="device">
+        <div class="screen" style="height:570px">
+          <div class="notch"></div>
+          <div class="sbar"><span class="stime">9:41</span></div>
+          <div class="mob-top">
+            <div class="mob-logo">P<span>D</span></div>
+            <div class="mob-mode-tog"><div class="mmt">Dev</div><div class="mmt dc">DC</div></div>
+            <div class="mob-search" style="max-width:80px"><div class="si" style="width:9px;height:9px;border-width:1px"></div><span class="mob-ph">Search…</span></div>
+          </div>
+          <div class="mob-map" style="height:415px;position:relative">
+            <!-- territory -->
+            <div style="position:absolute;left:0;top:0;width:52%;height:100%;background:rgba(249,115,22,.025);border-right:1px dashed rgba(249,115,22,.2)"></div>
+            <div style="position:absolute;left:7px;top:10px;font-family:var(--mono);font-size:7px;letter-spacing:.06em;text-transform:uppercase;color:rgba(249,115,22,.5)">Georgia Power</div>
+            <div style="position:absolute;left:55%;top:10px;font-family:var(--mono);font-size:7px;letter-spacing:.06em;text-transform:uppercase;color:rgba(59,130,246,.5)">Sawnee EMC</div>
+            <!-- TX lines -->
+            <div class="tx-line tx-500" style="left:0;top:25%;width:52%;transform:rotate(6deg)"></div>
+            <div class="tx-line tx-500" style="left:50%;top:27%;width:50%"></div>
+            <div class="tx-line tx-230" style="left:0;top:48%;width:38%"></div>
+            <div class="tx-v tx-115" style="left:30%;top:32%;height:44%"></div>
+            <div class="tx-line" style="left:0;top:57%;width:100%;background:rgba(6,182,212,.3);height:2px"></div>
+            <!-- substations -->
+            <div class="sub sub-500" style="left:28%;top:18%"><div class="sub-icon" style="width:14px;height:14px;font-size:6px">⚡</div><div class="sub-label" style="font-size:6px">500kV</div></div>
+            <div class="sub sub-500" style="left:70%;top:20%"><div class="sub-icon" style="width:14px;height:14px;font-size:6px">⚡</div><div class="sub-label" style="font-size:6px">500kV</div></div>
+            <div class="sub sub-230" style="left:10%;top:44%"><div class="sub-icon" style="width:11px;height:11px;font-size:5px">⚡</div><div class="sub-label" style="font-size:6px">230kV</div></div>
+            <!-- parcels -->
+            <div class="parcel" style="left:5%;top:10%;width:14%;height:22%"></div>
+            <div class="parcel" style="left:44%;top:8%;width:14%;height:24%"></div>
+            <!-- legend mini -->
+            <div style="position:absolute;right:8px;bottom:30px;background:rgba(13,15,18,.9);border:1px solid var(--line2);border-radius:4px;padding:5px 7px">
+              <div style="display:flex;align-items:center;gap:4px;margin-bottom:2px"><div style="width:12px;height:2px;background:var(--v-500);border-radius:1px"></div><div style="font-family:var(--mono);font-size:6px;color:var(--mid)">500kV</div></div>
+              <div style="display:flex;align-items:center;gap:4px;margin-bottom:2px"><div style="width:12px;height:2px;background:var(--v-230);border-radius:1px"></div><div style="font-family:var(--mono);font-size:6px;color:var(--mid)">230kV</div></div>
+              <div style="display:flex;align-items:center;gap:4px"><div style="width:12px;height:2px;background:rgba(6,182,212,.5);border-radius:1px"></div><div style="font-family:var(--mono);font-size:6px;color:var(--mid)">Fiber</div></div>
+            </div>
+          </div>
+          <div class="tabbar"><div class="tbi"><div class="tbi-icon on circ"></div><span class="tbi-lbl on">Map</span></div><div class="tbi"><div class="tbi-icon"></div><span class="tbi-lbl">Saved</span></div><div class="tbi"><div class="tbi-icon"></div><span class="tbi-lbl">Alerts</span></div><div class="tbi"><div class="tbi-icon"></div><span class="tbi-lbl">Settings</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOB 2: DC SCORE TAB -->
+    <div class="phone-wrap">
+      <div class="phone-cap">2 · DC Score Tab</div>
+      <div class="device">
+        <div class="screen" style="height:570px">
+          <div class="notch"></div>
+          <div class="sbar"><span class="stime">9:41</span></div>
+          <div class="mob-top"><div class="mob-logo">P<span>D</span></div><div class="mob-mode-tog"><div class="mmt">Dev</div><div class="mmt dc">DC</div></div><div class="mob-search" style="max-width:80px"><span class="mob-ph">Search…</span></div></div>
+          <div class="mob-map" style="height:110px;position:relative">
+            <div class="tx-line tx-500" style="left:0;top:30%;width:45%;transform:rotate(5deg)"></div>
+            <div class="sub sub-500" style="left:28%;top:10%"><div class="sub-icon" style="width:12px;height:12px;font-size:5px">⚡</div></div>
+            <div class="parcel p-sel" style="left:48%;top:10%;width:16%;height:70%"></div>
+          </div>
+          <div class="mob-sheet">
+            <div class="sh-handle"></div>
+            <div class="sh-hdr">
+              <div class="sh-addr">4821 Buford Hwy NE</div>
+              <div class="sh-meta">DC Mode · 10MW · Score: <span style="color:var(--orange)">82</span></div>
+            </div>
+            <div class="mob-tabs"><div class="mtab on">DC Score</div><div class="mtab">Power</div><div class="mtab">Fiber</div><div class="mtab">Water</div><div class="mtab">Env</div></div>
+            <div class="sh-body" style="max-height:270px;overflow-y:auto">
+              <!-- MW slider -->
+              <div style="background:var(--orange-dim);border:1px solid rgba(249,115,22,.2);border-radius:5px;padding:8px;margin-bottom:8px">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+                  <div style="font-family:var(--mono);font-size:7px;letter-spacing:.1em;text-transform:uppercase;color:var(--orange)">Target MW</div>
+                  <div style="font-family:var(--head);font-size:20px;color:var(--orange);line-height:1">10<span style="font-family:var(--mono);font-size:9px;color:var(--mid)"> MW</span></div>
+                </div>
+                <div class="mw-track" style="height:6px"><div class="mw-fill" style="width:22%"></div><div class="mw-thumb" style="left:22%;width:14px;height:14px"></div></div>
+                <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:6.5px;color:var(--muted);margin-top:3px"><span>1MW</span><span>10MW</span><span>100MW</span><span>500MW</span></div>
+              </div>
+              <!-- score hero -->
+              <div style="display:flex;align-items:center;gap:10px;background:var(--ink3);border:1px solid var(--line2);border-radius:5px;padding:10px;margin-bottom:8px">
+                <div style="font-family:var(--head);font-size:44px;color:var(--orange);line-height:1">82</div>
+                <div style="flex:1">
+                  <div style="font-family:var(--mono);font-size:7px;letter-spacing:.08em;text-transform:uppercase;color:var(--mid);margin-bottom:3px">DC Score · 10MW</div>
+                  <div style="display:inline-flex;align-items:center;background:var(--orange-dim);border:1px solid var(--orange);border-radius:2px;padding:2px 6px;margin-bottom:6px"><span style="font-family:var(--mono);font-size:7px;letter-spacing:.06em;text-transform:uppercase;color:var(--orange)">Tier II Capable</span></div>
+                  <div style="display:flex;flex-direction:column;gap:3px">
+                    <div style="display:flex;align-items:center;gap:4px"><span style="font-family:var(--mono);font-size:7px;color:var(--mid);width:52px">Power</span><div style="flex:1;height:4px;background:var(--ink4);border-radius:2px;overflow:hidden"><div style="height:100%;width:87%;background:var(--green);border-radius:2px"></div></div><span style="font-family:var(--mono);font-size:7px;color:var(--green);width:16px;text-align:right">35</span></div>
+                    <div style="display:flex;align-items:center;gap:4px"><span style="font-family:var(--mono);font-size:7px;color:var(--mid);width:52px">Fiber</span><div style="flex:1;height:4px;background:var(--ink4);border-radius:2px;overflow:hidden"><div style="height:100%;width:77%;background:var(--orange);border-radius:2px"></div></div><span style="font-family:var(--mono);font-size:7px;color:var(--text);width:16px;text-align:right">23</span></div>
+                    <div style="display:flex;align-items:center;gap:4px"><span style="font-family:var(--mono);font-size:7px;color:var(--mid);width:52px">Water</span><div style="flex:1;height:4px;background:var(--ink4);border-radius:2px;overflow:hidden"><div style="height:100%;width:70%;background:var(--teal);border-radius:2px"></div></div><span style="font-family:var(--mono);font-size:7px;color:var(--text);width:16px;text-align:right">14</span></div>
+                    <div style="display:flex;align-items:center;gap:4px"><span style="font-family:var(--mono);font-size:7px;color:var(--mid);width:52px">Environ.</span><div style="flex:1;height:4px;background:var(--ink4);border-radius:2px;overflow:hidden"><div style="height:100%;width:100%;background:var(--green);border-radius:2px"></div></div><span style="font-family:var(--mono);font-size:7px;color:var(--green);width:16px;text-align:right">10</span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="dr" style="padding:4px 0"><span class="dk" style="font-size:8px">500kV Sub</span><span class="dv g" style="font-size:9px">1.2 mi</span></div>
+              <div class="dr" style="padding:4px 0"><span class="dk" style="font-size:8px">Utility</span><span class="dv or" style="font-size:9px">Georgia Power</span></div>
+              <div class="dr" style="padding:4px 0;border-bottom:none"><span class="dk" style="font-size:8px">TIE Atlanta</span><span class="dv g" style="font-size:9px">8.3 mi</span></div>
+            </div>
+            <div class="mob-actions"><div class="mbtn mbtn-s">+ Compare</div><div class="mbtn mbtn-o">DC Brief</div></div>
+          </div>
+          <div class="tabbar"><div class="tbi"><div class="tbi-icon on circ"></div><span class="tbi-lbl on">Map</span></div><div class="tbi"><div class="tbi-icon"></div><span class="tbi-lbl">Saved</span></div><div class="tbi"><div class="tbi-icon"></div><span class="tbi-lbl">Alerts</span></div><div class="tbi"><div class="tbi-icon"></div><span class="tbi-lbl">Settings</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOB 3: DISQUALIFIED -->
+    <div class="phone-wrap">
+      <div class="phone-cap">3 · DISQUALIFIED State</div>
+      <div class="device">
+        <div class="screen" style="height:570px">
+          <div class="notch"></div>
+          <div class="sbar"><span class="stime">9:41</span></div>
+          <div class="mob-top"><div class="mob-logo">P<span>D</span></div><div class="mob-mode-tog"><div class="mmt">Dev</div><div class="mmt dc">DC</div></div><div class="mob-search" style="max-width:80px"><span class="mob-ph">Search…</span></div></div>
+          <div class="mob-map" style="height:110px;position:relative">
+            <div style="position:absolute;inset:0;background:rgba(239,68,68,.1)"></div>
+            <div style="position:absolute;left:10%;top:15%;right:10%;height:60%;border:1px dashed rgba(239,68,68,.4);border-radius:3px"></div>
+            <div style="position:absolute;left:14%;top:30%;font-family:var(--mono);font-size:7px;letter-spacing:.06em;text-transform:uppercase;color:rgba(239,68,68,.6)">FEMA Zone AE</div>
+            <div class="parcel" style="left:44%;top:10%;width:16%;height:70%;border-color:var(--red);background:rgba(239,68,68,.12)"></div>
+          </div>
+          <div class="mob-sheet">
+            <div class="sh-handle"></div>
+            <div class="sh-hdr">
+              <div class="sh-addr">1200 Satellite Blvd NW</div>
+              <div class="sh-meta">DC Mode · <span style="color:var(--red)">DISQUALIFIED</span></div>
+            </div>
+            <div class="mob-tabs"><div class="mtab on" style="color:var(--red);border-bottom-color:var(--red)">DC Score</div><div class="mtab">Power</div><div class="mtab">Fiber</div><div class="mtab">Water</div><div class="mtab crit">⚠ Env</div></div>
+            <div class="sh-body" style="max-height:290px">
+              <div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.35);border-radius:6px;padding:14px;text-align:center;margin-bottom:8px">
+                <div style="font-family:var(--head);font-size:26px;letter-spacing:.06em;color:var(--red);margin-bottom:3px">DISQUALIFIED</div>
+                <div style="font-family:var(--mono);font-size:7px;letter-spacing:.08em;text-transform:uppercase;color:rgba(239,68,68,.7)">Critical Environmental Condition</div>
+              </div>
+              <div style="background:var(--red-dim);border:1px solid rgba(239,68,68,.25);border-radius:5px;padding:8px;margin-bottom:8px">
+                <div style="font-family:var(--mono);font-size:8px;font-weight:500;color:var(--red);margin-bottom:3px">🚫 FEMA 100-yr Floodplain</div>
+                <div style="font-family:var(--mono);font-size:8px;color:var(--mid);line-height:1.5">Zone AE. Data center electrical infrastructure cannot be insured. Score suppressed.</div>
+                <div style="font-family:var(--mono);font-size:7px;color:rgba(239,68,68,.5);margin-top:3px">FEMA Panel 13135C0148G</div>
+              </div>
+              <div style="background:var(--green-dim);border:1px solid rgba(34,197,94,.15);border-radius:4px;padding:6px">
+                <div style="font-family:var(--mono);font-size:8px;color:var(--green)">✓ Clear · Wetlands &amp; Contamination</div>
+              </div>
+            </div>
+            <div class="mob-actions"><div class="mbtn mbtn-dis">+ Compare</div><div class="mbtn mbtn-dis">Brief N/A</div></div>
+          </div>
+          <div class="tabbar"><div class="tbi"><div class="tbi-icon on circ"></div><span class="tbi-lbl on">Map</span></div><div class="tbi"><div class="tbi-icon"></div><span class="tbi-lbl">Saved</span></div><div class="tbi"><div class="tbi-icon"></div><span class="tbi-lbl">Alerts</span></div><div class="tbi"><div class="tbi-icon"></div><span class="tbi-lbl">Settings</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOB 4: COMPARISON TABLE -->
+    <div class="phone-wrap">
+      <div class="phone-cap">4 · Comparison Table</div>
+      <div class="device">
+        <div class="screen" style="height:570px">
+          <div class="notch"></div>
+          <div class="sbar"><span class="stime">9:41</span></div>
+          <div style="position:absolute;inset:30px 0 0;background:rgba(8,10,13,.98);z-index:20;display:flex;flex-direction:column">
+            <div style="padding:10px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+              <div style="font-family:var(--head);font-size:14px;letter-spacing:.04em;color:var(--bright)">Site <span style="color:var(--orange)">Compare</span></div>
+              <div style="font-family:var(--mono);font-size:8px;color:var(--muted)">3 sites · 10MW</div>
+              <div style="font-family:var(--mono);font-size:9px;color:var(--muted)">✕</div>
+            </div>
+            <div style="flex:1;overflow:auto">
+              <div style="min-width:480px;padding:10px 14px">
+                <div style="display:grid;grid-template-columns:90px 1fr 1fr 1fr;gap:5px;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid var(--line)">
+                  <div style="font-family:var(--mono);font-size:7px;color:var(--muted)">Metric</div>
+                  <div style="font-family:var(--mono);font-size:8px;color:var(--orange)">① Buford</div>
+                  <div style="font-family:var(--mono);font-size:8px;color:var(--mid)">② Satellite</div>
+                  <div style="font-family:var(--mono);font-size:8px;color:var(--mid)">③ Venture</div>
+                </div>
+                <div style="display:grid;grid-template-columns:90px 1fr 1fr 1fr;gap:5px;padding:5px 0;border-bottom:1px solid var(--line)">
+                  <div style="font-family:var(--mono);font-size:7px;color:var(--muted);text-transform:uppercase">DC Score</div>
+                  <div style="font-family:var(--head);font-size:20px;color:var(--orange)">82</div>
+                  <div style="font-family:var(--mono);font-size:9px;color:var(--red);font-weight:500;align-self:center">DISQ</div>
+                  <div style="font-family:var(--head);font-size:20px;color:var(--mid)">71</div>
+                </div>
+                <div style="display:grid;grid-template-columns:90px 1fr 1fr 1fr;gap:5px;padding:5px 0;border-bottom:1px solid var(--line)">
+                  <div style="font-family:var(--mono);font-size:7px;color:var(--muted);text-transform:uppercase">Power</div>
+                  <div style="font-family:var(--mono);font-size:9px;color:var(--green);background:rgba(34,197,94,.06);padding:2px 4px;border-radius:2px;align-self:center">35/40</div>
+                  <div style="font-family:var(--mono);font-size:9px;color:var(--red);align-self:center">—</div>
+                  <div style="font-family:var(--mono);font-size:9px;color:var(--text);align-self:center">28/40</div>
+                </div>
+                <div style="display:grid;grid-template-columns:90px 1fr 1fr 1fr;gap:5px;padding:5px 0;border-bottom:1px solid var(--line)">
+                  <div style="font-family:var(--mono);font-size:7px;color:var(--muted);text-transform:uppercase">500kV</div>
+                  <div style="font-family:var(--mono);font-size:9px;color:var(--green);background:rgba(34,197,94,.06);padding:2px 4px;border-radius:2px;align-self:center">1.2mi</div>
+                  <div style="font-family:var(--mono);font-size:9px;color:var(--red);align-self:center">—</div>
+                  <div style="font-family:var(--mono);font-size:9px;color:var(--text);align-self:center">4.8mi</div>
+                </div>
+                <div style="display:grid;grid-template-columns:90px 1fr 1fr 1fr;gap:5px;padding:5px 0;border-bottom:1px solid var(--line)">
+                  <div style="font-family:var(--mono);font-size:7px;color:var(--muted);text-transform:uppercase">Fiber</div>
+                  <div style="font-family:var(--mono);font-size:9px;color:var(--green);background:rgba(34,197,94,.06);padding:2px 4px;border-radius:2px;align-self:center">23/30</div>
+                  <div style="font-family:var(--mono);font-size:9px;color:var(--red);align-self:center">—</div>
+                  <div style="font-family:var(--mono);font-size:9px;color:var(--red);background:rgba(239,68,68,.06);padding:2px 4px;border-radius:2px;align-self:center">14/30</div>
+                </div>
+                <div style="display:grid;grid-template-columns:90px 1fr 1fr 1fr;gap:5px;padding:5px 0;border-bottom:1px solid var(--line)">
+                  <div style="font-family:var(--mono);font-size:7px;color:var(--muted);text-transform:uppercase">TIE ATL</div>
+                  <div style="font-family:var(--mono);font-size:9px;color:var(--green);background:rgba(34,197,94,.06);padding:2px 4px;border-radius:2px;align-self:center">8.3mi</div>
+                  <div style="font-family:var(--mono);font-size:9px;color:var(--red);align-self:center">—</div>
+                  <div style="font-family:var(--mono);font-size:9px;color:var(--red);background:rgba(239,68,68,.06);padding:2px 4px;border-radius:2px;align-self:center">22mi</div>
+                </div>
+                <div style="display:grid;grid-template-columns:90px 1fr 1fr 1fr;gap:5px;padding:5px 0">
+                  <div style="font-family:var(--mono);font-size:7px;color:var(--muted);text-transform:uppercase">Environ.</div>
+                  <div style="font-family:var(--mono);font-size:9px;color:var(--green);background:rgba(34,197,94,.06);padding:2px 4px;border-radius:2px;align-self:center">Clear</div>
+                  <div style="font-family:var(--mono);font-size:9px;color:var(--red);font-weight:500;align-self:center">FLOOD</div>
+                  <div style="font-family:var(--mono);font-size:9px;color:var(--green);background:rgba(34,197,94,.06);padding:2px 4px;border-radius:2px;align-self:center">Clear</div>
+                </div>
+              </div>
+            </div>
+            <div style="padding:10px 14px;border-top:1px solid var(--line);flex-shrink:0">
+              <div style="font-family:var(--mono);font-size:7px;letter-spacing:.1em;text-transform:uppercase;color:var(--orange);margin-bottom:4px">AI Recommendation</div>
+              <div style="font-family:var(--mono);font-size:8.5px;color:var(--text);line-height:1.55">Site ① is clear choice — 500kV at 1.2mi, 3 fiber carriers, TIE 8.3mi. Site ② disqualified. Site ③ has single-carrier latency risk.</div>
+              <div style="display:inline-flex;align-items:center;gap:4px;background:var(--orange-dim);border:1px solid rgba(249,115,22,.3);border-radius:3px;padding:3px 8px;margin-top:6px"><span style="font-family:var(--mono);font-size:8px;color:var(--orange)">→ Pursue Site ①</span></div>
+            </div>
+          </div>
+          <div style="position:absolute;bottom:0;left:0;right:0;z-index:25">
+            <div class="tabbar"><div class="tbi"><div class="tbi-icon on circ"></div><span class="tbi-lbl on">Map</span></div><div class="tbi"><div class="tbi-icon"></div><span class="tbi-lbl">Saved</span></div><div class="tbi"><div class="tbi-icon"></div><span class="tbi-lbl">Alerts</span></div><div class="tbi"><div class="tbi-icon"></div><span class="tbi-lbl">Settings</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOB 5: COMP TRAY VISIBLE ON MAP -->
+    <div class="phone-wrap" style="grid-column:1/3;justify-self:start;padding-left:14px">
+      <div class="phone-cap">5 · Comparison Tray (Map View)</div>
+      <div class="device">
+        <div class="screen" style="height:570px">
+          <div class="notch"></div>
+          <div class="sbar"><span class="stime">9:41</span></div>
+          <div class="mob-top"><div class="mob-logo">P<span>D</span></div><div class="mob-mode-tog"><div class="mmt">Dev</div><div class="mmt dc">DC</div></div><div class="mob-search" style="max-width:80px"><span class="mob-ph">Search…</span></div></div>
+          <div class="mob-map" style="height:380px;position:relative">
+            <div class="tx-line tx-500" style="left:0;top:22%;width:52%;transform:rotate(6deg)"></div>
+            <div class="tx-line tx-230" style="left:0;top:46%;width:40%"></div>
+            <div class="sub sub-500" style="left:28%;top:16%"><div class="sub-icon" style="width:12px;height:12px;font-size:5px">⚡</div><div class="sub-label" style="font-size:6px">500kV</div></div>
+            <!-- 3 comparison sites -->
+            <div class="parcel p-sel" style="left:38%;top:18%;width:14%;height:20%"></div>
+            <div class="parcel p-comp" style="left:10%;top:12%;width:12%;height:18%"></div>
+            <div class="parcel p-comp" style="left:60%;top:14%;width:13%;height:16%"></div>
+            <!-- numbered markers -->
+            <div style="position:absolute;left:11%;top:10%;width:18px;height:18px;background:var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:8px;color:var(--ink);font-weight:600;z-index:6">1</div>
+            <div style="position:absolute;left:39%;top:16%;width:18px;height:18px;background:var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:8px;color:var(--ink);font-weight:600;z-index:6">2</div>
+            <div style="position:absolute;left:62%;top:12%;width:18px;height:18px;background:var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:8px;color:var(--ink);font-weight:600;z-index:6">3</div>
+          </div>
+          <!-- COMPARISON TRAY sticky above tabbar -->
+          <div class="mob-comp-tray">
+            <div class="mct-lbl">Compare · 3/4</div>
+            <div style="display:flex;gap:5px;overflow-x:auto;flex:1">
+              <div style="display:flex;align-items:center;gap:4px;background:var(--ink3);border:1px solid var(--line2);border-radius:3px;padding:3px 7px;flex-shrink:0">
+                <span style="font-family:var(--mono);font-size:7.5px;color:var(--text)">① Buford</span>
+                <span class="mct-score">82</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:4px;background:var(--ink3);border:1px solid var(--line2);border-radius:3px;padding:3px 7px;flex-shrink:0">
+                <span style="font-family:var(--mono);font-size:7.5px;color:var(--text)">② Satellite</span>
+                <span class="mct-score" style="background:var(--red-dim);color:var(--red)">DISQ</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:4px;background:var(--ink3);border:1px solid var(--line2);border-radius:3px;padding:3px 7px;flex-shrink:0">
+                <span style="font-family:var(--mono);font-size:7.5px;color:var(--text)">③ Venture</span>
+                <span class="mct-score">71</span>
+              </div>
+            </div>
+            <div class="mct-btn">Compare →</div>
+          </div>
+          <div class="tabbar"><div class="tbi"><div class="tbi-icon on circ"></div><span class="tbi-lbl on">Map</span></div><div class="tbi"><div class="tbi-icon"></div><span class="tbi-lbl">Saved</span></div><div class="tbi"><div class="tbi-icon"></div><span class="tbi-lbl">Alerts</span></div><div class="tbi"><div class="tbi-icon"></div><span class="tbi-lbl">Settings</span></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end mob-grid -->
+
+  <div class="ann-strip" style="margin-top:24px">
+    <div class="chip"><div class="chip-dot" style="background:var(--orange)"></div><div class="chip-text">Mobile mode toggle is in the topbar — same row as logo + search, not a sheet</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">Comparison table on mobile scrolls horizontally — swipe left to see more columns</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--orange)"></div><div class="chip-text">Tray renders as a sticky strip above the tab bar — not a sheet, not a modal</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--red)"></div><div class="chip-text">DISQ sites in tray show red badge — still visible as context, still removable via ×</div></div>
+    <div class="chip"><div class="chip-dot" style="background:var(--mid)"></div><div class="chip-text">AI recommendation on mobile is condensed to 2 sentences — same endpoint, shorter prompt</div></div>
+  </div>
+</div>
+
+</div><!-- end page -->
+</body>
+</html>

@@ -1,0 +1,1730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pocket Developer — User Flows</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --bg: #0a0c10;
+    --surface: #111318;
+    --surface2: #181c24;
+    --border: #1e2330;
+    --border2: #252b3a;
+    --text: #e8eaf0;
+    --text-muted: #5a6278;
+    --text-mid: #8892a8;
+
+    --p1: #00c2ff;
+    --p1-dim: rgba(0,194,255,0.12);
+    --p1-glow: rgba(0,194,255,0.25);
+
+    --p2: #a78bfa;
+    --p2-dim: rgba(167,139,250,0.12);
+    --p2-glow: rgba(167,139,250,0.25);
+
+    --p3: #34d399;
+    --p3-dim: rgba(52,211,153,0.12);
+    --p3-glow: rgba(52,211,153,0.25);
+
+    --p4: #fb923c;
+    --p4-dim: rgba(251,146,60,0.12);
+    --p4-glow: rgba(251,146,60,0.25);
+
+    --danger: #f87171;
+    --warn: #fbbf24;
+    --success: #34d399;
+
+    --radius: 8px;
+    --radius-lg: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    border-bottom: 1px solid var(--border);
+    padding: 28px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: rgba(10,12,16,0.92);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+  }
+
+  .header-left { display: flex; align-items: center; gap: 16px; }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: -0.5px;
+    color: var(--text);
+  }
+
+  .logo span { color: var(--p1); }
+
+  .header-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    border: 1px solid var(--border2);
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .phase-nav {
+    display: flex;
+    gap: 4px;
+  }
+
+  .phase-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.04em;
+  }
+
+  .phase-btn:hover { color: var(--text); border-color: var(--border2); background: var(--surface); }
+  .phase-btn.active-p1 { background: var(--p1-dim); border-color: var(--p1); color: var(--p1); }
+  .phase-btn.active-p2 { background: var(--p2-dim); border-color: var(--p2); color: var(--p2); }
+  .phase-btn.active-p3 { background: var(--p3-dim); border-color: var(--p3); color: var(--p3); }
+  .phase-btn.active-p4 { background: var(--p4-dim); border-color: var(--p4); color: var(--p4); }
+
+  /* MAIN LAYOUT */
+  .main { display: flex; min-height: calc(100vh - 73px); }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 260px;
+    min-width: 260px;
+    border-right: 1px solid var(--border);
+    padding: 24px 0;
+    position: sticky;
+    top: 73px;
+    height: calc(100vh - 73px);
+    overflow-y: auto;
+  }
+
+  .sidebar-section { margin-bottom: 8px; }
+
+  .sidebar-phase-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 8px 20px 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .phase-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .sidebar-link {
+    display: block;
+    padding: 7px 20px 7px 34px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 13px;
+    transition: all 0.12s;
+    border-left: 2px solid transparent;
+    margin-left: 0;
+  }
+
+  .sidebar-link:hover { color: var(--text); background: var(--surface); }
+  .sidebar-link.active { color: var(--text); }
+
+  .p1-active { border-left-color: var(--p1) !important; color: var(--p1) !important; background: var(--p1-dim) !important; }
+  .p2-active { border-left-color: var(--p2) !important; color: var(--p2) !important; background: var(--p2-dim) !important; }
+  .p3-active { border-left-color: var(--p3) !important; color: var(--p3) !important; background: var(--p3-dim) !important; }
+  .p4-active { border-left-color: var(--p4) !important; color: var(--p4) !important; background: var(--p4-dim) !important; }
+
+  /* CONTENT */
+  .content {
+    flex: 1;
+    padding: 40px 48px;
+    max-width: 980px;
+  }
+
+  /* PHASE HEADER */
+  .phase-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 40px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .phase-number {
+    font-family: 'Syne', sans-serif;
+    font-size: 48px;
+    font-weight: 800;
+    line-height: 1;
+    opacity: 0.15;
+    flex-shrink: 0;
+    margin-top: -4px;
+  }
+
+  .phase-meta {}
+  .phase-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .phase-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+
+  .phase-desc { color: var(--text-mid); max-width: 600px; line-height: 1.65; }
+
+  /* FEATURE SECTION */
+  .feature-section {
+    margin-bottom: 48px;
+  }
+
+  .feature-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .feature-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 5px;
+    flex-shrink: 0;
+  }
+
+  .feature-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+  }
+
+  /* FLOW DIAGRAM */
+  .flow {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .flow-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .flow-dots { display: flex; gap: 5px; }
+  .flow-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border2); }
+
+  .flow-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-left: 4px;
+  }
+
+  .flow-body { padding: 24px; }
+
+  /* FLOW NODES */
+  .flow-track {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .flow-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+  }
+
+  .flow-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .node {
+    border-radius: var(--radius);
+    padding: 10px 16px;
+    font-size: 12.5px;
+    font-weight: 500;
+    position: relative;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .node-icon {
+    font-size: 13px;
+    line-height: 1;
+  }
+
+  .node-user {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    color: var(--text);
+  }
+
+  .node-action {
+    font-size: 12px;
+    color: var(--text-mid);
+    font-style: italic;
+    padding: 6px 12px;
+    background: transparent;
+    border: 1px dashed var(--border2);
+  }
+
+  .node-system {
+    border: 1px solid;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.03em;
+  }
+
+  .node-decision {
+    border-radius: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--warn);
+    color: var(--warn);
+    font-size: 12px;
+  }
+
+  .node-success {
+    background: rgba(52,211,153,0.1);
+    border: 1px solid var(--success);
+    color: var(--success);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+  }
+
+  .node-error {
+    background: rgba(248,113,113,0.1);
+    border: 1px solid var(--danger);
+    color: var(--danger);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+  }
+
+  /* CONNECTORS */
+  .arrow-down {
+    width: 1px;
+    height: 20px;
+    background: var(--border2);
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .arrow-down::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 0; height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid var(--border2);
+  }
+
+  .arrow-right {
+    height: 1px;
+    width: 32px;
+    background: var(--border2);
+    align-self: center;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .arrow-right::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 50%;
+    transform: translateY(-50%);
+    width: 0; height: 0;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    border-left: 5px solid var(--border2);
+  }
+
+  .branch-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    align-self: center;
+    padding: 0 4px;
+  }
+
+  /* STEP LIST (alternative to diagram for complex flows) */
+  .step-list { display: flex; flex-direction: column; gap: 0; }
+
+  .step {
+    display: flex;
+    gap: 16px;
+    position: relative;
+  }
+
+  .step:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 14px;
+    top: 32px;
+    bottom: 0;
+    width: 1px;
+    background: var(--border);
+  }
+
+  .step-indicator {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    margin-top: 2px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .step-body { padding-bottom: 24px; flex: 1; }
+
+  .step-title {
+    font-weight: 600;
+    font-size: 13.5px;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .step-desc { color: var(--text-mid); font-size: 13px; line-height: 1.6; }
+
+  .step-context {
+    margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.04em;
+  }
+
+  .tag-component { background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.25); }
+  .tag-state { background: rgba(251,146,60,0.12); color: #fcd34d; border: 1px solid rgba(251,146,60,0.2); }
+  .tag-api { background: rgba(52,211,153,0.1); color: #6ee7b7; border: 1px solid rgba(52,211,153,0.2); }
+  .tag-mobile { background: rgba(0,194,255,0.1); color: #7dd3fc; border: 1px solid rgba(0,194,255,0.2); }
+  .tag-desktop { background: rgba(167,139,250,0.1); color: #c4b5fd; border: 1px solid rgba(167,139,250,0.2); }
+  .tag-both { background: rgba(100,116,139,0.15); color: #94a3b8; border: 1px solid rgba(100,116,139,0.2); }
+
+  /* DEVICE SPLIT */
+  .device-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 12px;
+  }
+
+  .device-panel {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+  }
+
+  .device-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .device-label::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+  }
+
+  .mobile-label::before { background: var(--p1); }
+  .desktop-label::before { background: var(--p2); }
+
+  .device-steps { display: flex; flex-direction: column; gap: 6px; }
+
+  .device-step {
+    font-size: 12px;
+    color: var(--text-mid);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .device-step-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    min-width: 16px;
+    margin-top: 1px;
+  }
+
+  /* STATE TRANSITIONS */
+  .state-machine {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    padding: 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-top: 12px;
+  }
+
+  .state-node {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid;
+  }
+
+  .state-arrow {
+    font-size: 11px;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+  }
+
+  .state-arrow-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  /* SECTION DIVIDER */
+  .section-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 48px 0;
+  }
+
+  /* HIDE/SHOW */
+  .phase-content { display: none; }
+  .phase-content.active { display: block; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 10px; }
+
+  /* ANNOTATION */
+  .annotation {
+    background: rgba(251,191,36,0.06);
+    border-left: 2px solid var(--warn);
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+    margin-top: 10px;
+    font-size: 12.5px;
+    color: var(--text-mid);
+  }
+
+  .annotation strong { color: var(--warn); font-weight: 600; }
+
+  @media (max-width: 768px) {
+    .header { padding: 16px 20px; flex-direction: column; gap: 12px; align-items: flex-start; }
+    .content { padding: 24px 20px; }
+    .sidebar { display: none; }
+    .device-split { grid-template-columns: 1fr; }
+    .phase-nav { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <div class="logo">Pocket<span>Dev</span></div>
+    <div class="header-tag">User Flow Reference</div>
+  </div>
+  <div class="phase-nav">
+    <button class="phase-btn active-p1" onclick="showPhase('p1', this)">Phase 1</button>
+    <button class="phase-btn" onclick="showPhase('p2', this)">Phase 2</button>
+    <button class="phase-btn" onclick="showPhase('p3', this)">Phase 3</button>
+    <button class="phase-btn" onclick="showPhase('p4', this)">Phase 4</button>
+  </div>
+</header>
+
+<div class="main">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-section" id="sidebar-p1">
+      <div class="sidebar-phase-label" style="color:var(--p1)"><span class="phase-dot" style="background:var(--p1)"></span>Phase 1 — Foundation</div>
+      <a class="sidebar-link" href="#f1-1" onclick="scrollTo('f1-1')">1.1 Parcel Map</a>
+      <a class="sidebar-link" href="#f1-2" onclick="scrollTo('f1-2')">1.2 Parcel Detail Panel</a>
+      <a class="sidebar-link" href="#f1-3" onclick="scrollTo('f1-3')">1.3 GPS + Search</a>
+      <a class="sidebar-link" href="#f1-4" onclick="scrollTo('f1-4')">1.4 LLC Owner Lookup</a>
+      <a class="sidebar-link" href="#f1-5" onclick="scrollTo('f1-5')">1.5 Saved Properties</a>
+      <a class="sidebar-link" href="#f1-6" onclick="scrollTo('f1-6')">1.6 Layer Toggles</a>
+    </div>
+    <div class="sidebar-section" id="sidebar-p2" style="display:none">
+      <div class="sidebar-phase-label" style="color:var(--p2)"><span class="phase-dot" style="background:var(--p2)"></span>Phase 2 — AI Analysis</div>
+      <a class="sidebar-link" href="#f2-1">2.1 Site Score Card</a>
+      <a class="sidebar-link" href="#f2-2">2.2 Zoning AI</a>
+      <a class="sidebar-link" href="#f2-3">2.3 Auto Comps</a>
+      <a class="sidebar-link" href="#f2-4">2.4 Deal RAG</a>
+      <a class="sidebar-link" href="#f2-5">2.5 Feasibility Brief</a>
+    </div>
+    <div class="sidebar-section" id="sidebar-p3" style="display:none">
+      <div class="sidebar-phase-label" style="color:var(--p3)"><span class="phase-dot" style="background:var(--p3)"></span>Phase 3 — Data Center</div>
+      <a class="sidebar-link" href="#f3-1">3.1 Power Scoring</a>
+      <a class="sidebar-link" href="#f3-2">3.2 Fiber Scoring</a>
+      <a class="sidebar-link" href="#f3-3">3.3 Water Analysis</a>
+      <a class="sidebar-link" href="#f3-4">3.4 Environmental Risk</a>
+      <a class="sidebar-link" href="#f3-5">3.5 DC Composite Score</a>
+      <a class="sidebar-link" href="#f3-6">3.6 Site Comparison</a>
+    </div>
+    <div class="sidebar-section" id="sidebar-p4" style="display:none">
+      <div class="sidebar-phase-label" style="color:var(--p4)"><span class="phase-dot" style="background:var(--p4)"></span>Phase 4 — Intelligence</div>
+      <a class="sidebar-link" href="#f4-1">4.1 ML Firm Model</a>
+      <a class="sidebar-link" href="#f4-2">4.2 Deal Pipeline</a>
+      <a class="sidebar-link" href="#f4-3">4.3 Multi-Tenant</a>
+      <a class="sidebar-link" href="#f4-4">4.4 Team Collab</a>
+      <a class="sidebar-link" href="#f4-5">4.5 Exec Dashboard</a>
+      <a class="sidebar-link" href="#f4-6">4.6 External API</a>
+      <a class="sidebar-link" href="#f4-7">4.7 Watch Alerts</a>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <!-- ==================== PHASE 1 ==================== -->
+    <div class="phase-content active" id="phase-p1">
+
+      <div class="phase-header">
+        <div class="phase-number" style="color:var(--p1)">01</div>
+        <div class="phase-meta">
+          <div class="phase-tag" style="color:var(--p1)">Phase 1 · LandGlide Replication</div>
+          <div class="phase-title">The Foundation Layer</div>
+          <div class="phase-desc">Core map interaction, parcel discovery, and property data. Everything a field developer needs to replace LandGlide on day one. The entire UX lives around one primary surface: the map.</div>
+        </div>
+      </div>
+
+      <!-- 1.1 -->
+      <div class="feature-section" id="f1-1">
+        <div class="feature-header">
+          <span class="feature-num" style="background:var(--p1-dim);color:var(--p1);border:1px solid rgba(0,194,255,0.25)">1.1</span>
+          <span class="feature-title">Interactive Parcel Map</span>
+        </div>
+        <div class="flow">
+          <div class="flow-header">
+            <div class="flow-dots"><div class="flow-dot"></div><div class="flow-dot"></div><div class="flow-dot"></div></div>
+            <span class="flow-label">Primary Interaction Flow</span>
+          </div>
+          <div class="flow-body">
+            <div class="step-list">
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p1-dim);color:var(--p1);border:1px solid rgba(0,194,255,0.3)">1</div>
+                <div class="step-body">
+                  <div class="step-title">App loads → Map initializes</div>
+                  <div class="step-desc">Mapbox GL JS initializes to user's last known viewport (stored in localStorage) or defaults to Atlanta metro. Parcel vector tile layer loads immediately on map ready. No spinner, tiles load progressively as map renders.</div>
+                  <div class="step-context">
+                    <span class="tag tag-component">MapContainer.tsx</span>
+                    <span class="tag tag-state">viewport: {lat, lng, zoom}</span>
+                    <span class="tag tag-api">GET /tiles/{z}/{x}/{y}</span>
+                    <span class="tag tag-both">Mobile + Desktop</span>
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p1-dim);color:var(--p1);border:1px solid rgba(0,194,255,0.3)">2</div>
+                <div class="step-body">
+                  <div class="step-title">User taps / clicks anywhere on map</div>
+                  <div class="step-desc">map.on('click') fires. queryRenderedFeatures() checks if click landed on a parcel feature. If yes: parcel boundary highlights (fill-opacity animates to 0.3), panel begins opening. If no: no-op or close existing panel.</div>
+                  <div class="step-context">
+                    <span class="tag tag-state">selectedParcel: APN | null</span>
+                    <span class="tag tag-component">useMapClick() hook</span>
+                  </div>
+                  <div class="device-split">
+                    <div class="device-panel">
+                      <div class="device-label mobile-label">Mobile</div>
+                      <div class="device-steps">
+                        <div class="device-step"><span class="device-step-num">→</span>Bottom sheet drawer slides up (60vh)</div>
+                        <div class="device-step"><span class="device-step-num">→</span>Map shrinks to top 40% of screen</div>
+                        <div class="device-step"><span class="device-step-num">→</span>Haptic feedback on tap</div>
+                      </div>
+                    </div>
+                    <div class="device-panel">
+                      <div class="device-label desktop-label">Desktop</div>
+                      <div class="device-steps">
+                        <div class="device-step"><span class="device-step-num">→</span>Right panel slides in (380px wide)</div>
+                        <div class="device-step"><span class="device-step-num">→</span>Map remains full-height, pans left</div>
+                        <div class="device-step"><span class="device-step-num">→</span>Smooth 200ms ease-out transition</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p1-dim);color:var(--p1);border:1px solid rgba(0,194,255,0.3)">3</div>
+                <div class="step-body">
+                  <div class="step-title">Parcel data fetches and renders</div>
+                  <div class="step-desc">APN extracted from vector tile feature → GET /api/parcel/{apn} → returns full parcel record from Supabase. Panel skeleton loads immediately, data populates on response. Cache hit from prior view = instant.</div>
+                  <div class="step-context">
+                    <span class="tag tag-api">GET /api/parcel/:apn</span>
+                    <span class="tag tag-state">parcelData: Parcel | loading | error</span>
+                    <span class="tag tag-component">ParcelPanel.tsx</span>
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p1-dim);color:var(--p1);border:1px solid rgba(0,194,255,0.3)">4</div>
+                <div class="step-body">
+                  <div class="step-title">User dismisses panel</div>
+                  <div class="step-desc">Swipe down (mobile) or click X / click map background (desktop). Panel closes, parcel highlight clears, map returns to full viewport. State resets: selectedParcel = null.</div>
+                  <div class="step-context">
+                    <span class="tag tag-state">selectedParcel → null</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1.2 -->
+      <div class="feature-section" id="f1-2">
+        <div class="feature-header">
+          <span class="feature-num" style="background:var(--p1-dim);color:var(--p1);border:1px solid rgba(0,194,255,0.25)">1.2</span>
+          <span class="feature-title">Parcel Detail Panel</span>
+        </div>
+        <div class="flow">
+          <div class="flow-header">
+            <div class="flow-dots"><div class="flow-dot"></div><div class="flow-dot"></div><div class="flow-dot"></div></div>
+            <span class="flow-label">Panel Content & Interaction States</span>
+          </div>
+          <div class="flow-body">
+            <div class="step-list">
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p1-dim);color:var(--p1);border:1px solid rgba(0,194,255,0.3)">1</div>
+                <div class="step-body">
+                  <div class="step-title">Panel opens in skeleton state</div>
+                  <div class="step-desc">Address, APN, and county render immediately from the vector tile feature properties (no API needed). All other fields show animated skeleton loaders while the API call resolves.</div>
+                  <div class="step-context">
+                    <span class="tag tag-component">ParcelSkeleton.tsx</span>
+                    <span class="tag tag-mobile">Mobile: bottom drawer</span>
+                    <span class="tag tag-desktop">Desktop: side panel</span>
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p1-dim);color:var(--p1);border:1px solid rgba(0,194,255,0.3)">2</div>
+                <div class="step-body">
+                  <div class="step-title">Full data populates</div>
+                  <div class="step-desc">Panel fills with: Owner Name · Mailing Address · Lot Size (acres + sqft) · Land Use Code · Zoning · Assessed Value (land / improvement / total) · Last Sale Date · Last Sale Price · Price per SF. Phase 2 score badge shows "pending" until computed.</div>
+                  <div class="step-context">
+                    <span class="tag tag-component">ParcelDataGrid.tsx</span>
+                    <span class="tag tag-api">GET /api/parcel/:apn</span>
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p1-dim);color:var(--p1);border:1px solid rgba(0,194,255,0.3)">3</div>
+                <div class="step-body">
+                  <div class="step-title">Action bar renders at panel bottom</div>
+                  <div class="step-desc">Four primary actions always visible: Save Property · LLC Lookup · Add to Compare · Open in Maps. Secondary actions in overflow menu: Copy APN · Share Link · Export PDF.</div>
+                  <div class="step-context">
+                    <span class="tag tag-component">PanelActionBar.tsx</span>
+                    <span class="tag tag-state">savedParcels[], compareList[]</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1.3 -->
+      <div class="feature-section" id="f1-3">
+        <div class="feature-header">
+          <span class="feature-num" style="background:var(--p1-dim);color:var(--p1);border:1px solid rgba(0,194,255,0.25)">1.3</span>
+          <span class="feature-title">GPS + Address Search</span>
+        </div>
+        <div class="flow">
+          <div class="flow-header">
+            <div class="flow-dots"><div class="flow-dot"></div><div class="flow-dot"></div><div class="flow-dot"></div></div>
+            <span class="flow-label">Two Entry Points to Parcel Discovery</span>
+          </div>
+          <div class="flow-body">
+            <div class="step-list">
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p1-dim);color:var(--p1);border:1px solid rgba(0,194,255,0.3)">A</div>
+                <div class="step-body">
+                  <div class="step-title">GPS Flow — "Find my parcel"</div>
+                  <div class="step-desc">User taps location button → browser geolocation fires → on success: map flies to coords (zoom 18), blue dot marker appears, parcel under coords auto-selects and panel opens. On permission denied: show inline prompt explaining why location is needed with manual search fallback.</div>
+                  <div class="step-context">
+                    <span class="tag tag-api">navigator.geolocation.getCurrentPosition()</span>
+                    <span class="tag tag-component">LocationButton.tsx</span>
+                    <span class="tag tag-mobile">Primary mobile entry point</span>
+                  </div>
+                  <div class="annotation"><strong>Dev note:</strong> On iOS Safari, geolocation requires HTTPS and a user gesture. Ensure the location button is triggered by a direct click event, not programmatically.</div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p1-dim);color:var(--p1);border:1px solid rgba(0,194,255,0.3)">B</div>
+                <div class="step-body">
+                  <div class="step-title">Address Search Flow</div>
+                  <div class="step-desc">Search bar always visible at top of map. User types → 300ms debounce → Mapbox Search Box API returns suggestions → dropdown renders up to 5 results → user selects → map flies to result → parcel auto-selects. APN search also supported: if input matches APN pattern, query local DB directly.</div>
+                  <div class="step-context">
+                    <span class="tag tag-api">Mapbox Search Box API v2</span>
+                    <span class="tag tag-api">GET /api/parcel/by-apn/:apn</span>
+                    <span class="tag tag-component">SearchBar.tsx</span>
+                    <span class="tag tag-both">Mobile + Desktop</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1.4 -->
+      <div class="feature-section" id="f1-4">
+        <div class="feature-header">
+          <span class="feature-num" style="background:var(--p1-dim);color:var(--p1);border:1px solid rgba(0,194,255,0.25)">1.4</span>
+          <span class="feature-title">LLC Owner Lookup</span>
+        </div>
+        <div class="flow">
+          <div class="flow-header">
+            <div class="flow-dots"><div class="flow-dot"></div><div class="flow-dot"></div><div class="flow-dot"></div></div>
+            <span class="flow-label">Entity Resolution Flow</span>
+          </div>
+          <div class="flow-body">
+            <div class="step-list">
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p1-dim);color:var(--p1);border:1px solid rgba(0,194,255,0.3)">1</div>
+                <div class="step-body">
+                  <div class="step-title">User taps "LLC Lookup" in panel action bar</div>
+                  <div class="step-desc">Button only appears when owner_name field matches LLC pattern (contains "LLC", "LP", "Inc", "Corp", "Holdings", etc.). Disabled with tooltip for individual owners.</div>
+                  <div class="step-context"><span class="tag tag-component">LLCLookupButton.tsx</span></div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p1-dim);color:var(--p1);border:1px solid rgba(0,194,255,0.3)">2</div>
+                <div class="step-body">
+                  <div class="step-title">POST /api/entity/lookup → async job queued</div>
+                  <div class="step-desc">Backend checks cache first. Cache miss → Playwright scraper hits Georgia SOS ecorp search → parses registered agent + principal officer + formation date + status. Job takes 4–12 seconds. Frontend shows inline progress indicator in the panel, not a blocking modal.</div>
+                  <div class="step-context">
+                    <span class="tag tag-api">POST /api/entity/lookup</span>
+                    <span class="tag tag-state">entityStatus: idle | loading | found | not-found</span>
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p1-dim);color:var(--p1);border:1px solid rgba(0,194,255,0.3)">3</div>
+                <div class="step-body">
+                  <div class="step-title">Results expand inline in panel</div>
+                  <div class="step-desc">Entity card shows: Registered Agent · Principal Officer(s) · Formation Date · Status (Active/Dissolved). Below: "Other Properties by This Entity" — list of other parcels in DB matching the owner name, each clickable to fly-to on map.</div>
+                  <div class="step-context">
+                    <span class="tag tag-component">EntityCard.tsx</span>
+                    <span class="tag tag-api">GET /api/parcels/by-owner</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1.5 -->
+      <div class="feature-section" id="f1-5">
+        <div class="feature-header">
+          <span class="feature-num" style="background:var(--p1-dim);color:var(--p1);border:1px solid rgba(0,194,255,0.25)">1.5</span>
+          <span class="feature-title">Saved Properties & Collections</span>
+        </div>
+        <div class="flow">
+          <div class="flow-header">
+            <div class="flow-dots"><div class="flow-dot"></div><div class="flow-dot"></div><div class="flow-dot"></div></div>
+            <span class="flow-label">Save → Organize → Access</span>
+          </div>
+          <div class="flow-body">
+            <div class="step-list">
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p1-dim);color:var(--p1);border:1px solid rgba(0,194,255,0.3)">1</div>
+                <div class="step-body">
+                  <div class="step-title">Save a parcel</div>
+                  <div class="step-desc">Tap bookmark icon in panel action bar. If user has no collections yet: prompt to name first collection inline (default: "Saved"). If collections exist: popover shows collection list with checkboxes. Multi-collection save supported. Saved parcels render as colored pin markers on the map.</div>
+                  <div class="step-context">
+                    <span class="tag tag-api">POST /api/saved-parcels</span>
+                    <span class="tag tag-state">savedParcels: APN[]</span>
+                    <span class="tag tag-component">SaveButton.tsx, CollectionPicker.tsx</span>
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p1-dim);color:var(--p1);border:1px solid rgba(0,194,255,0.3)">2</div>
+                <div class="step-body">
+                  <div class="step-title">Access saved properties</div>
+                  <div class="step-desc">Bottom nav tab (mobile) or left sidebar section (desktop) labeled "Saved." Shows collections as folders. Tapping a saved parcel row flies map to that parcel and opens the panel. Swipe left to remove (mobile) or right-click context menu (desktop).</div>
+                  <div class="step-context">
+                    <span class="tag tag-component">SavedPanel.tsx</span>
+                    <span class="tag tag-mobile">Tab bar navigation</span>
+                    <span class="tag tag-desktop">Sidebar section</span>
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p1-dim);color:var(--p1);border:1px solid rgba(0,194,255,0.3)">3</div>
+                <div class="step-body">
+                  <div class="step-title">Add notes to saved parcel</div>
+                  <div class="step-desc">In saved view or open panel, tap "Note" to expand inline text area. Notes autosave on blur (no submit button). Notes appear in the panel under the parcel data and are searchable across all saves.</div>
+                  <div class="step-context">
+                    <span class="tag tag-api">PATCH /api/saved-parcels/:id</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1.6 -->
+      <div class="feature-section" id="f1-6">
+        <div class="feature-header">
+          <span class="feature-num" style="background:var(--p1-dim);color:var(--p1);border:1px solid rgba(0,194,255,0.25)">1.6</span>
+          <span class="feature-title">Map Layer Toggles</span>
+        </div>
+        <div class="flow">
+          <div class="flow-header">
+            <div class="flow-dots"><div class="flow-dot"></div><div class="flow-dot"></div><div class="flow-dot"></div></div>
+            <span class="flow-label">Layer Control Interaction</span>
+          </div>
+          <div class="flow-body">
+            <div class="step-list">
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p1-dim);color:var(--p1);border:1px solid rgba(0,194,255,0.3)">1</div>
+                <div class="step-body">
+                  <div class="step-title">Layer control button</div>
+                  <div class="step-desc">Floating button on map (bottom-right, above zoom controls). Tapping opens a compact layer panel — not a modal, anchored to the button. Closes on outside tap. Persists layer state in localStorage across sessions.</div>
+                  <div class="step-context">
+                    <span class="tag tag-component">LayerControl.tsx</span>
+                    <span class="tag tag-state">layers: { parcels, zoning, satellite, labels }</span>
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p1-dim);color:var(--p1);border:1px solid rgba(0,194,255,0.3)">2</div>
+                <div class="step-body">
+                  <div class="step-title">Available toggles</div>
+                  <div class="step-desc">Base Map: Streets / Satellite / Hybrid (radio, one active). Overlays (independent toggles): Parcel Boundaries · Parcel Fill · Zoning Colors · Saved Property Pins · Road Labels. Each toggle triggers map.setLayoutProperty() or map.setStyle() immediately — no page reload.</div>
+                  <div class="step-context">
+                    <span class="tag tag-both">Identical on mobile and desktop</span>
+                  </div>
+                  <div class="annotation"><strong>Dev note:</strong> Switching base map style (Streets ↔ Satellite) re-initializes the Mapbox style, which clears custom layers. You must re-add parcel and overlay layers in the map's 'style.load' event after every base style switch.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end phase-p1 -->
+
+    <!-- ==================== PHASE 2 ==================== -->
+    <div class="phase-content" id="phase-p2">
+
+      <div class="phase-header">
+        <div class="phase-number" style="color:var(--p2)">02</div>
+        <div class="phase-meta">
+          <div class="phase-tag" style="color:var(--p2)">Phase 2 · AI Site Analysis</div>
+          <div class="phase-title">From Data to Intelligence</div>
+          <div class="phase-desc">Every Phase 1 flow extends — the parcel panel gains AI layers. Users move from seeing raw data to receiving scored analysis, zoning interpretation, comparable sales, and generated feasibility briefs without leaving the map.</div>
+        </div>
+      </div>
+
+      <!-- 2.1 -->
+      <div class="feature-section" id="f2-1">
+        <div class="feature-header">
+          <span class="feature-num" style="background:var(--p2-dim);color:var(--p2);border:1px solid rgba(167,139,250,0.25)">2.1</span>
+          <span class="feature-title">AI Site Score Card</span>
+        </div>
+        <div class="flow">
+          <div class="flow-header">
+            <div class="flow-dots"><div class="flow-dot"></div><div class="flow-dot"></div><div class="flow-dot"></div></div>
+            <span class="flow-label">Score Computation & Display Flow</span>
+          </div>
+          <div class="flow-body">
+            <div class="step-list">
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p2-dim);color:var(--p2);border:1px solid rgba(167,139,250,0.3)">1</div>
+                <div class="step-body">
+                  <div class="step-title">Parcel panel opens — score check</div>
+                  <div class="step-desc">When the parcel panel opens (from Phase 1 map click), Phase 2 adds a Score tab alongside the Data tab. The tab immediately checks cache: GET /api/scores/:apn. Cache hit renders score instantly. Cache miss triggers background compute job and shows animated "Analyzing..." state with sub-score skeleton.</div>
+                  <div class="step-context">
+                    <span class="tag tag-api">GET /api/scores/:apn</span>
+                    <span class="tag tag-component">ScoreTab.tsx</span>
+                    <span class="tag tag-state">scoreStatus: cached | computing | error</span>
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p2-dim);color:var(--p2);border:1px solid rgba(167,139,250,0.3)">2</div>
+                <div class="step-body">
+                  <div class="step-title">Score renders — composite + breakdown</div>
+                  <div class="step-desc">Large composite score (0–100) renders prominently. Below: five sub-score bars animate in sequentially — Zoning, Access, Demographics, Market Activity, Infrastructure. Each bar is tappable to expand the rationale: why this sub-score, what data drove it.</div>
+                  <div class="step-context">
+                    <span class="tag tag-component">ScoreGauge.tsx, SubScoreBar.tsx</span>
+                    <span class="tag tag-both">Radial gauge on desktop, linear bars on mobile</span>
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p2-dim);color:var(--p2);border:1px solid rgba(167,139,250,0.3)">3</div>
+                <div class="step-body">
+                  <div class="step-title">Score badge on map marker</div>
+                  <div class="step-desc">For saved parcels with computed scores, the pin marker on the map displays the composite score as a badge. Color coded: green (70+), yellow (40–69), red (&lt;40). Gives instant visual scan of a saved portfolio across a market area.</div>
+                  <div class="step-context">
+                    <span class="tag tag-component">ScoredPin.tsx</span>
+                    <span class="tag tag-api">GET /api/scores/batch (saved APN list)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2.2 -->
+      <div class="feature-section" id="f2-2">
+        <div class="feature-header">
+          <span class="feature-num" style="background:var(--p2-dim);color:var(--p2);border:1px solid rgba(167,139,250,0.25)">2.2</span>
+          <span class="feature-title">Zoning Intelligence (AI Chat)</span>
+        </div>
+        <div class="flow">
+          <div class="flow-header">
+            <div class="flow-dots"><div class="flow-dot"></div><div class="flow-dot"></div><div class="flow-dot"></div></div>
+            <span class="flow-label">Contextual Q&A Flow</span>
+          </div>
+          <div class="flow-body">
+            <div class="step-list">
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p2-dim);color:var(--p2);border:1px solid rgba(167,139,250,0.3)">1</div>
+                <div class="step-body">
+                  <div class="step-title">Zoning tab in parcel panel</div>
+                  <div class="step-desc">Third tab in panel alongside Data and Score. Auto-loads a structured zoning summary: zone code + name, permitted uses list, key setbacks and height limits, conditional uses. All from your local zoning_rules table — no LLM call yet.</div>
+                  <div class="step-context">
+                    <span class="tag tag-api">GET /api/zoning/:county/:zone_code</span>
+                    <span class="tag tag-component">ZoningTab.tsx</span>
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p2-dim);color:var(--p2);border:1px solid rgba(167,139,250,0.3)">2</div>
+                <div class="step-body">
+                  <div class="step-title">User asks a question</div>
+                  <div class="step-desc">Below the zoning summary: a chat input with suggested prompts ("Can I build a drive-through?", "What's the variance process?", "Is outdoor storage permitted?"). User types or selects a suggestion → POST /api/zoning/ask with parcel context + question → streaming LLM response renders word by word.</div>
+                  <div class="step-context">
+                    <span class="tag tag-api">POST /api/zoning/ask (streaming)</span>
+                    <span class="tag tag-component">ZoningChat.tsx</span>
+                    <span class="tag tag-state">chatHistory: Message[]</span>
+                  </div>
+                  <div class="annotation"><strong>Dev note:</strong> Use the Vercel AI SDK's useChat hook for streaming. The system prompt includes the full zoning rule record so the LLM is grounded in actual ordinance data, not hallucination.</div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p2-dim);color:var(--p2);border:1px solid rgba(167,139,250,0.3)">3</div>
+                <div class="step-body">
+                  <div class="step-title">Response + follow-up</div>
+                  <div class="step-desc">Response renders with any variance/CUP requirements flagged in amber. Conversation persists for the session. "Clear chat" button resets. Chat history is NOT saved server-side in Phase 2 — session only. Phase 4 adds persistent deal-linked chat history.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2.3 -->
+      <div class="feature-section" id="f2-3">
+        <div class="feature-header">
+          <span class="feature-num" style="background:var(--p2-dim);color:var(--p2);border:1px solid rgba(167,139,250,0.25)">2.3</span>
+          <span class="feature-title">Auto-Comps</span>
+        </div>
+        <div class="flow">
+          <div class="flow-header">
+            <div class="flow-dots"><div class="flow-dot"></div><div class="flow-dot"></div><div class="flow-dot"></div></div>
+            <span class="flow-label">Comparable Sales Discovery</span>
+          </div>
+          <div class="flow-body">
+            <div class="step-list">
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p2-dim);color:var(--p2);border:1px solid rgba(167,139,250,0.3)">1</div>
+                <div class="step-body">
+                  <div class="step-title">Comps tab loads automatically</div>
+                  <div class="step-desc">Fourth tab in panel. On open, fires GET /api/comps/:apn with default params (1-mile radius, 24 months, ±50% acreage). Comps return sorted by distance. On the map, comparable parcel locations render as small secondary markers in a different color.</div>
+                  <div class="step-context">
+                    <span class="tag tag-api">GET /api/comps/:apn?radius=1&months=24</span>
+                    <span class="tag tag-component">CompsTab.tsx, CompMarker.tsx</span>
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p2-dim);color:var(--p2);border:1px solid rgba(167,139,250,0.3)">2</div>
+                <div class="step-body">
+                  <div class="step-title">Comps table + filter controls</div>
+                  <div class="step-desc">Comps render as a sortable table: Address · Distance · Acres · Sale Date · Sale Price · $/SF · Zoning. Above table: filter sliders for radius (0.5–5mi) and time window (6–60 months). Adjusting filters re-queries instantly. Clicking a comp row flies map to that parcel.</div>
+                  <div class="step-context">
+                    <span class="tag tag-component">CompsTable.tsx, CompsFilter.tsx</span>
+                    <span class="tag tag-mobile">Horizontal scroll table on mobile</span>
+                    <span class="tag tag-desktop">Full table with sortable columns</span>
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p2-dim);color:var(--p2);border:1px solid rgba(167,139,250,0.3)">3</div>
+                <div class="step-body">
+                  <div class="step-title">AI value summary</div>
+                  <div class="step-desc">Below the table: a 2–3 sentence LLM-generated value implication summary loads after comps return. Capped at 150 tokens — it's a quick read, not a report. "Refresh analysis" button re-runs if user changes filters.</div>
+                  <div class="step-context">
+                    <span class="tag tag-api">POST /api/comps/summarize</span>
+                    <span class="tag tag-component">CompsSummary.tsx</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2.4 -->
+      <div class="feature-section" id="f2-4">
+        <div class="feature-header">
+          <span class="feature-num" style="background:var(--p2-dim);color:var(--p2);border:1px solid rgba(167,139,250,0.25)">2.4</span>
+          <span class="feature-title">Deal History RAG</span>
+        </div>
+        <div class="flow">
+          <div class="flow-header">
+            <div class="flow-dots"><div class="flow-dot"></div><div class="flow-dot"></div><div class="flow-dot"></div></div>
+            <span class="flow-label">Institutional Memory Retrieval</span>
+          </div>
+          <div class="flow-body">
+            <div class="step-list">
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p2-dim);color:var(--p2);border:1px solid rgba(167,139,250,0.3)">1</div>
+                <div class="step-body">
+                  <div class="step-title">"Firm History" panel section</div>
+                  <div class="step-desc">Appears as a section within the Score tab (not a separate tab). Labeled "What We've Seen Like This." On parcel open, fires a similarity search against the org's deal document embeddings using the parcel's attributes as the query. Renders top 3 matches.</div>
+                  <div class="step-context">
+                    <span class="tag tag-api">POST /api/rag/similar-deals</span>
+                    <span class="tag tag-component">FirmHistoryCard.tsx</span>
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p2-dim);color:var(--p2);border:1px solid rgba(167,139,250,0.3)">2</div>
+                <div class="step-body">
+                  <div class="step-title">Match cards render</div>
+                  <div class="step-desc">Each match shows: Deal name · Year · Outcome badge (Closed / Passed / Lost) · Similarity % · 1–2 sentence excerpt of why it's relevant. Tapping a match expands to show the full retrieved text chunk and a link to the source document.</div>
+                  <div class="step-context">
+                    <span class="tag tag-component">DealMatchCard.tsx</span>
+                    <span class="tag tag-state">Only visible to authenticated org users</span>
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p2-dim);color:var(--p2);border:1px solid rgba(167,139,250,0.3)">3</div>
+                <div class="step-body">
+                  <div class="step-title">Document Ingestion Flow (Admin)</div>
+                  <div class="step-desc">Separate admin route /settings/documents. Org admin uploads deal docs (PDF, DOCX, XLSX) via drag-and-drop → POST /api/ingest → background job runs LlamaParse extraction → chunking → embedding → stored in pgvector. Progress shown in a processing queue UI. Admin receives in-app notification on completion.</div>
+                  <div class="step-context">
+                    <span class="tag tag-api">POST /api/ingest (multipart)</span>
+                    <span class="tag tag-component">DocumentUploader.tsx, IngestionQueue.tsx</span>
+                    <span class="tag tag-desktop">Admin-only, desktop primarily</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2.5 -->
+      <div class="feature-section" id="f2-5">
+        <div class="feature-header">
+          <span class="feature-num" style="background:var(--p2-dim);color:var(--p2);border:1px solid rgba(167,139,250,0.25)">2.5</span>
+          <span class="feature-title">Feasibility Brief Generator</span>
+        </div>
+        <div class="flow">
+          <div class="flow-header">
+            <div class="flow-dots"><div class="flow-dot"></div><div class="flow-dot"></div><div class="flow-dot"></div></div>
+            <span class="flow-label">One-Click Report Generation</span>
+          </div>
+          <div class="flow-body">
+            <div class="step-list">
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p2-dim);color:var(--p2);border:1px solid rgba(167,139,250,0.3)">1</div>
+                <div class="step-body">
+                  <div class="step-title">User taps "Generate Brief"</div>
+                  <div class="step-desc">Button in panel action bar (desktop) or floating action button (mobile). Requires: score computed + at least 1 comp found. If prerequisites missing, button shows tooltip explaining what's needed. On tap: full-screen overlay opens showing generation progress — live status updates as each section completes.</div>
+                  <div class="step-context">
+                    <span class="tag tag-api">POST /api/brief/generate</span>
+                    <span class="tag tag-component">BriefGenerator.tsx</span>
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p2-dim);color:var(--p2);border:1px solid rgba(167,139,250,0.3)">2</div>
+                <div class="step-body">
+                  <div class="step-title">Brief renders in viewer</div>
+                  <div class="step-desc">On completion, a structured brief viewer renders in the overlay. Sections: Executive Summary · Site Overview · Development Score Breakdown · Zoning Analysis · Comparable Sales · Firm Historical Context · Key Risks · Recommended Next Steps. Each section is collapsible. The viewer is printable.</div>
+                  <div class="step-context">
+                    <span class="tag tag-component">BriefViewer.tsx</span>
+                    <span class="tag tag-desktop">Full-screen on desktop</span>
+                    <span class="tag tag-mobile">Scrollable sheet on mobile</span>
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p2-dim);color:var(--p2);border:1px solid rgba(167,139,250,0.3)">3</div>
+                <div class="step-body">
+                  <div class="step-title">Export options</div>
+                  <div class="step-desc">Three export paths: Download PDF (Puppeteer server-side render, firm logo watermark applied) · Copy Share Link (brief hosted at /brief/:id, org-gated access) · Add to Deal (if deal pipeline exists in Phase 4, brief attaches to the deal record).</div>
+                  <div class="step-context">
+                    <span class="tag tag-api">GET /api/brief/:id/pdf</span>
+                    <span class="tag tag-component">BriefExportBar.tsx</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end phase-p2 -->
+
+    <!-- ==================== PHASE 3 ==================== -->
+    <div class="phase-content" id="phase-p3">
+
+      <div class="phase-header">
+        <div class="phase-number" style="color:var(--p3)">03</div>
+        <div class="phase-meta">
+          <div class="phase-tag" style="color:var(--p3)">Phase 3 · Data Center Selector</div>
+          <div class="phase-title">Infrastructure Intelligence Layer</div>
+          <div class="phase-desc">A parallel evaluation mode that overlays power, fiber, water, and environmental data on the same map surface. Users toggle into "Data Center Mode" — the scoring engine, panel tabs, and map layers all switch to DC-specific context.</div>
+        </div>
+      </div>
+
+      <!-- Mode Switch -->
+      <div class="feature-section" id="f3-0">
+        <div class="feature-header">
+          <span class="feature-num" style="background:var(--p3-dim);color:var(--p3);border:1px solid rgba(52,211,153,0.25)">→</span>
+          <span class="feature-title">Mode Entry Point</span>
+        </div>
+        <div class="flow">
+          <div class="flow-header">
+            <div class="flow-dots"><div class="flow-dot"></div><div class="flow-dot"></div><div class="flow-dot"></div></div>
+            <span class="flow-label">Switching Into DC Mode</span>
+          </div>
+          <div class="flow-body">
+            <div class="step-list">
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p3-dim);color:var(--p3);border:1px solid rgba(52,211,153,0.3)">→</div>
+                <div class="step-body">
+                  <div class="step-title">Mode toggle in header nav</div>
+                  <div class="step-desc">A segmented toggle in the top nav switches between "Development Mode" (Phases 1–2 default) and "Data Center Mode" (Phase 3). Switching mode: reloads map layer visibility (power/fiber/water layers turn on, zoning layer dims), resets parcel panel to DC tab set, persists preference in user settings. The map does not reload — layer visibility is toggled in-place.</div>
+                  <div class="step-context">
+                    <span class="tag tag-state">appMode: 'development' | 'datacenter'</span>
+                    <span class="tag tag-component">ModeToggle.tsx</span>
+                    <span class="tag tag-both">Available both mobile and desktop</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3.1 -->
+      <div class="feature-section" id="f3-1">
+        <div class="feature-header">
+          <span class="feature-num" style="background:var(--p3-dim);color:var(--p3);border:1px solid rgba(52,211,153,0.25)">3.1</span>
+          <span class="feature-title">Power Infrastructure Scoring</span>
+        </div>
+        <div class="flow">
+          <div class="flow-header">
+            <div class="flow-dots"><div class="flow-dot"></div><div class="flow-dot"></div><div class="flow-dot"></div></div>
+            <span class="flow-label">Power Layer + Panel Score Flow</span>
+          </div>
+          <div class="flow-body">
+            <div class="step-list">
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p3-dim);color:var(--p3);border:1px solid rgba(52,211,153,0.3)">1</div>
+                <div class="step-body">
+                  <div class="step-title">Power layer activates on map</div>
+                  <div class="step-desc">In DC Mode, map renders: substation icons (sized by voltage tier — small/medium/large), transmission line polylines (colored by kV: yellow=69kV, orange=115kV, red=230kV+), utility territory fill layer (semi-transparent, labeled with utility name). User can filter transmission lines by minimum voltage via layer control.</div>
+                  <div class="step-context">
+                    <span class="tag tag-component">PowerLayer.tsx</span>
+                    <span class="tag tag-state">layers.power: { substations, lines, territories }</span>
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p3-dim);color:var(--p3);border:1px solid rgba(52,211,153,0.3)">2</div>
+                <div class="step-body">
+                  <div class="step-title">Parcel tapped → DC panel opens</div>
+                  <div class="step-desc">Panel in DC mode shows: Power tab (default open), Fiber tab, Water tab, Environment tab, DC Score tab. Power tab lists nearest 3 substations with distance, voltage, and owner. Serving utility displays prominently with large-load program link. Redundancy flag: green if 2+ substations within 5 miles, red if only 1.</div>
+                  <div class="step-context">
+                    <span class="tag tag-api">GET /api/dc/power/:apn</span>
+                    <span class="tag tag-component">PowerTab.tsx</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3.4 -->
+      <div class="feature-section" id="f3-4">
+        <div class="feature-header">
+          <span class="feature-num" style="background:var(--p3-dim);color:var(--p3);border:1px solid rgba(52,211,153,0.25)">3.4</span>
+          <span class="feature-title">Environmental Risk Layer</span>
+        </div>
+        <div class="flow">
+          <div class="flow-header">
+            <div class="flow-dots"><div class="flow-dot"></div><div class="flow-dot"></div><div class="flow-dot"></div></div>
+            <span class="flow-label">Risk Flag System</span>
+          </div>
+          <div class="flow-body">
+            <div class="step-list">
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p3-dim);color:var(--p3);border:1px solid rgba(52,211,153,0.3)">1</div>
+                <div class="step-body">
+                  <div class="step-title">Environment tab — flag list renders</div>
+                  <div class="step-desc">Auto-runs on parcel select in DC mode. Checks: FEMA flood zone, USFWS wetlands coverage %, EPA brownfield proximity, USGS seismic PGA, FAA airspace obstacles. Renders as a flagged list — not a score. CRITICAL flags (disqualifying) render in red at top. MEDIUM in amber. CLEAR items in green.</div>
+                  <div class="step-context">
+                    <span class="tag tag-api">GET /api/dc/environment/:apn</span>
+                    <span class="tag tag-component">EnvironmentTab.tsx, RiskFlagList.tsx</span>
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p3-dim);color:var(--p3);border:1px solid rgba(52,211,153,0.3)">2</div>
+                <div class="step-body">
+                  <div class="step-title">Critical flag behavior</div>
+                  <div class="step-desc">If any CRITICAL flag exists (e.g. AE flood zone), the DC Composite Score tab shows a red "Disqualified" badge instead of a numeric score. The disqualifying reason renders prominently. User can still view all other sub-scores, but the composite is suppressed to prevent misuse of a flagged score.</div>
+                  <div class="step-context">
+                    <span class="tag tag-state">dcScore.disqualified: boolean</span>
+                    <span class="tag tag-component">DisqualifiedBanner.tsx</span>
+                  </div>
+                  <div class="annotation"><strong>Dev note:</strong> Never show a composite DC score on a disqualified parcel. Developers could screenshot a partial score and misrepresent the site to investors. The disqualified state must be visually unmistakable.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3.5 -->
+      <div class="feature-section" id="f3-5">
+        <div class="feature-header">
+          <span class="feature-num" style="background:var(--p3-dim);color:var(--p3);border:1px solid rgba(52,211,153,0.25)">3.5</span>
+          <span class="feature-title">DC Composite Score + Tier</span>
+        </div>
+        <div class="flow">
+          <div class="flow-header">
+            <div class="flow-dots"><div class="flow-dot"></div><div class="flow-dot"></div><div class="flow-dot"></div></div>
+            <span class="flow-label">Score Display + MW Slider</span>
+          </div>
+          <div class="flow-body">
+            <div class="step-list">
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p3-dim);color:var(--p3);border:1px solid rgba(52,211,153,0.3)">1</div>
+                <div class="step-body">
+                  <div class="step-title">DC Score tab — composite view</div>
+                  <div class="step-desc">Composite score (0–100) + Tier badge (Tier I / II / III / IV / Not Viable). A horizontal bar visualization shows the four sub-score contributions. The MW target slider (1 MW – 200 MW, logarithmic scale) sits above the score — adjusting it recalculates water and power sub-scores in real time (debounced 500ms, re-query on settle).</div>
+                  <div class="step-context">
+                    <span class="tag tag-component">DCScoreTab.tsx, MWSlider.tsx</span>
+                    <span class="tag tag-state">targetMW: number</span>
+                    <span class="tag tag-api">GET /api/dc/score/:apn?mw=10</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3.6 -->
+      <div class="feature-section" id="f3-6">
+        <div class="feature-header">
+          <span class="feature-num" style="background:var(--p3-dim);color:var(--p3);border:1px solid rgba(52,211,153,0.25)">3.6</span>
+          <span class="feature-title">Site Comparison Mode</span>
+        </div>
+        <div class="flow">
+          <div class="flow-header">
+            <div class="flow-dots"><div class="flow-dot"></div><div class="flow-dot"></div><div class="flow-dot"></div></div>
+            <span class="flow-label">Multi-Site Evaluation Flow</span>
+          </div>
+          <div class="flow-body">
+            <div class="step-list">
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p3-dim);color:var(--p3);border:1px solid rgba(52,211,153,0.3)">1</div>
+                <div class="step-body">
+                  <div class="step-title">Adding sites to comparison</div>
+                  <div class="step-desc">In DC Mode, panel action bar shows "Add to Compare" button. Tapping adds the parcel to a persistent comparison tray — a collapsed bar at the screen bottom showing added site chips (up to 4). The tray is always visible once 1+ sites added. Each chip shows address + DC score badge.</div>
+                  <div class="step-context">
+                    <span class="tag tag-state">compareList: APN[] (max 4)</span>
+                    <span class="tag tag-component">ComparisonTray.tsx</span>
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p3-dim);color:var(--p3);border:1px solid rgba(52,211,153,0.3)">2</div>
+                <div class="step-body">
+                  <div class="step-title">"Compare" opens full comparison table</div>
+                  <div class="step-desc">Full-screen comparison view: each site is a column, each scoring dimension is a row. Best value in each row highlighted green. Worst value highlighted red. Rows: Composite Score · Tier · Power Score · Nearest Substation (dist + voltage) · Fiber Carriers · Water Capacity · Flood Zone · Wetlands % · Acreage · Price/SF.</div>
+                  <div class="step-context">
+                    <span class="tag tag-component">ComparisonTable.tsx</span>
+                    <span class="tag tag-desktop">Side-by-side columns</span>
+                    <span class="tag tag-mobile">Horizontally scrollable</span>
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p3-dim);color:var(--p3);border:1px solid rgba(52,211,153,0.3)">3</div>
+                <div class="step-body">
+                  <div class="step-title">AI recommendation + export</div>
+                  <div class="step-desc">Below table: LLM-generated recommendation paragraph names the top site and explains why relative to the others. "Export Comparison" generates a PDF table. "Clear All" resets the tray. Individual sites can be removed via chip X without clearing all.</div>
+                  <div class="step-context">
+                    <span class="tag tag-api">POST /api/dc/compare/brief</span>
+                    <span class="tag tag-api">GET /api/dc/compare/pdf</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end phase-p3 -->
+
+    <!-- ==================== PHASE 4 ==================== -->
+    <div class="phase-content" id="phase-p4">
+
+      <div class="phase-header">
+        <div class="phase-number" style="color:var(--p4)">04</div>
+        <div class="phase-meta">
+          <div class="phase-tag" style="color:var(--p4)">Phase 4 · Firm Intelligence Platform</div>
+          <div class="phase-title">The Platform Layer</div>
+          <div class="phase-desc">The UX shifts from single-user tool to multi-user platform. New surfaces: Deal Pipeline (Kanban), Executive Dashboard, Admin settings, and proactive alert flows. The map remains the core, but navigation expands significantly.</div>
+        </div>
+      </div>
+
+      <!-- 4.1 -->
+      <div class="feature-section" id="f4-1">
+        <div class="feature-header">
+          <span class="feature-num" style="background:var(--p4-dim);color:var(--p4);border:1px solid rgba(251,146,60,0.25)">4.1</span>
+          <span class="feature-title">ML Firm Score</span>
+        </div>
+        <div class="flow">
+          <div class="flow-header">
+            <div class="flow-dots"><div class="flow-dot"></div><div class="flow-dot"></div><div class="flow-dot"></div></div>
+            <span class="flow-label">Firm Model Score Surfacing</span>
+          </div>
+          <div class="flow-body">
+            <div class="step-list">
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p4-dim);color:var(--p4);border:1px solid rgba(251,146,60,0.3)">1</div>
+                <div class="step-body">
+                  <div class="step-title">Firm Score appears alongside generic score</div>
+                  <div class="step-desc">In the Score tab, Phase 2's generic composite score (market data driven) now shows alongside a second score: "DeThomas Score" — the firm-trained ML model prediction. They're visually differentiated: generic score in default styling, firm score in firm brand color with a "Trained on your data" label. Once enough deals are recorded (minimum ~30), the firm score becomes the primary displayed number.</div>
+                  <div class="step-context">
+                    <span class="tag tag-api">GET /api/ml/predict/:apn?org_id=</span>
+                    <span class="tag tag-component">FirmScoreCard.tsx</span>
+                    <span class="tag tag-state">firmModel: { score, confidence, top_drivers }</span>
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p4-dim);color:var(--p4);border:1px solid rgba(251,146,60,0.3)">2</div>
+                <div class="step-body">
+                  <div class="step-title">SHAP explanation renders</div>
+                  <div class="step-desc">Below the firm score: a horizontal bar chart showing the top 5 SHAP drivers — 3 positive (green), 2 negative (red). Each bar labeled with the feature name in plain English (not the column name): "Traffic count", "Price per SF vs your average", "Zoning match to your typical deals." Tapping a bar shows the actual feature value vs the firm's historical median.</div>
+                  <div class="step-context">
+                    <span class="tag tag-component">SHAPChart.tsx</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4.2 -->
+      <div class="feature-section" id="f4-2">
+        <div class="feature-header">
+          <span class="feature-num" style="background:var(--p4-dim);color:var(--p4);border:1px solid rgba(251,146,60,0.25)">4.2</span>
+          <span class="feature-title">Deal Pipeline (Kanban)</span>
+        </div>
+        <div class="flow">
+          <div class="flow-header">
+            <div class="flow-dots"><div class="flow-dot"></div><div class="flow-dot"></div><div class="flow-dot"></div></div>
+            <span class="flow-label">Pipeline Lifecycle Flow</span>
+          </div>
+          <div class="flow-body">
+            <div class="step-list">
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p4-dim);color:var(--p4);border:1px solid rgba(251,146,60,0.3)">1</div>
+                <div class="step-body">
+                  <div class="step-title">Create deal from parcel panel</div>
+                  <div class="step-desc">"Add to Pipeline" button in the panel action bar. Opens a quick-create modal: deal name (pre-filled with address), product type selector, assigned user, priority. One-click confirm. Deal created in "Identified" stage. Map pin for that parcel updates to show a deal-active indicator.</div>
+                  <div class="step-context">
+                    <span class="tag tag-api">POST /api/deals</span>
+                    <span class="tag tag-component">CreateDealModal.tsx</span>
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p4-dim);color:var(--p4);border:1px solid rgba(251,146,60,0.3)">2</div>
+                <div class="step-body">
+                  <div class="step-title">Kanban board view (/pipeline)</div>
+                  <div class="step-desc">Separate route from the map. Columns: Identified → Evaluating → LOI → Due Diligence → Under Contract → Closed / Passed. Deal cards show: address, score badge, assigned avatar, days in current stage, priority indicator. Drag between columns updates stage instantly (optimistic UI, API call fires async).</div>
+                  <div class="step-context">
+                    <span class="tag tag-component">PipelineBoard.tsx, DealCard.tsx</span>
+                    <span class="tag tag-api">PATCH /api/deals/:id {stage}</span>
+                    <span class="tag tag-desktop">Kanban primary layout</span>
+                    <span class="tag tag-mobile">List view with stage filter tabs</span>
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p4-dim);color:var(--p4);border:1px solid rgba(251,146,60,0.3)">3</div>
+                <div class="step-body">
+                  <div class="step-title">Deal detail view</div>
+                  <div class="step-desc">Clicking a deal card opens the deal detail panel (right panel on desktop, full screen on mobile). Sections: Site Intelligence (embedded parcel panel), Activity Log, Tasks, Documents, Outcome (visible when stage = Closed/Passed). Recording an outcome (with structured tags) feeds the ML training pipeline.</div>
+                  <div class="step-context">
+                    <span class="tag tag-component">DealDetail.tsx</span>
+                    <span class="tag tag-state">outcome triggers ML retraining queue</span>
+                  </div>
+                  <div class="state-machine">
+                    <div class="state-node" style="color:var(--p1);border-color:rgba(0,194,255,0.3)">Identified</div>
+                    <div class="state-arrow">→</div>
+                    <div class="state-node" style="color:var(--p2);border-color:rgba(167,139,250,0.3)">Evaluating</div>
+                    <div class="state-arrow">→</div>
+                    <div class="state-node" style="color:var(--warn);border-color:rgba(251,191,36,0.3)">LOI</div>
+                    <div class="state-arrow">→</div>
+                    <div class="state-node" style="color:var(--p3);border-color:rgba(52,211,153,0.3)">DD</div>
+                    <div class="state-arrow">→</div>
+                    <div class="state-node" style="color:var(--success);border-color:rgba(52,211,153,0.4)">Closed</div>
+                    <div style="color:var(--text-muted);align-self:center;font-size:12px;padding:0 8px">or</div>
+                    <div class="state-node" style="color:var(--danger);border-color:rgba(248,113,113,0.3)">Passed</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4.5 -->
+      <div class="feature-section" id="f4-5">
+        <div class="feature-header">
+          <span class="feature-num" style="background:var(--p4-dim);color:var(--p4);border:1px solid rgba(251,146,60,0.25)">4.5</span>
+          <span class="feature-title">Executive Dashboard</span>
+        </div>
+        <div class="flow">
+          <div class="flow-header">
+            <div class="flow-dots"><div class="flow-dot"></div><div class="flow-dot"></div><div class="flow-dot"></div></div>
+            <span class="flow-label">Leadership View Flow</span>
+          </div>
+          <div class="flow-body">
+            <div class="step-list">
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p4-dim);color:var(--p4);border:1px solid rgba(251,146,60,0.3)">1</div>
+                <div class="step-body">
+                  <div class="step-title">Dashboard route (/dashboard)</div>
+                  <div class="step-desc">Default landing page for Owner and Admin roles. Members and viewers land on the map. Dashboard renders server-side (Next.js RSC) for fast first paint. Four KPI cards: Active Pipeline Deals · Total Pipeline Value · Deals Closed This Quarter · Avg Days to LOI. Below: pipeline stage distribution chart, team activity feed, model performance card.</div>
+                  <div class="step-context">
+                    <span class="tag tag-component">Dashboard.tsx (RSC)</span>
+                    <span class="tag tag-desktop">Primary desktop surface</span>
+                    <span class="tag tag-mobile">Simplified summary cards only</span>
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p4-dim);color:var(--p4);border:1px solid rgba(251,146,60,0.3)">2</div>
+                <div class="step-body">
+                  <div class="step-title">Market heat map panel</div>
+                  <div class="step-desc">Embedded Mapbox map (smaller, not interactive for parcel clicking) showing deal activity density as a choropleth. Hovering a county/zip shows tooltip: X deals evaluated, Y closed, average score. Clicking a county navigates to the main map centered on that area with the pipeline filter pre-applied.</div>
+                  <div class="step-context">
+                    <span class="tag tag-component">MarketHeatMap.tsx</span>
+                    <span class="tag tag-api">GET /api/analytics/market-density</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4.7 -->
+      <div class="feature-section" id="f4-7">
+        <div class="feature-header">
+          <span class="feature-num" style="background:var(--p4-dim);color:var(--p4);border:1px solid rgba(251,146,60,0.25)">4.7</span>
+          <span class="feature-title">Site Watch Alerts</span>
+        </div>
+        <div class="flow">
+          <div class="flow-header">
+            <div class="flow-dots"><div class="flow-dot"></div><div class="flow-dot"></div><div class="flow-dot"></div></div>
+            <span class="flow-label">Alert Configuration + Delivery Flow</span>
+          </div>
+          <div class="flow-body">
+            <div class="step-list">
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p4-dim);color:var(--p4);border:1px solid rgba(251,146,60,0.3)">1</div>
+                <div class="step-body">
+                  <div class="step-title">Create a watch area</div>
+                  <div class="step-desc">On the map, "Draw Watch Area" tool (polygon draw mode using Mapbox Draw) lets users define a custom boundary. Or select a county/zip from a dropdown for a preset boundary. After drawing: filter panel appears — set min acres, zoning types, max price/SF, min score threshold. Name the watch and save.</div>
+                  <div class="step-context">
+                    <span class="tag tag-component">WatchAreaDrawer.tsx</span>
+                    <span class="tag tag-api">POST /api/watches</span>
+                    <span class="tag tag-desktop">Primary creation surface</span>
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p4-dim);color:var(--p4);border:1px solid rgba(251,146,60,0.3)">2</div>
+                <div class="step-body">
+                  <div class="step-title">Alert triggers (nightly job)</div>
+                  <div class="step-desc">Scheduled job runs at 6 AM daily. Checks new parcel transfers in the Regrid data refresh (quarterly bulk) or live API (if upgraded). Matching parcels get scored. Parcels meeting the watch criteria trigger alert delivery: in-app notification bell, email digest (Resend), optional webhook to external system.</div>
+                  <div class="step-context">
+                    <span class="tag tag-api">Scheduler: cron 0 6 * * *</span>
+                    <span class="tag tag-component">AlertNotification.tsx</span>
+                  </div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-indicator" style="background:var(--p4-dim);color:var(--p4);border:1px solid rgba(251,146,60,0.3)">3</div>
+                <div class="step-body">
+                  <div class="step-title">Alert received → action flow</div>
+                  <div class="step-desc">Alert card shows: matched parcel address + score + why it matched the watch. Two CTAs: "View on Map" (flies to parcel, opens panel) · "Add to Pipeline" (one-click deal creation from alert). Alert is marked read on either action. Alerts accumulate in a notification drawer — sortable by date or score.</div>
+                  <div class="step-context">
+                    <span class="tag tag-component">AlertDrawer.tsx, AlertCard.tsx</span>
+                    <span class="tag tag-both">Mobile push + desktop in-app</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end phase-p4 -->
+
+  </main>
+</div>
+
+<script>
+  function showPhase(phase, btn) {
+    // Hide all phase content
+    document.querySelectorAll('.phase-content').forEach(el => el.classList.remove('active'));
+    document.getElementById('phase-' + phase).classList.add('active');
+
+    // Update nav buttons
+    document.querySelectorAll('.phase-btn').forEach(b => {
+      b.className = 'phase-btn';
+    });
+    btn.classList.add('active-' + phase);
+
+    // Update sidebar
+    ['p1','p2','p3','p4'].forEach(p => {
+      const sb = document.getElementById('sidebar-' + p);
+      if (sb) sb.style.display = (p === phase) ? 'block' : 'none';
+    });
+
+    // Scroll to top
+    document.querySelector('.content').scrollTop = 0;
+    window.scrollTo(0, 0);
+  }
+
+  // Initialize sidebar
+  document.querySelectorAll('.sidebar-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+      document.querySelectorAll('.sidebar-link').forEach(l => {
+        l.classList.remove('p1-active','p2-active','p3-active','p4-active');
+      });
+      const phase = document.querySelector('.phase-btn[class*="active"]');
+      if (phase) {
+        const p = phase.className.match(/active-(p\d)/)?.[1];
+        if (p) this.classList.add(p + '-active');
+      }
+    });
+  });
+</script>
+</body>
+</html>
