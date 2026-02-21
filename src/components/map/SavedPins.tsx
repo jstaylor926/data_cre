@@ -1,8 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Marker } from "react-map-gl/mapbox";
 import { useAppStore } from "@/store/useAppStore";
-import { getParcelCentroid } from "@/lib/mock-geojson";
 import type { SavedParcel } from "@/lib/types";
 
 interface SavedPinsProps {
@@ -14,15 +14,36 @@ export default function SavedPins({ savedParcels }: SavedPinsProps) {
   const siteScore = useAppStore((s) => s.siteScore);
   const selectedAPN = useAppStore((s) => s.selectedAPN);
 
+  // Real centroids fetched from the batch API
+  const [centroids, setCentroids] = useState<Record<string, [number, number]>>({});
+
+  useEffect(() => {
+    if (savedParcels.length === 0) return;
+
+    const pins = savedParcels.map((sp) => sp.apn).join(",");
+    fetch(`/api/parcel/batch?pins=${encodeURIComponent(pins)}`)
+      .then((res) => (res.ok ? res.json() : {}))
+      .then((data: Record<string, { centroid?: [number, number] }>) => {
+        const result: Record<string, [number, number]> = {};
+        for (const [pin, parcel] of Object.entries(data)) {
+          if (parcel?.centroid) {
+            result[pin] = parcel.centroid;
+          }
+        }
+        setCentroids(result);
+      })
+      .catch(() => {});
+  }, [savedParcels]);
+
   return (
     <>
       {savedParcels.map((sp) => {
-        const centroid = getParcelCentroid(sp.apn);
+        const centroid = centroids[sp.apn];
         if (!centroid) return null;
 
-        // Simulate a score for saved pins in Phase 2
+        // Phase 2: show score badge when available
         const hasScore = siteScore && sp.apn === selectedAPN;
-        const scoreValue = hasScore ? siteScore.composite : (sp.apn.endsWith('1') ? 74 : null);
+        const scoreValue = hasScore ? siteScore.composite : null;
 
         return (
           <Marker

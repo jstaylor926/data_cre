@@ -26,9 +26,8 @@ export default function SavedPage() {
       <div className="flex-1 overflow-y-auto">
         <SavedPropertiesList
           onSelectParcel={(apn) => {
-            // Navigate to map with the parcel selected
-            // TODO: pass apn as query param and select on map load
-            router.push(`/?apn=${apn}`);
+            // Navigate to phase-1 map with the parcel selected
+            router.push(`/phase-1?apn=${apn}`);
           }}
         />
       </div>

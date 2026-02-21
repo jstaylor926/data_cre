@@ -23,9 +23,13 @@ export default function Phase1Dashboard() {
   }, []);
 
   const handleSelectSavedParcel = useCallback(
-    (apn: string) => {
-      selectParcel(apn);
+    (apn: string, centroid?: [number, number]) => {
       setActiveNav("map");
+      if (centroid) {
+        mapRef.current?.flyTo(centroid[0], centroid[1]);
+      }
+      // Small delay so map view activates and flyTo starts first
+      setTimeout(() => selectParcel(apn), 300);
     },
     [selectParcel]
   );

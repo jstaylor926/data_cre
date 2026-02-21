@@ -48,6 +48,34 @@ export function useSavedParcels() {
     [refresh]
   );
 
+  const updateNotes = useCallback(
+    async (apn: string, notes: string) => {
+      const res = await fetch("/api/saved", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ apn, notes }),
+      });
+      if (res.ok) {
+        await refresh();
+      }
+    },
+    [refresh]
+  );
+
+  const moveToCollection = useCallback(
+    async (apn: string, collectionId: string | null) => {
+      const res = await fetch("/api/saved", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ apn, collection_id: collectionId }),
+      });
+      if (res.ok) {
+        await refresh();
+      }
+    },
+    [refresh]
+  );
+
   const unsave = useCallback(
     async (apn: string) => {
       await fetch(`/api/saved?apn=${apn}`, { method: "DELETE" });
@@ -56,5 +84,5 @@ export function useSavedParcels() {
     [refresh]
   );
 
-  return { savedParcels, loading, isSaved, save, unsave, refresh };
+  return { savedParcels, loading, isSaved, save, updateNotes, moveToCollection, unsave, refresh };
 }

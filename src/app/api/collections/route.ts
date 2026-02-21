@@ -47,6 +47,32 @@ export async function POST(request: Request) {
   return NextResponse.json(data, { status: 201 });
 }
 
+export async function PATCH(request: Request) {
+  const body = await request.json();
+  const { id, name } = body as { id: string; name: string };
+
+  if (!id || !name) {
+    return NextResponse.json({ error: "id and name are required" }, { status: 400 });
+  }
+
+  const supabase = await createServerSupabase();
+
+  const { data, error } = await supabase
+    .from("collections")
+    .update({ name })
+    .eq("id", id)
+    .eq("user_id", DEV_USER_ID)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Failed to rename collection:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json(data);
+}
+
 export async function DELETE(request: Request) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");

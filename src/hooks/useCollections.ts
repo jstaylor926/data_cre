@@ -33,11 +33,25 @@ export function useCollections() {
         body: JSON.stringify({ name }),
       });
       if (res.ok) {
-        await refresh();
         const data = await res.json();
+        await refresh();
         return data as Collection;
       }
       return null;
+    },
+    [refresh]
+  );
+
+  const rename = useCallback(
+    async (id: string, name: string) => {
+      const res = await fetch("/api/collections", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, name }),
+      });
+      if (res.ok) {
+        await refresh();
+      }
     },
     [refresh]
   );
@@ -50,5 +64,5 @@ export function useCollections() {
     [refresh]
   );
 
-  return { collections, loading, create, remove, refresh };
+  return { collections, loading, create, rename, remove, refresh };
 }

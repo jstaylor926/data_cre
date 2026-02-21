@@ -1,26 +1,58 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { Bookmark, Plus } from "lucide-react";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
+import { Bookmark, Plus, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { useSavedParcels } from "@/hooks/useSavedParcels";
 import { useCollections } from "@/hooks/useCollections";
-import { getParcelByAPN } from "@/lib/mock-data";
+import type { Parcel, Collection } from "@/lib/types";
 import SavedPropertyRow from "./SavedPropertyRow";
 
 interface SavedPropertiesListProps {
-  onSelectParcel?: (apn: string) => void;
+  onSelectParcel?: (apn: string, centroid?: [number, number]) => void;
 }
 
 export default function SavedPropertiesList({
   onSelectParcel,
 }: SavedPropertiesListProps) {
-  const { savedParcels, loading: savedLoading } = useSavedParcels();
-  const { collections, loading: colLoading, create } = useCollections();
+  const { savedParcels, loading: savedLoading, updateNotes, moveToCollection } = useSavedParcels();
+  const { collections, loading: colLoading, create, rename, remove } = useCollections();
   const [activeCollection, setActiveCollection] = useState<string | null>(null);
   const [creatingNew, setCreatingNew] = useState(false);
   const [newName, setNewName] = useState("");
 
+  // Collection management state
+  const [menuCollId, setMenuCollId] = useState<string | null>(null);
+  const [renamingId, setRenamingId] = useState<string | null>(null);
+  const [renameValue, setRenameValue] = useState("");
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Batch-fetched parcel data from county
+  const [parcelData, setParcelData] = useState<Record<string, Parcel & { centroid?: [number, number] }>>({});
+
   const loading = savedLoading || colLoading;
+
+  // Fetch real parcel data for all saved APNs
+  useEffect(() => {
+    if (savedParcels.length === 0) return;
+
+    const pins = savedParcels.map((sp) => sp.apn).join(",");
+    fetch(`/api/parcel/batch?pins=${encodeURIComponent(pins)}`)
+      .then((res) => (res.ok ? res.json() : {}))
+      .then((data) => setParcelData(data))
+      .catch(() => {});
+  }, [savedParcels]);
+
+  // Close collection menu on outside click
+  useEffect(() => {
+    if (!menuCollId) return;
+    function handleClick(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuCollId(null);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [menuCollId]);
 
   // Filter parcels by active collection
   const filteredParcels = useMemo(() => {
@@ -47,11 +79,41 @@ export default function SavedPropertiesList({
     setCreatingNew(false);
   };
 
+  const handleRename = async (col: Collection) => {
+    const trimmed = renameValue.trim();
+    if (!trimmed || trimmed === col.name) {
+      setRenamingId(null);
+      return;
+    }
+    await rename(col.id, trimmed);
+    setRenamingId(null);
+  };
+
+  const handleDelete = async (col: Collection) => {
+    const count = collectionCounts[col.id] || 0;
+    const msg = count > 0
+      ? `Delete "${col.name}"? ${count} parcel(s) will be moved to unsorted.`
+      : `Delete "${col.name}"?`;
+    if (confirm(msg)) {
+      if (activeCollection === col.id) setActiveCollection(null);
+      await remove(col.id);
+    }
+    setMenuCollId(null);
+  };
+
+  const handleSelect = useCallback(
+    (apn: string) => {
+      const centroid = parcelData[apn]?.centroid;
+      onSelectParcel?.(apn, centroid);
+    },
+    [parcelData, onSelectParcel]
+  );
+
   if (loading) {
     return (
       <div className="flex flex-col gap-3 p-4">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="h-16 animate-pulse rounded bg-ink3" />
+          <div key={i} className="h-20 animate-pulse rounded-lg bg-ink3" />
         ))}
       </div>
     );
@@ -79,17 +141,72 @@ export default function SavedPropertiesList({
 
           {/* Collection tabs */}
           {collections.map((col) => (
-            <button
-              key={col.id}
-              onClick={() => setActiveCollection(col.id)}
-              className={`shrink-0 rounded px-2.5 py-1 font-mono text-[8px] uppercase tracking-wider transition-colors ${
-                activeCollection === col.id
-                  ? "border border-teal bg-teal-dim text-teal"
-                  : "border border-line2 text-pd-muted hover:text-mid"
-              }`}
-            >
-              {col.name} ({collectionCounts[col.id] || 0})
-            </button>
+            <div key={col.id} className="relative shrink-0 flex items-center">
+              {renamingId === col.id ? (
+                <input
+                  autoFocus
+                  value={renameValue}
+                  onChange={(e) => setRenameValue(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleRename(col);
+                    if (e.key === "Escape") setRenamingId(null);
+                  }}
+                  onBlur={() => handleRename(col)}
+                  className="h-6 w-28 rounded border border-teal bg-ink3 px-2 font-mono text-[9px] text-bright placeholder:text-pd-muted focus:outline-none"
+                />
+              ) : (
+                <button
+                  onClick={() => setActiveCollection(col.id)}
+                  className={`rounded px-2.5 py-1 font-mono text-[8px] uppercase tracking-wider transition-colors ${
+                    activeCollection === col.id
+                      ? "border border-teal bg-teal-dim text-teal"
+                      : "border border-line2 text-pd-muted hover:text-mid"
+                  }`}
+                >
+                  {col.name} ({collectionCounts[col.id] || 0})
+                </button>
+              )}
+
+              {/* Collection menu trigger — show on active tab */}
+              {activeCollection === col.id && renamingId !== col.id && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setMenuCollId(menuCollId === col.id ? null : col.id);
+                  }}
+                  className="ml-0.5 rounded p-0.5 text-pd-muted hover:text-mid"
+                >
+                  <MoreHorizontal size={10} />
+                </button>
+              )}
+
+              {/* Collection context menu */}
+              {menuCollId === col.id && (
+                <div
+                  ref={menuRef}
+                  className="absolute top-full left-0 z-50 mt-1 w-32 rounded-lg border border-line2 bg-ink2 p-1 shadow-xl"
+                >
+                  <button
+                    onClick={() => {
+                      setRenameValue(col.name);
+                      setRenamingId(col.id);
+                      setMenuCollId(null);
+                    }}
+                    className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left font-mono text-[9px] text-text transition-colors hover:bg-ink3"
+                  >
+                    <Pencil size={9} />
+                    Rename
+                  </button>
+                  <button
+                    onClick={() => handleDelete(col)}
+                    className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left font-mono text-[9px] text-red transition-colors hover:bg-ink3"
+                  >
+                    <Trash2 size={9} />
+                    Delete
+                  </button>
+                </div>
+              )}
+            </div>
           ))}
 
           {/* + New tab */}
@@ -147,13 +264,16 @@ export default function SavedPropertiesList({
         ) : (
           <div className="flex flex-col gap-2 p-4">
             {filteredParcels.map((sp) => {
-              const parcel = getParcelByAPN(sp.apn);
+              const parcel = parcelData[sp.apn] ?? undefined;
               return (
                 <SavedPropertyRow
                   key={sp.id}
                   savedParcel={sp}
-                  parcel={parcel ?? undefined}
-                  onSelect={() => onSelectParcel?.(sp.apn)}
+                  parcel={parcel}
+                  collections={collections}
+                  onSelect={() => handleSelect(sp.apn)}
+                  onUpdateNotes={(notes) => updateNotes(sp.apn, notes)}
+                  onMoveToCollection={(colId) => moveToCollection(sp.apn, colId)}
                 />
               );
             })}
