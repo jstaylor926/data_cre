@@ -1,17 +1,24 @@
 import { NextResponse } from "next/server";
+import { createServerSupabase } from "@/lib/supabase-server";
 
-// In-memory store for development (replace with Supabase when ready)
-const savedParcels: Map<
-  string,
-  { id: string; user_id: string; apn: string; notes: string | null; collection_id: string | null; created_at: string }
-> = new Map();
-
-let counter = 0;
+// TODO: Replace with auth.uid() when authentication is added
+const DEV_USER_ID = "dev-user";
 
 export async function GET() {
-  // TODO: Replace with Supabase query for authenticated user
-  const parcels = Array.from(savedParcels.values());
-  return NextResponse.json(parcels);
+  const supabase = await createServerSupabase();
+
+  const { data, error } = await supabase
+    .from("saved_parcels")
+    .select("*")
+    .eq("user_id", DEV_USER_ID)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Failed to fetch saved parcels:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json(data);
 }
 
 export async function POST(request: Request) {
@@ -26,26 +33,29 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "apn is required" }, { status: 400 });
   }
 
-  // Check if already saved
-  const existing = Array.from(savedParcels.values()).find(
-    (p) => p.apn === apn
-  );
-  if (existing) {
-    return NextResponse.json(existing);
+  const supabase = await createServerSupabase();
+
+  // Upsert: if already saved, return existing
+  const { data, error } = await supabase
+    .from("saved_parcels")
+    .upsert(
+      {
+        user_id: DEV_USER_ID,
+        apn,
+        notes: notes ?? null,
+        collection_id: collection_id ?? null,
+      },
+      { onConflict: "user_id,apn" }
+    )
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Failed to save parcel:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  const id = `saved-${++counter}`;
-  const saved = {
-    id,
-    user_id: "dev-user",
-    apn,
-    notes: notes ?? null,
-    collection_id: collection_id ?? null,
-    created_at: new Date().toISOString(),
-  };
-
-  savedParcels.set(id, saved);
-  return NextResponse.json(saved, { status: 201 });
+  return NextResponse.json(data, { status: 201 });
 }
 
 export async function DELETE(request: Request) {
@@ -53,13 +63,20 @@ export async function DELETE(request: Request) {
   const id = searchParams.get("id");
   const apn = searchParams.get("apn");
 
+  const supabase = await createServerSupabase();
+
   if (id) {
-    savedParcels.delete(id);
+    await supabase
+      .from("saved_parcels")
+      .delete()
+      .eq("id", id)
+      .eq("user_id", DEV_USER_ID);
   } else if (apn) {
-    const entry = Array.from(savedParcels.entries()).find(
-      ([, v]) => v.apn === apn
-    );
-    if (entry) savedParcels.delete(entry[0]);
+    await supabase
+      .from("saved_parcels")
+      .delete()
+      .eq("apn", apn)
+      .eq("user_id", DEV_USER_ID);
   }
 
   return NextResponse.json({ ok: true });

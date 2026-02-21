@@ -1,15 +1,23 @@
 import { NextResponse } from "next/server";
+import { createServerSupabase } from "@/lib/supabase-server";
 
-// In-memory store for development
-const collections: Map<
-  string,
-  { id: string; user_id: string; name: string; org_id: string | null; created_at: string }
-> = new Map();
-
-let counter = 0;
+const DEV_USER_ID = "dev-user";
 
 export async function GET() {
-  return NextResponse.json(Array.from(collections.values()));
+  const supabase = await createServerSupabase();
+
+  const { data, error } = await supabase
+    .from("collections")
+    .select("*")
+    .eq("user_id", DEV_USER_ID)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Failed to fetch collections:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json(data);
 }
 
 export async function POST(request: Request) {
@@ -20,22 +28,40 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "name is required" }, { status: 400 });
   }
 
-  const id = `col-${++counter}`;
-  const collection = {
-    id,
-    user_id: "dev-user",
-    name,
-    org_id: null,
-    created_at: new Date().toISOString(),
-  };
+  const supabase = await createServerSupabase();
 
-  collections.set(id, collection);
-  return NextResponse.json(collection, { status: 201 });
+  const { data, error } = await supabase
+    .from("collections")
+    .insert({
+      user_id: DEV_USER_ID,
+      name,
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Failed to create collection:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json(data, { status: 201 });
 }
 
 export async function DELETE(request: Request) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");
-  if (id) collections.delete(id);
+
+  if (!id) {
+    return NextResponse.json({ error: "id is required" }, { status: 400 });
+  }
+
+  const supabase = await createServerSupabase();
+
+  await supabase
+    .from("collections")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", DEV_USER_ID);
+
   return NextResponse.json({ ok: true });
 }
