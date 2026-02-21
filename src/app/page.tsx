@@ -63,7 +63,7 @@ export default function Home() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button asChild className="w-full bg-violet hover:bg-violet/90 text-zinc-950">
+              <Button asChild className="w-full">
                 <Link href="/phase-2">Launch Phase 2</Link>
               </Button>
             </CardFooter>

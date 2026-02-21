@@ -4,6 +4,14 @@ import type { EntityResult } from "@/lib/types";
 
 // Mock entity lookup data — simulates GA SOS scraping results
 const MOCK_ENTITIES: Record<string, Omit<EntityResult, "related_parcels">> = {
+  "Meridian Holdings LLC": {
+    llc_name: "Meridian Holdings LLC",
+    state: "GA",
+    principal_name: "Marcus W. Chen",
+    agent_name: "David R. Thornton",
+    status: "Active/Compliance",
+    formed_date: "2018-03-12",
+  },
   "DeThomas Development Group LLC": {
     llc_name: "DeThomas Development Group LLC",
     state: "GA",

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { fetchPropertyByPIN, mapTaxToParcel } from "@/lib/arcgis";
 import { getParcelByAPN } from "@/lib/mock-data";
 
 export async function GET(
@@ -7,14 +8,22 @@ export async function GET(
 ) {
   const { apn } = await params;
 
-  // TODO: Replace with Supabase query when real data is available
-  // const supabase = await createServerSupabase();
-  // const { data, error } = await supabase
-  //   .from('parcels')
-  //   .select('*')
-  //   .eq('apn', apn)
-  //   .single();
+  // Try real county data first (Gwinnett County ArcGIS)
+  try {
+    const attrs = await fetchPropertyByPIN(apn);
+    if (attrs) {
+      const parcel = mapTaxToParcel(attrs, apn);
+      return NextResponse.json(parcel, {
+        headers: {
+          "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
+        },
+      });
+    }
+  } catch (err) {
+    console.error("County data fetch failed, falling back to mock:", err);
+  }
 
+  // Fallback to mock data for non-Gwinnett parcels or if county API is down
   const parcel = getParcelByAPN(apn);
 
   if (!parcel) {

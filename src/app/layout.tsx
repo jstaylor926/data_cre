@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Bebas_Neue, IBM_Plex_Mono, Barlow } from "next/font/google";
 import "./globals.css";
 
@@ -23,9 +23,33 @@ const barlow = Barlow({
   display: "swap",
 });
 
+export const viewport: Viewport = {
+  themeColor: "#00d4c8",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
 export const metadata: Metadata = {
   title: "Pocket Developer",
-  description: "Commercial real estate parcel intelligence",
+  description: "Commercial real estate parcel intelligence — interactive maps, parcel data, LLC entity lookup, and saved collections.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "PocketDev",
+  },
+  openGraph: {
+    title: "Pocket Developer",
+    description: "Commercial real estate parcel intelligence",
+    type: "website",
+    siteName: "Pocket Developer",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({

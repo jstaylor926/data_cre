@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Building2, ChevronRight, Loader2 } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Building2, ChevronRight, Loader2, Check } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import type { EntityResult, Parcel } from "@/lib/types";
 import { formatAcres } from "@/lib/formatters";
@@ -16,6 +16,9 @@ export default function EntityLookupCard({ ownerName }: EntityLookupCardProps) {
   const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const selectParcel = useAppStore((s) => s.selectParcel);
+  const entityLookupOpen = useAppStore((s) => s.entityLookupOpen);
+  const setEntityLookupOpen = useAppStore((s) => s.setEntityLookupOpen);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const isLLC =
     ownerName.includes("LLC") ||
@@ -24,9 +27,7 @@ export default function EntityLookupCard({ ownerName }: EntityLookupCardProps) {
     ownerName.includes("Partners") ||
     ownerName.includes("Group");
 
-  if (!isLLC) return null;
-
-  const handleLookup = async () => {
+  const doLookup = async () => {
     if (result) {
       setExpanded(!expanded);
       return;
@@ -57,16 +58,35 @@ export default function EntityLookupCard({ ownerName }: EntityLookupCardProps) {
     }
   };
 
+  // Auto-trigger when LLC button in action bar is clicked
+  useEffect(() => {
+    if (entityLookupOpen && isLLC && !result && !loading) {
+      doLookup();
+      cardRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    } else if (entityLookupOpen && result && !expanded) {
+      setExpanded(true);
+      cardRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+    // Reset store flag after handling
+    if (entityLookupOpen) {
+      setEntityLookupOpen(false);
+    }
+  }, [entityLookupOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (!isLLC) return null;
+
   return (
-    <div className="border-t border-line">
+    <div ref={cardRef} className="border-t border-line">
       {/* Trigger button */}
       <button
-        onClick={handleLookup}
+        onClick={doLookup}
         disabled={loading}
         className="flex w-full items-center gap-2 px-4 py-3 text-left transition-colors hover:bg-ink3"
       >
         {loading ? (
           <Loader2 size={14} className="animate-spin text-teal" />
+        ) : result ? (
+          <Check size={14} className="text-teal" />
         ) : (
           <Building2 size={14} className="text-teal" />
         )}
@@ -95,7 +115,7 @@ export default function EntityLookupCard({ ownerName }: EntityLookupCardProps) {
               <span
                 className={`rounded px-1.5 py-0.5 font-mono text-[8px] uppercase tracking-wider ${
                   result.status?.includes("Active")
-                    ? "bg-pd-green-dim text-pd-green"
+                    ? "border border-green/20 bg-green/10 text-green"
                     : "bg-amber-dim text-amber"
                 }`}
               >
@@ -131,7 +151,7 @@ export default function EntityLookupCard({ ownerName }: EntityLookupCardProps) {
 
       {/* Error state */}
       {error && (
-        <div className="border-t border-line px-4 py-2 text-[10px] text-pd-red">
+        <div className="border-t border-line px-4 py-2 text-[10px] text-red">
           {error}
         </div>
       )}
@@ -149,7 +169,7 @@ function EntityRow({
   return (
     <div className="flex items-baseline justify-between gap-4">
       <span className="font-mono text-[9px] text-mid">{label}</span>
-      <span className="text-right text-[11px] text-text">{value ?? "—"}</span>
+      <span className="text-right text-[11px] text-text">{value ?? "\u2014"}</span>
     </div>
   );
 }

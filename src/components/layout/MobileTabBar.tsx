@@ -10,7 +10,7 @@ interface MobileTabBarProps {
 const TABS = [
   { id: "map", label: "Map", icon: Map },
   { id: "saved", label: "Saved", icon: Bookmark },
-  { id: "alerts", label: "Alerts", icon: Bell },
+  { id: "alerts", label: "Alerts", icon: Bell, dot: true },
   { id: "settings", label: "Settings", icon: Settings },
 ];
 
@@ -27,7 +27,7 @@ export default function MobileTabBar({
           <button
             key={tab.id}
             onClick={() => onTabChange?.(tab.id)}
-            className={`flex flex-col items-center gap-0.5 px-4 py-1 transition-colors ${
+            className={`relative flex flex-col items-center gap-0.5 px-4 py-1 transition-colors ${
               active ? "text-teal" : "text-pd-muted"
             }`}
           >
@@ -35,6 +35,9 @@ export default function MobileTabBar({
             <span className="font-mono text-[8px] uppercase tracking-wider">
               {tab.label}
             </span>
+            {tab.dot && (
+              <span className="absolute right-2.5 top-0.5 h-1.5 w-1.5 rounded-full bg-red" />
+            )}
           </button>
         );
       })}

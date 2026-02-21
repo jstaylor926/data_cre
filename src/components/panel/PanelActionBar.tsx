@@ -1,19 +1,17 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Heart, Building2, FileText, Check, Plus } from "lucide-react";
+import { Heart, Building2, FileText, GitCompare, Check, Plus } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import { useSavedParcels } from "@/hooks/useSavedParcels";
 import { useCollections } from "@/hooks/useCollections";
 
 export default function PanelActionBar() {
   const selectedAPN = useAppStore((s) => s.selectedAPN);
-  const activeTab = useAppStore((s) => s.activeTab);
-  const setBriefOverlayOpen = useAppStore((s) => s.setBriefOverlayOpen);
-  const setBriefStatus = useAppStore((s) => s.setBriefStatus);
+  const setEntityLookupOpen = useAppStore((s) => s.setEntityLookupOpen);
   const { savedParcels, isSaved, save, unsave } = useSavedParcels();
   const { collections, create } = useCollections();
-  
+
   const [showCollPopup, setShowCollPopup] = useState(false);
   const [creatingNew, setCreatingNew] = useState(false);
   const [newName, setNewName] = useState("");
@@ -70,13 +68,6 @@ export default function PanelActionBar() {
     ? savedParcels.find((sp) => sp.apn === selectedAPN)
     : null;
 
-  const isPhase2 = ["score", "zoning", "comps"].includes(activeTab);
-
-  const handleBriefClick = () => {
-    setBriefOverlayOpen(true);
-    setBriefStatus("generating");
-  };
-
   return (
     <div className="relative flex gap-1.5 border-t border-line px-3.5 py-2.5 flex-shrink-0">
       {/* Save button */}
@@ -93,22 +84,30 @@ export default function PanelActionBar() {
       </button>
 
       {/* LLC button */}
-      <button className="flex h-[30px] flex-1 items-center justify-center gap-1 rounded border border-line2 bg-ink4 font-mono text-[8px] uppercase tracking-wider text-mid transition-colors hover:text-bright">
+      <button
+        onClick={() => setEntityLookupOpen(true)}
+        className="flex h-[30px] flex-1 items-center justify-center gap-1 rounded border border-line2 bg-ink4 font-mono text-[8px] uppercase tracking-wider text-mid transition-colors hover:border-teal hover:text-teal"
+      >
         <Building2 size={10} />
-        LLC →
+        LLC &rarr;
       </button>
 
-      {/* Brief */}
+      {/* Compare (ghost — Phase 1 placeholder) */}
       <button
-        onClick={handleBriefClick}
-        className={`flex h-[30px] flex-[1.5] items-center justify-center gap-1.5 rounded font-mono text-[8px] uppercase tracking-wider transition-colors ${
-          isPhase2
-            ? "bg-violet text-ink font-semibold"
-            : "bg-ink4 border border-line text-pd-muted opacity-40 cursor-not-allowed"
-        }`}
+        disabled
+        className="flex h-[30px] flex-[0.8] items-center justify-center gap-1 rounded border border-line bg-transparent font-mono text-[8px] uppercase tracking-wider text-pd-muted/50 cursor-not-allowed"
       >
-        <FileText size={10} />
-        {isPhase2 ? "Generate Brief" : "Brief"}
+        <GitCompare size={9} />
+        Compare
+      </button>
+
+      {/* Brief (ghost — Phase 1 placeholder) */}
+      <button
+        disabled
+        className="flex h-[30px] flex-[0.8] items-center justify-center gap-1 rounded border border-line bg-transparent font-mono text-[8px] uppercase tracking-wider text-pd-muted/50 cursor-not-allowed"
+      >
+        <FileText size={9} />
+        Brief
       </button>
 
       {/* Collection popup */}
@@ -151,7 +150,7 @@ export default function PanelActionBar() {
                     setNewName("");
                   }
                 }}
-                placeholder="Collection name…"
+                placeholder="Collection name..."
                 className="h-5 flex-1 rounded border border-line2 bg-ink3 px-1.5 font-mono text-[9px] text-bright placeholder:text-pd-muted focus:border-teal focus:outline-none"
               />
             </div>

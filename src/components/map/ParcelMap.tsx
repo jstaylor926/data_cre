@@ -2,15 +2,17 @@
 
 import { useCallback, useRef, useEffect, type MutableRefObject } from 'react';
 import Map, { Source, Layer, NavigationControl } from 'react-map-gl/mapbox';
+import type { ViewStateChangeEvent } from 'react-map-gl/mapbox';
 import type { MapMouseEvent, FillLayerSpecification, LineLayerSpecification, Map as MapboxMap } from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useAppStore } from '@/store/useAppStore';
-import { MOCK_PARCELS_GEOJSON } from '@/lib/mock-geojson';
 import { useSavedParcels } from '@/hooks/useSavedParcels';
+import { useViewportParcels } from '@/hooks/useViewportParcels';
+import { useViewportZoning } from '@/hooks/useViewportZoning';
 import SavedPins from './SavedPins';
 import CompMarkers from './CompMarkers';
 import ZoningLayer from './ZoningLayer';
-import { getParcelCentroid } from '@/lib/mock-geojson';
+import QuickInfoCard from './QuickInfoCard';
 import {
   MAP_DEFAULT_CENTER,
   MAP_DEFAULT_ZOOM,
@@ -27,6 +29,12 @@ import { useResponsive } from '@/hooks/useResponsive';
 import { Marker } from 'react-map-gl/mapbox';
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || '';
+
+// Empty GeoJSON as placeholder before data loads
+const EMPTY_GEOJSON: GeoJSON.FeatureCollection = {
+  type: "FeatureCollection",
+  features: [],
+};
 
 export interface MapHandle {
   flyTo: (lng: number, lat: number) => void;
@@ -48,14 +56,32 @@ export default function ParcelMap({ mapRef }: ParcelMapProps) {
   const showRoadLabels = useAppStore((s) => s.showRoadLabels);
   const panelOpen = useAppStore((s) => s.panelOpen);
   const activeTab = useAppStore((s) => s.activeTab);
-  const selectParcel = useAppStore((s) => s.selectParcel);
+  const showQuickCard = useAppStore((s) => s.showQuickCard);
+  const dismissQuickCard = useAppStore((s) => s.dismissQuickCard);
+  const quickCardData = useAppStore((s) => s.quickCardData);
+  const setViewport = useAppStore((s) => s.setViewport);
   const { isMobile } = useResponsive();
   const { savedParcels } = useSavedParcels();
 
+  // Real data hooks
+  const { geojson: parcelGeojson, isZoomedIn, requestFetch: requestParcelFetch } = useViewportParcels();
+  const { geojson: zoningGeojson, shouldFetch: shouldFetchZoning, requestFetch: requestZoningFetch } = useViewportZoning();
+
   const internalMapRef = useRef<MapboxMap | null>(null);
 
-  // Calculate centroid for radius circle
-  const selectedCentroid = selectedAPN ? getParcelCentroid(selectedAPN) : null;
+  // Centroid for comp radius circle — from quick card or loaded GeoJSON
+  const selectedCentroid = (() => {
+    if (quickCardData) return quickCardData.lngLat;
+    if (!selectedAPN || !parcelGeojson) return null;
+    const feature = parcelGeojson.features.find(
+      (f) => f.properties?.PIN === selectedAPN
+    );
+    if (!feature || feature.geometry.type !== 'Polygon') return null;
+    const coords = feature.geometry.coordinates[0];
+    const lng = coords.reduce((s: number, c: number[]) => s + c[0], 0) / coords.length;
+    const lat = coords.reduce((s: number, c: number[]) => s + c[1], 0) / coords.length;
+    return [lng, lat] as [number, number];
+  })();
 
   // Expose map controls via parent ref
   useEffect(() => {
@@ -78,15 +104,67 @@ export default function ParcelMap({ mapRef }: ParcelMapProps) {
     }
   }, [mapRef]);
 
+  // Fetch parcels/zoning whenever the map viewport changes
+  const triggerViewportFetch = useCallback(() => {
+    const map = internalMapRef.current;
+    if (!map) return;
+    const bounds = map.getBounds();
+    if (!bounds) return;
+    const bbox = {
+      west: bounds.getWest(),
+      south: bounds.getSouth(),
+      east: bounds.getEast(),
+      north: bounds.getNorth(),
+    };
+    requestParcelFetch(bbox);
+    if (shouldFetchZoning) {
+      requestZoningFetch(bbox);
+    }
+  }, [requestParcelFetch, requestZoningFetch, shouldFetchZoning]);
+
+  const handleMove = useCallback(
+    (e: ViewStateChangeEvent) => {
+      const { latitude, longitude, zoom } = e.viewState;
+      setViewport(latitude, longitude, zoom);
+    },
+    [setViewport]
+  );
+
+  const handleMoveEnd = useCallback(() => {
+    triggerViewportFetch();
+  }, [triggerViewportFetch]);
+
   const handleClick = useCallback(
     (e: MapMouseEvent) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const feature = (e as any).features?.[0];
-      if (feature?.properties?.apn) {
-        selectParcel(feature.properties.apn);
+      // County data uses PIN field; mock data used apn
+      const pin = feature?.properties?.PIN || feature?.properties?.apn;
+
+      if (!pin) {
+        // Clicked empty area — dismiss quick card
+        dismissQuickCard();
+        return;
       }
+
+      // Compute centroid from the feature geometry for card positioning
+      let lngLat: [number, number] = [e.lngLat.lng, e.lngLat.lat];
+      if (feature?.geometry?.type === "Polygon" && feature.geometry.coordinates?.[0]) {
+        const coords = feature.geometry.coordinates[0] as [number, number][];
+        const lng = coords.reduce((s: number, c: [number, number]) => s + c[0], 0) / coords.length;
+        const lat = coords.reduce((s: number, c: [number, number]) => s + c[1], 0) / coords.length;
+        lngLat = [lng, lat];
+      }
+
+      // Show quick preview card with data already available in the GeoJSON
+      showQuickCard({
+        pin,
+        address: feature?.properties?.ADDRESS || "Unknown Address",
+        acres: feature?.properties?.CALCULATEDACREAGE || 0,
+        lngLat,
+      });
     },
-    [selectParcel]
+    [showQuickCard, dismissQuickCard]
   );
 
   // Dynamic paint based on selection and fill toggle
@@ -94,17 +172,17 @@ export default function ParcelMap({ mapRef }: ParcelMapProps) {
   const defaultFill = showParcelFill ? 'rgba(0, 212, 200, 0.06)' : 'rgba(0, 212, 200, 0.01)';
   const fillPaint: FillLayerSpecification['paint'] = {
     'fill-color': selectedAPN
-      ? ['case', ['==', ['get', 'apn'], selectedAPN], PARCEL_FILL_SELECTED, defaultFill]
+      ? ['case', ['==', ['get', 'PIN'], selectedAPN], PARCEL_FILL_SELECTED, defaultFill]
       : defaultFill,
     'fill-opacity': 1,
   };
 
   const linePaint: LineLayerSpecification['paint'] = {
     'line-color': selectedAPN
-      ? ['case', ['==', ['get', 'apn'], selectedAPN], PARCEL_BORDER_SELECTED, PARCEL_BORDER_COLOR]
+      ? ['case', ['==', ['get', 'PIN'], selectedAPN], PARCEL_BORDER_SELECTED, PARCEL_BORDER_COLOR]
       : PARCEL_BORDER_COLOR,
     'line-width': selectedAPN
-      ? ['case', ['==', ['get', 'apn'], selectedAPN], 2, 1]
+      ? ['case', ['==', ['get', 'PIN'], selectedAPN], 2, 1]
       : 1,
   };
 
@@ -128,6 +206,13 @@ export default function ParcelMap({ mapRef }: ParcelMapProps) {
     }
   }, [showRoadLabels, baseMapStyle]);
 
+  // Re-fetch zoning when toggle changes
+  useEffect(() => {
+    if (shouldFetchZoning) {
+      triggerViewportFetch();
+    }
+  }, [shouldFetchZoning, triggerViewportFetch]);
+
   // Map padding adjusts when panel is open on desktop
   const padding = {
     top: 0,
@@ -135,6 +220,9 @@ export default function ParcelMap({ mapRef }: ParcelMapProps) {
     left: 0,
     right: !isMobile && panelOpen ? PANEL_WIDTH : 0,
   };
+
+  // Use real data if available, empty GeoJSON otherwise
+  const parcelData = (isZoomedIn && parcelGeojson) ? parcelGeojson : EMPTY_GEOJSON;
 
   return (
     <div className="absolute inset-0">
@@ -158,6 +246,8 @@ export default function ParcelMap({ mapRef }: ParcelMapProps) {
               }
             }
           }
+          // Initial parcel fetch
+          triggerViewportFetch();
         }}
         initialViewState={{
           longitude: MAP_DEFAULT_CENTER[0],
@@ -168,14 +258,16 @@ export default function ParcelMap({ mapRef }: ParcelMapProps) {
         padding={padding}
         mapStyle={MAP_STYLES[baseMapStyle]}
         mapboxAccessToken={MAPBOX_TOKEN}
-        interactiveLayerIds={showParcels ? [PARCEL_FILL_LAYER] : []}
+        interactiveLayerIds={showParcels && isZoomedIn ? [PARCEL_FILL_LAYER] : []}
+        onMove={handleMove}
+        onMoveEnd={handleMoveEnd}
         onClick={handleClick}
         cursor="pointer"
       >
         <NavigationControl position="top-right" showCompass={false} />
 
         {/* Zoning overlay (render below parcels) */}
-        {showZoning && <ZoningLayer />}
+        {showZoning && <ZoningLayer geojson={zoningGeojson} />}
 
         {/* Comp radius circle */}
         {activeTab === "comps" && selectedCentroid && (
@@ -185,7 +277,7 @@ export default function ParcelMap({ mapRef }: ParcelMapProps) {
         )}
 
         {showParcels && (
-          <Source id={PARCEL_SOURCE} type="geojson" data={MOCK_PARCELS_GEOJSON}>
+          <Source id={PARCEL_SOURCE} type="geojson" data={parcelData}>
             <Layer
               id={PARCEL_FILL_LAYER}
               type="fill"
@@ -200,6 +292,16 @@ export default function ParcelMap({ mapRef }: ParcelMapProps) {
             />
           </Source>
         )}
+
+        {/* Zoom hint when parcels aren't visible */}
+        {showParcels && !isZoomedIn && (
+          <div className="absolute bottom-20 left-1/2 -translate-x-1/2 rounded-full bg-ink2/90 px-4 py-1.5 font-mono text-[10px] uppercase tracking-wider text-mid backdrop-blur-sm">
+            Zoom in to see parcels
+          </div>
+        )}
+
+        {/* Quick info card (geo-anchored on desktop) */}
+        <QuickInfoCard />
 
         {/* Saved parcel pins */}
         {showSavedPins && <SavedPins savedParcels={savedParcels} />}

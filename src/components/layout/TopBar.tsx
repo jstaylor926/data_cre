@@ -12,7 +12,7 @@ interface TopBarProps {
 const NAV_ITEMS = [
   { id: "map", label: "Map" },
   { id: "saved", label: "Saved" },
-  { id: "alerts", label: "Alerts" },
+  { id: "alerts", label: "Alerts", dot: true },
 ];
 
 export default function TopBar({ onFlyTo, activeNav = "map", onNavChange }: TopBarProps) {
@@ -43,13 +43,16 @@ export default function TopBar({ onFlyTo, activeNav = "map", onNavChange }: TopB
             <button
               key={item.id}
               onClick={() => onNavChange?.(item.id)}
-              className={`rounded px-2.5 py-1 font-mono text-[9px] uppercase tracking-wider transition-colors ${
+              className={`relative rounded px-2.5 py-1 font-mono text-[9px] uppercase tracking-wider transition-colors ${
                 activeNav === item.id
                   ? "border border-teal bg-teal-dim text-teal"
                   : "border border-line text-mid hover:text-text"
               }`}
             >
               {item.label}
+              {item.dot && (
+                <span className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 rounded-full bg-red" />
+              )}
             </button>
           ))}
         </div>

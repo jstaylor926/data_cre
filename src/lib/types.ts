@@ -7,9 +7,15 @@ export interface Parcel {
   acres: number | null;
   land_use_code: string | null;
   zoning: string | null;
+  zoning_desc?: string | null;
   assessed_total: number | null;
+  land_value?: number | null;
+  improvement_value?: number | null;
   last_sale_date: string | null;
   last_sale_price: number | null;
+  legal_desc?: string | null;
+  deed_refs?: string[];
+  previous_owners?: string[];
   geom?: GeoJSON.MultiPolygon | null;
 }
 
