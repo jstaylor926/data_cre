@@ -46,7 +46,9 @@ async function queryLayer(layer: number, params: ArcGISQueryParams): Promise<Res
       url.searchParams.set(key, String(value));
     }
   }
-  return fetch(url.toString(), { next: { revalidate: 3600 } }); // Cache 1 hour
+  // Note: Next.js data cache is skipped for responses >2MB (ArcGIS bbox queries).
+  // Use no-store to avoid the warning; HTTP caching still applies via ArcGIS CDN.
+  return fetch(url.toString(), { cache: "no-store" });
 }
 
 /**

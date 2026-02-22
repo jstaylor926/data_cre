@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Building2, ChevronRight, Loader2, Check } from "lucide-react";
+import { Building2, ChevronRight, FlaskConical, Loader2, Check } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import type { EntityResult, Parcel } from "@/lib/types";
 import { formatAcres } from "@/lib/formatters";
@@ -52,7 +52,12 @@ export default function EntityLookupCard({ ownerName }: EntityLookupCardProps) {
       setResult(data);
       setExpanded(true);
     } catch (err) {
-      setError((err as Error).message);
+      const msg = (err as Error).message;
+      setError(
+        msg === "Entity not found"
+          ? "Not in demo dataset — GA SOS integration planned for Phase 3"
+          : msg
+      );
     } finally {
       setLoading(false);
     }
@@ -108,7 +113,7 @@ export default function EntityLookupCard({ ownerName }: EntityLookupCardProps) {
         <div className="border-t border-line bg-ink3/50 px-4 py-3">
           {/* Entity info */}
           <div className="flex flex-col gap-1.5">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="text-[11px] font-medium text-bright">
                 {result.llc_name}
               </span>
@@ -120,6 +125,10 @@ export default function EntityLookupCard({ ownerName }: EntityLookupCardProps) {
                 }`}
               >
                 {result.status?.includes("Active") ? "Active" : result.status}
+              </span>
+              <span className="ml-auto flex items-center gap-1 rounded border border-violet/20 bg-violet/10 px-1.5 py-0.5 font-mono text-[7px] uppercase tracking-wider text-violet/70">
+                <FlaskConical size={8} />
+                Demo
               </span>
             </div>
 

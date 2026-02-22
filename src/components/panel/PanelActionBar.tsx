@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { Heart, Building2, FileText, GitCompare, Check, Plus } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import { useSavedParcels } from "@/hooks/useSavedParcels";
@@ -9,6 +10,11 @@ import { useCollections } from "@/hooks/useCollections";
 export default function PanelActionBar() {
   const selectedAPN = useAppStore((s) => s.selectedAPN);
   const setEntityLookupOpen = useAppStore((s) => s.setEntityLookupOpen);
+  const setBriefOverlayOpen = useAppStore((s) => s.setBriefOverlayOpen);
+  const setBriefStatus = useAppStore((s) => s.setBriefStatus);
+  const siteScore = useAppStore((s) => s.siteScore);
+  const pathname = usePathname();
+  const isPhase2 = pathname?.includes("phase-2");
   const { savedParcels, isSaved, save, unsave } = useSavedParcels();
   const { collections, create } = useCollections();
 
@@ -101,14 +107,28 @@ export default function PanelActionBar() {
         Compare
       </button>
 
-      {/* Brief (ghost — Phase 1 placeholder) */}
-      <button
-        disabled
-        className="flex h-[30px] flex-[0.8] items-center justify-center gap-1 rounded border border-line bg-transparent font-mono text-[8px] uppercase tracking-wider text-pd-muted/50 cursor-not-allowed"
-      >
-        <FileText size={9} />
-        Brief
-      </button>
+      {/* Brief button — active on Phase 2 */}
+      {isPhase2 ? (
+        <button
+          onClick={() => {
+            setBriefStatus("generating");
+            setBriefOverlayOpen(true);
+          }}
+          disabled={!siteScore}
+          className="flex h-[30px] flex-[0.8] items-center justify-center gap-1 rounded border border-violet/40 bg-violet-dim font-mono text-[8px] uppercase tracking-wider text-violet transition-colors hover:border-violet disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          <FileText size={9} />
+          Brief
+        </button>
+      ) : (
+        <button
+          disabled
+          className="flex h-[30px] flex-[0.8] items-center justify-center gap-1 rounded border border-line bg-transparent font-mono text-[8px] uppercase tracking-wider text-pd-muted/50 cursor-not-allowed"
+        >
+          <FileText size={9} />
+          Brief
+        </button>
+      )}
 
       {/* Collection popup */}
       {showCollPopup && (

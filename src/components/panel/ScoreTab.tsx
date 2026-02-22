@@ -1,22 +1,30 @@
 "use client";
 
+import { Lock } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
-import { MOCK_SITE_SCORE, MOCK_FIRM_HISTORY } from "@/lib/mock-data";
-import { useEffect } from "react";
+import { useSiteScore } from "@/hooks/useSiteScore";
 
 export default function ScoreTab() {
-  const siteScore = useAppStore((s) => s.siteScore);
-  const setSiteScore = useAppStore((s) => s.setSiteScore);
+  const selectedAPN = useAppStore((s) => s.selectedAPN);
   const firmHistory = useAppStore((s) => s.firmHistory);
-  const setFirmHistory = useAppStore((s) => s.setFirmHistory);
+  const siteScore = useSiteScore(selectedAPN);
 
-  useEffect(() => {
-    // Simulate API fetch
-    if (!siteScore) setSiteScore(MOCK_SITE_SCORE);
-    if (firmHistory.length === 0) setFirmHistory(MOCK_FIRM_HISTORY);
-  }, [siteScore, firmHistory, setSiteScore, setFirmHistory]);
-
-  if (!siteScore) return null;
+  if (!siteScore) {
+    return (
+      <div className="flex flex-col gap-4 animate-pulse p-2">
+        <div className="mx-auto h-20 w-32 rounded bg-ink3" />
+        <div className="mx-auto h-4 w-24 rounded bg-ink3" />
+        <div className="space-y-3 mt-2">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="flex items-center gap-3">
+              <div className="h-2 w-20 rounded bg-ink3" />
+              <div className="h-1.5 flex-1 rounded-full bg-ink3" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-500">
@@ -34,6 +42,11 @@ export default function ScoreTab() {
             {siteScore.tier}
           </span>
         </div>
+        {(siteScore as { narrative?: string }).narrative && (
+          <p className="mt-3 px-2 font-mono text-[9px] leading-relaxed text-mid text-left">
+            {(siteScore as { narrative?: string }).narrative}
+          </p>
+        )}
       </div>
 
       {/* Breakdown */}
@@ -43,67 +56,102 @@ export default function ScoreTab() {
         </div>
         <div className="space-y-3">
           <ScoreRow label="Zoning" value={siteScore.zoning} max={20} color="bg-green" />
-          <ScoreRow label="Access" value={siteScore.access} max={20} color="bg-teal" />
-          <ScoreRow label="Demographics" value={siteScore.demographics} max={20} color="bg-teal" />
           <ScoreRow label="Market" value={siteScore.market} max={20} color="bg-amber" />
-          <ScoreRow label="Infrastructure" value={siteScore.infrastructure} max={20} color="bg-teal" />
+          <ScoreRow label="Infra" value={siteScore.infrastructure} max={20} color="bg-teal" />
+          <ScoreRow label="Access" value={siteScore.access} max={20} color="bg-teal" pending />
+          <ScoreRow label="Demo" value={siteScore.demographics} max={20} color="bg-teal" pending />
+        </div>
+        <div className="mt-2 flex items-center gap-1.5 rounded border border-line2 bg-ink3 px-2 py-1.5">
+          <Lock size={9} className="shrink-0 text-pd-muted/60" />
+          <p className="font-mono text-[7px] text-pd-muted/70">
+            Access &amp; Demographics require traffic + census data integration — Phase 3
+          </p>
         </div>
       </div>
 
-      {/* Firm History */}
-      <div className="rounded-lg border border-amber/20 bg-amber-dim p-3">
-        <div className="mb-3 flex items-center justify-between">
-          <span className="font-mono text-[8px] uppercase tracking-[0.12em] text-amber">
-            Firm History · Matches
-          </span>
-          <span className="rounded bg-amber-dim border border-amber/20 px-1.5 py-0.5 font-mono text-[8px] text-amber">
-            {firmHistory.length} Matches
-          </span>
-        </div>
-        <div className="space-y-2">
-          {firmHistory.map((match) => (
-            <div key={match.id} className="rounded border border-line bg-ink3 p-2.5">
-              <div className="mb-1.5 flex items-center justify-between">
-                <span className="font-body text-[11px] font-semibold text-bright">
-                  {match.deal_name}
-                </span>
-                <span className={`rounded px-1.5 py-0.5 font-mono text-[8px] uppercase ${
-                  match.outcome === 'closed' ? 'bg-green-dim text-green border border-green/20' : 
-                  match.outcome === 'passed' ? 'bg-red-dim text-red border border-red/20' : 
-                  'bg-amber-dim text-amber border border-amber/20'
-                }`}>
-                  {match.outcome}
-                </span>
+      {/* Firm History — placeholder until RAG is wired */}
+      {firmHistory.length > 0 ? (
+        <div className="rounded-lg border border-amber/20 bg-amber-dim p-3">
+          <div className="mb-3 flex items-center justify-between">
+            <span className="font-mono text-[8px] uppercase tracking-[0.12em] text-amber">
+              Firm History · Matches
+            </span>
+            <span className="rounded bg-amber-dim border border-amber/20 px-1.5 py-0.5 font-mono text-[8px] text-amber">
+              {firmHistory.length} Matches
+            </span>
+          </div>
+          <div className="space-y-2">
+            {firmHistory.map((match) => (
+              <div key={match.id} className="rounded border border-line bg-ink3 p-2.5">
+                <div className="mb-1.5 flex items-center justify-between">
+                  <span className="font-body text-[11px] font-semibold text-bright">
+                    {match.deal_name}
+                  </span>
+                  <span className={`rounded px-1.5 py-0.5 font-mono text-[8px] uppercase ${
+                    match.outcome === "closed" ? "bg-green-dim text-green border border-green/20" :
+                    match.outcome === "passed" ? "bg-red-dim text-red border border-red/20" :
+                    "bg-amber-dim text-amber border border-amber/20"
+                  }`}>
+                    {match.outcome}
+                  </span>
+                </div>
+                <p className="font-mono text-[9px] italic leading-relaxed text-mid">
+                  {match.excerpt}
+                </p>
               </div>
-              <p className="font-mono text-[9px] italic leading-relaxed text-mid">
-                {match.excerpt}
-              </p>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="rounded-lg border border-line2 bg-ink3 p-3 text-center">
+          <p className="font-mono text-[8px] uppercase tracking-wider text-pd-muted">
+            Firm History
+          </p>
+          <p className="mt-1 font-mono text-[9px] text-mid/60">
+            Deal history coming soon
+          </p>
+        </div>
+      )}
     </div>
   );
 }
 
-function ScoreRow({ label, value, max, color }: { label: string; value: number; max: number; color: string }) {
+function ScoreRow({
+  label,
+  value,
+  max,
+  color,
+  pending,
+}: {
+  label: string;
+  value: number;
+  max: number;
+  color: string;
+  pending?: boolean;
+}) {
   const percentage = (value / max) * 100;
   return (
-    <div className="flex items-center gap-3">
+    <div className={`flex items-center gap-3 ${pending ? "opacity-40" : ""}`}>
       <span className="w-20 flex-shrink-0 font-mono text-[9px] uppercase tracking-wider text-mid">
         {label}
       </span>
       <div className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-ink4">
         <div
-          className={`h-full rounded-full transition-all duration-1000 ${color}`}
-          style={{ width: `${percentage}%` }}
+          className={`h-full rounded-full transition-all duration-1000 ${
+            pending ? "bg-ink4" : color
+          }`}
+          style={{ width: pending ? "60%" : `${percentage}%` }}
         />
       </div>
-      <span className={`w-6 flex-shrink-0 text-right font-mono text-[9px] ${
-        color === 'bg-green' ? 'text-green' : color === 'bg-amber' ? 'text-amber' : 'text-bright'
-      }`}>
-        {value}
-      </span>
+      {pending ? (
+        <Lock size={9} className="w-6 flex-shrink-0 text-pd-muted/60" />
+      ) : (
+        <span className={`w-6 flex-shrink-0 text-right font-mono text-[9px] ${
+          color === "bg-green" ? "text-green" : color === "bg-amber" ? "text-amber" : "text-bright"
+        }`}>
+          {value}
+        </span>
+      )}
     </div>
   );
 }
