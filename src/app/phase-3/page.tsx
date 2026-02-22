@@ -133,7 +133,7 @@ export default function Phase3Dashboard() {
       )}
 
       {isMobile && (
-        <MobileTabBar activeTab={activeNav} onTabChange={handleNavChange} />
+        <MobileTabBar />
       )}
     </div>
   );

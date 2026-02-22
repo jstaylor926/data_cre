@@ -1,36 +1,27 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import React from "react";
+import EnterpriseShell from "@/components/layout/EnterpriseShell";
 import SavedPropertiesList from "@/components/saved/SavedPropertiesList";
+import { useRouter } from "next/navigation";
+import { useAppStore } from "@/store/useAppStore";
 
 export default function SavedPage() {
   const router = useRouter();
+  const selectParcel = useAppStore((s) => s.selectParcel);
+
+  const handleSelectParcel = (apn: string, centroid?: [number, number]) => {
+    // Select the parcel in store
+    selectParcel(apn);
+    // Navigate to map
+    router.push("/map");
+  };
 
   return (
-    <div className="flex min-h-screen flex-col bg-ink">
-      {/* Header */}
-      <header className="flex h-12 shrink-0 items-center gap-3 border-b border-line bg-ink/95 px-4">
-        <button
-          onClick={() => router.push("/")}
-          className="flex h-7 w-7 items-center justify-center rounded text-mid hover:text-bright"
-        >
-          <ArrowLeft size={16} />
-        </button>
-        <h1 className="font-head text-base tracking-widest text-bright">
-          SAVED
-        </h1>
-      </header>
-
-      {/* Content */}
+    <EnterpriseShell title="Saved Properties">
       <div className="flex-1 overflow-y-auto">
-        <SavedPropertiesList
-          onSelectParcel={(apn) => {
-            // Navigate to phase-1 map with the parcel selected
-            router.push(`/phase-1?apn=${apn}`);
-          }}
-        />
+        <SavedPropertiesList onSelectParcel={handleSelectParcel} />
       </div>
-    </div>
+    </EnterpriseShell>
   );
 }

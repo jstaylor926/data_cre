@@ -236,3 +236,74 @@ export interface ScoutSession {
   loading: boolean;
   error: string | null;
 }
+
+// ─── Phase 4: Enterprise Intelligence ──────────────────────────────────────────
+
+export type OrgRole = "owner" | "admin" | "member" | "viewer";
+
+export interface Organization {
+  id: string;
+  name: string;
+  slug: string;
+  branding?: {
+    logo_url?: string;
+    primary_color?: string;
+    secondary_color?: string;
+    font_head?: string;
+  };
+  created_at: string;
+}
+
+export interface User {
+  id: string;
+  email: string;
+  full_name: string | null;
+  avatar_url: string | null;
+  org_id: string;
+  role: OrgRole;
+}
+
+export type DealStage = 
+  | "identified" 
+  | "evaluating" 
+  | "loi" 
+  | "due_diligence" 
+  | "under_contract" 
+  | "closed" 
+  | "passed" 
+  | "lost";
+
+export type DealPriority = "high" | "medium" | "low";
+
+export interface Deal {
+  id: string;
+  org_id: string;
+  apn: string;
+  property_address: string;
+  deal_name: string;
+  stage: DealStage;
+  target_product_type?: string;
+  target_sf?: number;
+  projected_roi?: number;
+  actual_roi?: number;
+  assigned_to?: string; // User ID
+  outcome?: "executed" | "passed" | "lost";
+  outcome_reason?: string;
+  outcome_tags?: string[];
+  priority: DealPriority;
+  target_close_date?: string;
+  created_at: string;
+  updated_at: string;
+  parcel?: Parcel;
+}
+
+export interface DealActivity {
+  id: string;
+  deal_id: string;
+  user_id: string;
+  activity_type: "note" | "stage_change" | "document_added" | "task_completed";
+  content: string;
+  metadata?: any;
+  created_at: string;
+  user?: User;
+}

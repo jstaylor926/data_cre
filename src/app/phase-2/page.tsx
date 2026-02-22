@@ -85,9 +85,7 @@ export default function Phase2Dashboard() {
         </div>
       )}
 
-      {isMobile && (
-        <MobileTabBar activeTab={activeNav} onTabChange={handleNavChange} />
-      )}
+      {isMobile && <MobileTabBar />}
     </div>
   );
 }

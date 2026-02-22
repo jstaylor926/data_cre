@@ -1,44 +1,42 @@
 "use client";
 
-import { Map, Bookmark, Bell, Settings } from "lucide-react";
-
-interface MobileTabBarProps {
-  activeTab?: string;
-  onTabChange?: (tab: string) => void;
-}
+import { Map, Bookmark, LayoutDashboard, Briefcase, User } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 const TABS = [
-  { id: "map", label: "Map", icon: Map },
-  { id: "saved", label: "Saved", icon: Bookmark },
-  { id: "alerts", label: "Alerts", icon: Bell, dot: true },
-  { id: "settings", label: "Settings", icon: Settings },
+  { id: "dashboard", label: "Home", icon: LayoutDashboard, href: "/dashboard" },
+  { id: "map", label: "Map", icon: Map, href: "/map" },
+  { id: "pipeline", label: "Deals", icon: Briefcase, href: "/pipeline" },
+  { id: "saved", label: "Saved", icon: Bookmark, href: "/saved" },
 ];
 
-export default function MobileTabBar({
-  activeTab = "map",
-  onTabChange,
-}: MobileTabBarProps) {
+export default function MobileTabBar() {
+  const pathname = usePathname();
+
   return (
-    <nav className="flex h-[52px] shrink-0 items-center justify-around border-t border-line bg-ink">
+    <nav className="flex h-[60px] shrink-0 items-center justify-around border-t border-line bg-ink2 pb-safe">
       {TABS.map((tab) => {
-        const active = activeTab === tab.id;
+        const active = pathname === tab.href;
         const Icon = tab.icon;
         return (
-          <button
+          <Link
             key={tab.id}
-            onClick={() => onTabChange?.(tab.id)}
-            className={`relative flex flex-col items-center gap-0.5 px-4 py-1 transition-colors ${
+            href={tab.href}
+            className={cn(
+              "relative flex flex-col items-center gap-1 px-4 py-2 transition-colors",
               active ? "text-teal" : "text-pd-muted"
-            }`}
+            )}
           >
-            <Icon size={18} strokeWidth={active ? 2 : 1.5} />
-            <span className="font-mono text-[8px] uppercase tracking-wider">
+            <Icon size={20} strokeWidth={active ? 2.5 : 2} />
+            <span className="text-[9px] font-medium tracking-tight">
               {tab.label}
             </span>
-            {tab.dot && (
-              <span className="absolute right-2.5 top-0.5 h-1.5 w-1.5 rounded-full bg-red" />
+            {active && (
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 h-0.5 w-8 bg-teal rounded-full" />
             )}
-          </button>
+          </Link>
         );
       })}
     </nav>

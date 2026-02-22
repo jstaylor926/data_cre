@@ -18,6 +18,10 @@ import type {
   ScoutSession,
   SubMarketCandidate,
   RankedCandidate,
+  User,
+  Organization,
+  Deal,
+  DealActivity,
 } from "@/lib/types";
 
 export interface QuickCardData {
@@ -80,6 +84,13 @@ interface AppState {
   scoutSession: ScoutSession;
   scoutPanelOpen: boolean;
 
+  // Phase 4: Enterprise Intelligence
+  currentUser: User | null;
+  currentOrg: Organization | null;
+  deals: Deal[];
+  activities: DealActivity[];
+  sidebarCollapsed: boolean;
+
   // Actions
   showQuickCard: (data: QuickCardData) => void;
   dismissQuickCard: () => void;
@@ -132,6 +143,14 @@ interface AppState {
   addChatMessage: (msg: ChatMessage) => void;
   setBriefStatus: (status: BriefStatus) => void;
   setBriefOverlayOpen: (open: boolean) => void;
+
+  // Phase 4 Actions
+  setCurrentUser: (user: User | null) => void;
+  setCurrentOrg: (org: Organization | null) => void;
+  setDeals: (deals: Deal[]) => void;
+  updateDeal: (deal: Deal) => void;
+  addActivity: (activity: DealActivity) => void;
+  setSidebarCollapsed: (collapsed: boolean) => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -193,6 +212,13 @@ export const useAppStore = create<AppState>()(
         loading: false,
         error: null,
       },
+
+      // Phase 4 Initial state
+      currentUser: null,
+      currentOrg: null,
+      deals: [],
+      activities: [],
+      sidebarCollapsed: false,
 
       // Actions
 
@@ -337,6 +363,17 @@ export const useAppStore = create<AppState>()(
       addChatMessage: (msg) => set((s) => ({ chatHistory: [...s.chatHistory, msg] })),
       setBriefStatus: (briefStatus) => set({ briefStatus }),
       setBriefOverlayOpen: (isBriefOverlayOpen) => set({ isBriefOverlayOpen }),
+
+      // Phase 4 Actions
+      setCurrentUser: (currentUser) => set({ currentUser }),
+      setCurrentOrg: (currentOrg) => set({ currentOrg }),
+      setDeals: (deals) => set({ deals }),
+      updateDeal: (updatedDeal) =>
+        set((s) => ({
+          deals: s.deals.map((d) => (d.id === updatedDeal.id ? updatedDeal : d)),
+        })),
+      addActivity: (activity) => set((s) => ({ activities: [activity, ...s.activities] })),
+      setSidebarCollapsed: (sidebarCollapsed) => set({ sidebarCollapsed }),
     }),
     {
       name: "pd-map-prefs",
@@ -350,6 +387,7 @@ export const useAppStore = create<AppState>()(
         showRoadLabels: state.showRoadLabels,
         appMode: state.appMode,
         dcMwTarget: state.dcMwTarget,
+        sidebarCollapsed: state.sidebarCollapsed,
       }),
     }
   )

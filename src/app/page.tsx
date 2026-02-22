@@ -96,27 +96,31 @@ export default function Home() {
             </CardFooter>
           </Card>
 
-          {/* Phase 4 */}
-          <Card className="flex flex-col opacity-90">
+          {/* Phase 4 - NOW LIVE */}
+          <Card className="flex flex-col border-teal/40 shadow-lg bg-ink2 ring-1 ring-teal/20">
             <CardHeader>
-              <div className="text-muted-foreground text-sm font-semibold mb-2">UPCOMING</div>
-              <CardTitle>Phase 4<br />Firm Intel Platform</CardTitle>
-              <CardDescription>Proprietary Models & Deploy</CardDescription>
+              <div className="text-teal text-sm font-semibold mb-2 flex items-center gap-2">
+                <div className="h-2 w-2 rounded-full bg-teal animate-pulse" />
+                NEW: PRODUCTION
+              </div>
+              <CardTitle>Enterprise<br />Intelligence</CardTitle>
+              <CardDescription>Firm Intelligence Platform</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 text-sm text-zinc-600 dark:text-zinc-400 space-y-4">
               <p>
-                Enterprise scale deployment. Proprietary ML deal scoring trained on client-specific
-                outcomes with a white-label multi-tenant architecture.
+                The complete unified platform. Proprietary ML deal scoring, 
+                white-label multi-tenant architecture, and a full deal pipeline.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-1 text-xs">
-                <li>Custom ML Scoring</li>
-                <li>Enterprise White-label</li>
-                <li>Multi-Tenant Auth</li>
+                <li>Universal Intelligence Shell</li>
+                <li>Executive Dashboards</li>
+                <li>Deal Pipeline CRM</li>
+                <li>Team Collaboration</li>
               </ul>
             </CardContent>
             <CardFooter>
-              <Button variant="outline" className="w-full" disabled>
-                Coming Soon
+              <Button asChild className="w-full bg-teal hover:bg-teal/90 text-ink font-bold">
+                <Link href="/dashboard">Enter Platform</Link>
               </Button>
             </CardFooter>
           </Card>
