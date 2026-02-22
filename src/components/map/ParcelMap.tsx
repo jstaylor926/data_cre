@@ -16,6 +16,7 @@ import QuickInfoCard from './QuickInfoCard';
 import InfrastructureLayers from './InfrastructureLayers';
 import ScoutResultPins from '@/components/scout/ScoutResultPins';
 import SubMarketOverlay from '@/components/scout/SubMarketOverlay';
+import HotspotMarkers from './HotspotMarkers';
 import {
   MAP_DEFAULT_CENTER,
   MAP_DEFAULT_ZOOM,
@@ -316,6 +317,19 @@ export default function ParcelMap({ mapRef }: ParcelMapProps) {
 
         {/* DC infrastructure layers — must be inside <Map> for react-map-gl context */}
         {appMode === "datacenter" && <InfrastructureLayers />}
+
+        {/* DC Hotspot market markers */}
+        {appMode === "datacenter" && (
+          <HotspotMarkers
+            onFlyTo={(lng, lat, zoom) => {
+              internalMapRef.current?.flyTo({
+                center: [lng, lat],
+                zoom: zoom ?? 12,
+                duration: 1500,
+              });
+            }}
+          />
+        )}
 
         {/* Scout map layers — Tier 1 sub-market bboxes + Tier 2 parcel pins */}
         {appMode === "datacenter" && (

@@ -11,6 +11,7 @@ import MapHUD from "@/components/map/MapHUD";
 import ParcelPanel from "@/components/panel/ParcelPanel";
 import ParcelDrawer from "@/components/panel/ParcelDrawer";
 import ComparisonTray from "@/components/comparison/ComparisonTray";
+import HotspotCardStrip from "@/components/map/HotspotCardStrip";
 
 interface AppShellProps {
   mapRef?: MutableRefObject<MapHandle | null>;
@@ -49,6 +50,15 @@ export default function AppShell({ mapRef }: AppShellProps) {
     <div className="relative flex-1 overflow-hidden">
       {/* Map — InfrastructureLayers is rendered inside ParcelMap's <Map> for react-map-gl context */}
       <ParcelMap mapRef={mapRef} />
+
+      {/* DC Hotspot market cards (datacenter mode only) */}
+      {appMode === "datacenter" && (
+        <HotspotCardStrip
+          onFlyTo={(lng, lat, zoom) => {
+            mapRef?.current?.flyTo(lng, lat, zoom);
+          }}
+        />
+      )}
 
       {/* Map overlays */}
       <MapControls

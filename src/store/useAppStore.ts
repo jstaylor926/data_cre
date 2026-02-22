@@ -73,6 +73,9 @@ interface AppState {
   dcComparisonTray: ComparisonSite[];
   isDCBriefOverlayOpen: boolean;
 
+  // DC Hotspot Markets
+  hotspotCardsCollapsed: boolean;
+
   // Phase 3: Site Scout
   scoutSession: ScoutSession;
   scoutPanelOpen: boolean;
@@ -106,6 +109,9 @@ interface AppState {
   removeFromComparison: (apn: string) => void;
   clearComparison: () => void;
   setDCBriefOverlayOpen: (open: boolean) => void;
+
+  // Hotspot Actions
+  setHotspotCardsCollapsed: (collapsed: boolean) => void;
 
   // Scout Actions
   setScoutPanelOpen: (open: boolean) => void;
@@ -170,6 +176,9 @@ export const useAppStore = create<AppState>()(
       dcScore: null,
       dcComparisonTray: [],
       isDCBriefOverlayOpen: false,
+
+      // DC Hotspot Markets
+      hotspotCardsCollapsed: false,
 
       // Scout initial state
       scoutPanelOpen: false,
@@ -277,6 +286,9 @@ export const useAppStore = create<AppState>()(
         set((s) => ({ dcComparisonTray: s.dcComparisonTray.filter((x) => x.apn !== apn) })),
       clearComparison: () => set({ dcComparisonTray: [] }),
       setDCBriefOverlayOpen: (isDCBriefOverlayOpen) => set({ isDCBriefOverlayOpen }),
+
+      // Hotspot Actions
+      setHotspotCardsCollapsed: (hotspotCardsCollapsed) => set({ hotspotCardsCollapsed }),
 
       // Scout Actions
       setScoutPanelOpen: (scoutPanelOpen) => set({ scoutPanelOpen }),

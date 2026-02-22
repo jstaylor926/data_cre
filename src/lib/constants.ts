@@ -32,6 +32,12 @@ export const PARCEL_FILL_SELECTED = "rgba(0, 212, 200, 0.10)";
 export const PARCEL_FILL_SAVED = "rgba(245, 166, 35, 0.12)";
 export const PARCEL_BORDER_SAVED = "#f5a623";
 
+// DC Hotspot Markets
+export const HOTSPOT_ZOOM_THRESHOLD = 13;
+export const HOTSPOT_FLY_ZOOM = 12;
+export const HOTSPOT_MARKER_COLOR = "#f97316"; // orange-500
+export const HOTSPOT_MARKER_BORDER = "#fb923c"; // orange-400
+
 // Zoning color map
 export const ZONING_COLORS: Record<string, string> = {
   "C-1": "#3b82f6",   // Commercial — blue
