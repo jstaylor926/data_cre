@@ -70,27 +70,28 @@ export default function Home() {
           </Card>
 
           {/* Phase 3 */}
-          <Card className="flex flex-col opacity-90">
+          <Card className="flex flex-col border-orange-400/20 shadow-md">
             <CardHeader>
-              <div className="text-muted-foreground text-sm font-semibold mb-2">UPCOMING</div>
-              <CardTitle>Phase 3<br />Data Center Selector</CardTitle>
+              <div className="text-orange-400 text-sm font-semibold mb-2">NEW</div>
+              <CardTitle>Phase 3<br />Data Center Mode</CardTitle>
               <CardDescription>Infrastructure & Risk Scoring</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 text-sm text-zinc-600 dark:text-zinc-400 space-y-4">
               <p>
                 Specialized tooling for data center developers. Overlays and scores power infrastructure,
-                fiber latency, water availability, and environmental risks.
+                fiber latency, water availability, and environmental risks with live HIFLD + FEMA data.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-1 text-xs">
-                <li>Power Scoring</li>
-                <li>Fiber & Connectivity</li>
-                <li>Water & Cooling</li>
-                <li>Composite Risk Score</li>
+                <li>Power & Substation Scoring</li>
+                <li>Fiber & IX Latency</li>
+                <li>Water & Cooling Demand</li>
+                <li>FEMA DISQUALIFIED Mechanic</li>
+                <li>Side-by-Side Comparison + AI Rec</li>
               </ul>
             </CardContent>
             <CardFooter>
-              <Button variant="outline" className="w-full" disabled>
-                Coming Soon
+              <Button asChild className="w-full bg-orange-500 hover:bg-orange-600 text-white">
+                <Link href="/phase-3">Launch Phase 3</Link>
               </Button>
             </CardFooter>
           </Card>

@@ -13,6 +13,9 @@ import SavedPins from './SavedPins';
 import CompMarkers from './CompMarkers';
 import ZoningLayer from './ZoningLayer';
 import QuickInfoCard from './QuickInfoCard';
+import InfrastructureLayers from './InfrastructureLayers';
+import ScoutResultPins from '@/components/scout/ScoutResultPins';
+import SubMarketOverlay from '@/components/scout/SubMarketOverlay';
 import {
   MAP_DEFAULT_CENTER,
   MAP_DEFAULT_ZOOM,
@@ -37,7 +40,7 @@ const EMPTY_GEOJSON: GeoJSON.FeatureCollection = {
 };
 
 export interface MapHandle {
-  flyTo: (lng: number, lat: number) => void;
+  flyTo: (lng: number, lat: number, zoom?: number) => void;
   zoomIn: () => void;
   zoomOut: () => void;
 }
@@ -60,6 +63,8 @@ export default function ParcelMap({ mapRef }: ParcelMapProps) {
   const dismissQuickCard = useAppStore((s) => s.dismissQuickCard);
   const quickCardData = useAppStore((s) => s.quickCardData);
   const setViewport = useAppStore((s) => s.setViewport);
+  const appMode = useAppStore((s) => s.appMode);
+  const setScoutActiveSubMarket = useAppStore((s) => s.setScoutActiveSubMarket);
   const { isMobile } = useResponsive();
   const { savedParcels } = useSavedParcels();
 
@@ -87,10 +92,10 @@ export default function ParcelMap({ mapRef }: ParcelMapProps) {
   useEffect(() => {
     if (mapRef) {
       mapRef.current = {
-        flyTo: (lng: number, lat: number) => {
+        flyTo: (lng: number, lat: number, zoom?: number) => {
           internalMapRef.current?.flyTo({
             center: [lng, lat],
-            zoom: 16,
+            zoom: zoom ?? 16,
             duration: 1500,
           });
         },
@@ -308,6 +313,24 @@ export default function ParcelMap({ mapRef }: ParcelMapProps) {
 
         {/* Comp Markers */}
         <CompMarkers />
+
+        {/* DC infrastructure layers — must be inside <Map> for react-map-gl context */}
+        {appMode === "datacenter" && <InfrastructureLayers />}
+
+        {/* Scout map layers — Tier 1 sub-market bboxes + Tier 2 parcel pins */}
+        {appMode === "datacenter" && (
+          <SubMarketOverlay
+            onExplore={(market) => {
+              setScoutActiveSubMarket(market);
+              internalMapRef.current?.flyTo({
+                center: [market.center[0], market.center[1]],
+                zoom: 12,
+                duration: 1200,
+              });
+            }}
+          />
+        )}
+        {appMode === "datacenter" && <ScoutResultPins />}
       </Map>
     </div>
   );

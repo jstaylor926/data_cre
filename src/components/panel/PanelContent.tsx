@@ -8,11 +8,20 @@ import CompsTab from "./CompsTab";
 import PanelTabs from "./PanelTabs";
 import PanelActionBar from "./PanelActionBar";
 import EntityLookupCard from "./EntityLookupCard";
+// DC mode
+import DCPanelTabs from "./DCPanelTabs";
+import DCScoreTab from "./DCScoreTab";
+import PowerTab from "./PowerTab";
+import FiberTab from "./FiberTab";
+import WaterTab from "./WaterTab";
+import EnvironTab from "./EnvironTab";
 
 export default function PanelContent() {
   const parcel = useAppStore((s) => s.selectedParcel);
   const loading = useAppStore((s) => s.parcelLoading);
   const activeTab = useAppStore((s) => s.activeTab);
+  const appMode = useAppStore((s) => s.appMode);
+  const dcActiveTab = useAppStore((s) => s.dcActiveTab);
 
   if (loading) {
     return (
@@ -33,11 +42,43 @@ export default function PanelContent() {
   if (!parcel) {
     return (
       <div className="flex items-center justify-center p-8 text-mid">
-        No parcel selected
+        {appMode === "datacenter"
+          ? "Select a parcel to run DC analysis"
+          : "No parcel selected"}
       </div>
     );
   }
 
+  // ── Data Center Mode ──────────────────────────────────────────────────────
+  if (appMode === "datacenter") {
+    return (
+      <div className="flex h-full flex-col">
+        {/* Header */}
+        <div className="border-b border-orange-500/20 bg-orange-500/5 px-4 pb-3 pt-4 flex-shrink-0">
+          <h2 className="text-[13px] font-semibold leading-tight text-bright">
+            {parcel.site_address ?? "Unknown Address"}
+          </h2>
+          <p className="mt-0.5 font-mono text-[9px] uppercase tracking-wider text-orange-400/70">
+            {parcel.apn} &middot; {parcel.county} County &middot; Data Center Analysis
+          </p>
+        </div>
+
+        {/* DC Tabs */}
+        <DCPanelTabs />
+
+        {/* DC Tab content */}
+        <div className="flex-1 overflow-y-auto px-4 py-4">
+          {dcActiveTab === "dc-score" && <DCScoreTab />}
+          {dcActiveTab === "power"    && <PowerTab />}
+          {dcActiveTab === "fiber"    && <FiberTab />}
+          {dcActiveTab === "water"    && <WaterTab />}
+          {dcActiveTab === "environ"  && <EnvironTab />}
+        </div>
+      </div>
+    );
+  }
+
+  // ── Dev Mode (standard) ───────────────────────────────────────────────────
   return (
     <div className="flex h-full flex-col">
       {/* Header */}

@@ -9,7 +9,15 @@ import type {
   Comp,
   FirmHistoryMatch,
   ChatMessage,
-  BriefStatus
+  BriefStatus,
+  AppMode,
+  DCPanelTab,
+  DCScore,
+  DCInfrastructure,
+  ComparisonSite,
+  ScoutSession,
+  SubMarketCandidate,
+  RankedCandidate,
 } from "@/lib/types";
 
 export interface QuickCardData {
@@ -56,6 +64,19 @@ interface AppState {
   entityLoading: boolean;
   entityLookupOpen: boolean;
 
+  // Phase 3: Data Center Mode
+  appMode: AppMode;
+  dcMwTarget: number;
+  dcActiveTab: DCPanelTab;
+  dcInfrastructure: DCInfrastructure | null;
+  dcScore: DCScore | null;
+  dcComparisonTray: ComparisonSite[];
+  isDCBriefOverlayOpen: boolean;
+
+  // Phase 3: Site Scout
+  scoutSession: ScoutSession;
+  scoutPanelOpen: boolean;
+
   // Actions
   showQuickCard: (data: QuickCardData) => void;
   dismissQuickCard: () => void;
@@ -74,6 +95,28 @@ interface AppState {
   setEntityLoading: (loading: boolean) => void;
   setEntityLookupOpen: (open: boolean) => void;
   setViewport: (lat: number, lng: number, zoom: number) => void;
+
+  // Phase 3 Actions
+  setAppMode: (mode: AppMode) => void;
+  setDcMwTarget: (mw: number) => void;
+  setDCActiveTab: (tab: DCPanelTab) => void;
+  setDCInfrastructure: (infra: DCInfrastructure | null) => void;
+  setDCScore: (score: DCScore | null) => void;
+  addToComparison: (site: ComparisonSite) => void;
+  removeFromComparison: (apn: string) => void;
+  clearComparison: () => void;
+  setDCBriefOverlayOpen: (open: boolean) => void;
+
+  // Scout Actions
+  setScoutPanelOpen: (open: boolean) => void;
+  setScoutQuery: (query: string) => void;
+  setScoutLoading: (loading: boolean) => void;
+  setScoutError: (error: string | null) => void;
+  setScoutSubMarkets: (markets: SubMarketCandidate[]) => void;
+  setScoutCandidates: (candidates: RankedCandidate[]) => void;
+  setScoutActiveSubMarket: (market: SubMarketCandidate | null) => void;
+  appendScoutSummary: (text: string) => void;
+  resetScout: () => void;
 
   // Phase 2 Actions
   setSiteScore: (score: SiteScore | null) => void;
@@ -118,6 +161,29 @@ export const useAppStore = create<AppState>()(
 
       entityLoading: false,
       entityLookupOpen: false,
+
+      // Phase 3 Initial state
+      appMode: "dev",
+      dcMwTarget: 10,
+      dcActiveTab: "dc-score",
+      dcInfrastructure: null,
+      dcScore: null,
+      dcComparisonTray: [],
+      isDCBriefOverlayOpen: false,
+
+      // Scout initial state
+      scoutPanelOpen: false,
+      scoutSession: {
+        mode: "idle",
+        query: "",
+        intent: null,
+        subMarkets: [],
+        candidates: [],
+        activeSubMarket: null,
+        summary: "",
+        loading: false,
+        error: null,
+      },
 
       // Actions
 
@@ -195,6 +261,62 @@ export const useAppStore = create<AppState>()(
       setEntityLookupOpen: (open) => set({ entityLookupOpen: open }),
       setViewport: (lat, lng, zoom) => set({ viewportLat: lat, viewportLng: lng, viewportZoom: zoom }),
 
+      // Phase 3 Actions
+      setAppMode: (appMode) => set({ appMode }),
+      setDcMwTarget: (dcMwTarget) => set({ dcMwTarget }),
+      setDCActiveTab: (dcActiveTab) => set({ dcActiveTab }),
+      setDCInfrastructure: (dcInfrastructure) => set({ dcInfrastructure }),
+      setDCScore: (dcScore) => set({ dcScore }),
+      addToComparison: (site) =>
+        set((s) => {
+          if (s.dcComparisonTray.length >= 4) return s;
+          if (s.dcComparisonTray.some((x) => x.apn === site.apn)) return s;
+          return { dcComparisonTray: [...s.dcComparisonTray, site] };
+        }),
+      removeFromComparison: (apn) =>
+        set((s) => ({ dcComparisonTray: s.dcComparisonTray.filter((x) => x.apn !== apn) })),
+      clearComparison: () => set({ dcComparisonTray: [] }),
+      setDCBriefOverlayOpen: (isDCBriefOverlayOpen) => set({ isDCBriefOverlayOpen }),
+
+      // Scout Actions
+      setScoutPanelOpen: (scoutPanelOpen) => set({ scoutPanelOpen }),
+      setScoutQuery: (query) =>
+        set((s) => ({ scoutSession: { ...s.scoutSession, query } })),
+      setScoutLoading: (loading) =>
+        set((s) => ({ scoutSession: { ...s.scoutSession, loading } })),
+      setScoutError: (error) =>
+        set((s) => ({ scoutSession: { ...s.scoutSession, error, loading: false } })),
+      setScoutSubMarkets: (subMarkets) =>
+        set((s) => ({
+          scoutSession: { ...s.scoutSession, subMarkets, mode: "results", loading: false },
+        })),
+      setScoutCandidates: (candidates) =>
+        set((s) => ({
+          scoutSession: { ...s.scoutSession, candidates, mode: "results", loading: false },
+        })),
+      setScoutActiveSubMarket: (activeSubMarket) =>
+        set((s) => ({
+          scoutSession: { ...s.scoutSession, activeSubMarket, candidates: [], summary: "" },
+        })),
+      appendScoutSummary: (text) =>
+        set((s) => ({
+          scoutSession: { ...s.scoutSession, summary: s.scoutSession.summary + text },
+        })),
+      resetScout: () =>
+        set({
+          scoutSession: {
+            mode: "idle",
+            query: "",
+            intent: null,
+            subMarkets: [],
+            candidates: [],
+            activeSubMarket: null,
+            summary: "",
+            loading: false,
+            error: null,
+          },
+        }),
+
       // Phase 2 Actions
       setSiteScore: (score) => set({ siteScore: score }),
       setZoningSummary: (summary) => set({ zoningSummary: summary }),
@@ -214,6 +336,8 @@ export const useAppStore = create<AppState>()(
         showZoning: state.showZoning,
         showSavedPins: state.showSavedPins,
         showRoadLabels: state.showRoadLabels,
+        appMode: state.appMode,
+        dcMwTarget: state.dcMwTarget,
       }),
     }
   )

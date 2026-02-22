@@ -10,6 +10,7 @@ import MapControls from "@/components/map/MapControls";
 import MapHUD from "@/components/map/MapHUD";
 import ParcelPanel from "@/components/panel/ParcelPanel";
 import ParcelDrawer from "@/components/panel/ParcelDrawer";
+import ComparisonTray from "@/components/comparison/ComparisonTray";
 
 interface AppShellProps {
   mapRef?: MutableRefObject<MapHandle | null>;
@@ -18,6 +19,7 @@ interface AppShellProps {
 export default function AppShell({ mapRef }: AppShellProps) {
   const { isMobile } = useResponsive();
   const panelOpen = useAppStore((s) => s.panelOpen);
+  const appMode = useAppStore((s) => s.appMode);
   const { locate } = useGeolocation();
 
   const handleZoomIn = useCallback(() => {
@@ -30,8 +32,6 @@ export default function AppShell({ mapRef }: AppShellProps) {
 
   const handleGPS = useCallback(() => {
     locate();
-    // For now, GPS just requests permission. Full flyTo on GPS
-    // requires the position callback — wire up if needed.
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
@@ -47,7 +47,7 @@ export default function AppShell({ mapRef }: AppShellProps) {
 
   return (
     <div className="relative flex-1 overflow-hidden">
-      {/* Map */}
+      {/* Map — InfrastructureLayers is rendered inside ParcelMap's <Map> for react-map-gl context */}
       <ParcelMap mapRef={mapRef} />
 
       {/* Map overlays */}
@@ -61,6 +61,9 @@ export default function AppShell({ mapRef }: AppShellProps) {
       {/* Parcel detail — desktop panel or mobile drawer */}
       {!isMobile && panelOpen && <ParcelPanel />}
       {isMobile && <ParcelDrawer />}
+
+      {/* DC Comparison Tray (bottom-docked) */}
+      {appMode === "datacenter" && <ComparisonTray />}
     </div>
   );
 }

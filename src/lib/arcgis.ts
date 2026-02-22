@@ -214,3 +214,41 @@ export function mapTaxToParcel(
     previous_owners: prevOwners,
   };
 }
+
+/**
+ * Compute the centroid [lng, lat] of a parcel polygon by PIN.
+ * Used by Phase 3 DC score API to locate the parcel for proximity queries.
+ */
+export async function getParcelCentroid(pin: string): Promise<[number, number] | null> {
+  try {
+    const url = new URL(`${BASE_URL}/${PARCELS_LAYER}/query`);
+    url.searchParams.set("where", `PIN='${pin.replace(/'/g, "''")}'`);
+    url.searchParams.set("outFields", "PIN");
+    url.searchParams.set("returnGeometry", "true");
+    url.searchParams.set("outSR", "4326");
+    url.searchParams.set("f", "json");
+
+    const res = await fetch(url.toString(), { cache: "no-store" });
+    if (!res.ok) return null;
+
+    const data = await res.json();
+    const feature = data.features?.[0];
+    if (!feature?.geometry) return null;
+
+    const geom = feature.geometry;
+    // Point geometry
+    if (geom.x !== undefined && geom.y !== undefined) {
+      return [geom.x, geom.y];
+    }
+    // Polygon geometry — compute centroid from first ring
+    if (geom.rings) {
+      const ring: [number, number][] = geom.rings[0];
+      const lng = ring.reduce((s, p) => s + p[0], 0) / ring.length;
+      const lat = ring.reduce((s, p) => s + p[1], 0) / ring.length;
+      return [lng, lat];
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
