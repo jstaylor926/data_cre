@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Pocket Developer — a commercial real estate (CRE) parcel research tool. Next.js 16 app with Mapbox GL maps, Zustand state management, and Supabase backend (currently using in-memory mock stores during dev). Phase 1 is the active build: interactive parcel map, property detail panels, LLC entity lookup, saved collections.
+Atlas CRE — a commercial real estate (CRE) parcel research tool. Next.js 16 app with Mapbox GL maps, Zustand state management, and Supabase backend (currently using in-memory mock stores during dev). Phase 1 is the active build: interactive parcel map, property detail panels, LLC entity lookup, saved collections.
 
 ## Commands
 
@@ -21,6 +21,7 @@ No test runner is configured yet. Playwright is installed as a dev dependency bu
 ## Environment Variables
 
 Required in `.env.local`:
+- `NEXT_PUBLIC_APP_MODE` — `"dev"` (default) or `"prod"`. Dev mode enables mock data fallbacks, a hardcoded dev-user, and mock entity lookup. Prod mode requires real data sources and authentication. Config lives in `src/lib/config.ts`.
 - `NEXT_PUBLIC_MAPBOX_TOKEN` — Mapbox API key (map rendering + geocoding)
 - `NEXT_PUBLIC_SUPABASE_URL` — Supabase instance URL
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` — Supabase anonymous key
@@ -77,5 +78,5 @@ Use the `cn()` utility from `src/lib/utils.ts` (clsx + tailwind-merge) for condi
 - Path alias: `@/*` maps to `src/*`
 - Formatting: `src/lib/formatters.ts` has standard formatters for currency, acres, sq ft, dates, $/SF — always use these rather than inline formatting
 - Types: Core interfaces (`Parcel`, `SavedParcel`, `Collection`, `EntityResult`, `SearchResult`) are in `src/lib/types.ts`
-- The wireframe reference is at `project_build/` — design specs come from the Phase 1 wireframes HTML doc
+- The wireframe reference is at `docs/planning/` — design specs come from the Phase 1 wireframes HTML doc
 - shadcn components live in `src/components/ui/` and are configured via `components.json` (new-york style, lucide icons)

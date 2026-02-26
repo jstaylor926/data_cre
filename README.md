@@ -1,16 +1,33 @@
-# Pocket Developer
+# Atlas CRE
 
-A commercial real estate (CRE) parcel research tool for Gwinnett County, Georgia. Built for DeThomas Development to streamline property due diligence and data center site selection with an interactive parcel map, instant property previews, AI-powered scoring, and persistent saved collections.
+A commercial real estate (CRE) parcel research and intelligence platform for Gwinnett County, Georgia. Built for DeThomas Development to streamline property due diligence and data center site selection through a unified, feature-flagged application.
 
-## What It Does
+## Product Overview
 
-Pocket Developer has three modes, accessible from the landing page at `/`:
+Atlas CRE provides a tiered intelligence platform for site selection and property research, accessible via a professional landing page at `/` and a unified application at `/map`.
 
-**Phase 1 — Standard CRE research.** Renders 307,000+ real parcel boundaries on an interactive Mapbox map. Click any parcel for an instant preview card, then open a full property panel with ownership, assessed values, zoning, deed history, legal descriptions, and LLC entity lookups sourced from Gwinnett County ArcGIS services.
+### Core Intelligence Layers
 
-**Phase 2 — Site Intelligence.** Adds AI-powered site scoring, zoning analysis chat, comparable sales, firm activity history, and a one-click investment brief generator. All powered by Claude (Anthropic) with structured streaming responses.
+**Standard Research (Free/Pro)**
+Renders 307,000+ real parcel boundaries on an interactive Mapbox map. Includes ownership, assessed values, zoning, deed history, legal descriptions, and LLC entity lookups sourced from Gwinnett County ArcGIS services.
 
-**Phase 3 — Data Center Mode.** Switches the app into a specialized workflow for data center site selection. Every selected parcel gets scored across five infrastructure dimensions — power, fiber, water, environmental risk, and composite DC suitability — validated against live federal HIFLD data. Includes a multi-site comparison table with AI consultant narrative, and **Site Scout**: an AI-powered discovery tool that finds candidate sites from a plain-English project description.
+**Site Intelligence (Pro/Enterprise)**
+Adds AI-powered site scoring, zoning analysis chat, comparable sales, firm activity history, and a one-click investment brief generator powered by Claude AI with structured streaming responses.
+
+**Data Center Mode (Pro/Enterprise)**
+A specialized workflow for data center site selection. Every parcel is scored across power, fiber, water, and environmental risk—validated against live federal HIFLD data. Includes multi-site comparison tables and **Site Scout**: an AI-powered discovery tool.
+
+**Firm Intelligence (Enterprise)**
+A proprietary platform layer for multi-tenant CRM, deal pipeline tracking, and internal project management, linking parcels directly to firm-wide outcomes.
+
+---
+
+## Technical Architecture
+
+- **Unified Application**: Consolidated all experimental phases into a single `/map` route with an adaptive UI.
+- **Feature Flag System**: Granular control over high-value features (AI, DC, CRM) via the Zustand store and a dedicated Settings Modal.
+- **Membership Simulation**: Built-in tier presets (Free, Pro, Enterprise) to demonstrate tiered value propositions.
+- **Dark-Mode Only**: A custom design system optimized for high-density data visualization.
 
 ---
 
@@ -18,8 +35,8 @@ Pocket Developer has three modes, accessible from the landing page at `/`:
 
 - **Next.js 16** (App Router, Turbopack dev server)
 - **Mapbox GL JS** via `react-map-gl/mapbox` — parcel polygons, zoning overlays, infrastructure layers, scout overlays
-- **Zustand** — single-store state management with persistence for user preferences
-- **Supabase** — saved parcels and collections (PostgreSQL + Row Level Security)
+- **Zustand** — single-store state management with persistence for user preferences and feature flags
+- **Supabase** — saved parcels, collections, and multi-tenant CRM (PostgreSQL + RLS)
 - **Anthropic Claude API** — site scoring narratives, zoning chat, investment briefs, DC scoring, Site Scout geographic reasoning
 - **Tailwind CSS 4** — dark-mode-only design system with custom CSS variables
 - **Vaul** — mobile bottom drawer for property details
@@ -104,97 +121,23 @@ npx tsc --noEmit     # Type check
 ```
 src/
 ├── app/
-│   ├── page.tsx                    # Landing page — links to all three phases
-│   ├── phase-1/page.tsx            # Standard CRE research dashboard
-│   ├── phase-2/page.tsx            # Site intelligence dashboard
-│   ├── phase-3/page.tsx            # Data center mode dashboard + Site Scout
+│   ├── page.tsx                    # Professional Landing Page
+│   ├── map/page.tsx                # Unified Application (All features)
 │   └── api/
 │       ├── parcel/[apn]/           # Property detail, score, zoning, comps, brief, dc-score
-│       ├── parcel/batch/           # Batch parcel lookup (used by dc-scout area route)
-│       ├── parcels/bbox/           # Viewport parcel GeoJSON
-│       ├── zoning/bbox/            # Viewport zoning GeoJSON
-│       ├── search/                 # County search (PIN, owner, address)
-│       ├── infrastructure/tx-lines/ # HIFLD TX line proxy
-│       ├── dc-brief/compare/       # Multi-site comparison AI narrative (streaming)
-│       ├── dc-scout/discover/      # Site Scout Tier 1: NL → sub-markets (SSE)
-│       ├── dc-scout/area/          # Site Scout Tier 2: bbox → parcel scoring (SSE)
-│       ├── saved/                  # Saved parcels CRUD (Supabase)
-│       ├── collections/            # Collections CRUD (Supabase)
-│       └── entity/lookup/          # LLC/entity owner search
+│       ├── ...                     # Other API routes
 ├── components/
-│   ├── map/
-│   │   ├── ParcelMap.tsx           # Main map — all layers, parcel click, viewport tracking
-│   │   ├── InfrastructureLayers.tsx # HIFLD substations + TX lines (DC mode only)
-│   │   ├── ZoningLayer.tsx         # Zoning overlay with county color mapping
-│   │   ├── QuickInfoCard.tsx       # Tap-to-preview floating card
-│   │   ├── SavedPins.tsx           # Bookmark markers
-│   │   ├── CompMarkers.tsx         # Comparable sale markers + radius ring
-│   │   └── GPSMarker.tsx           # User location dot
-│   ├── panel/
-│   │   ├── PanelContent.tsx        # Tab router — standard mode and DC mode
-│   │   ├── ParcelDataTab.tsx       # Full property detail view
-│   │   ├── ScoreTab.tsx            # Phase 2 site scoring
-│   │   ├── ZoningTab.tsx           # AI zoning analysis + chat
-│   │   ├── CompsTab.tsx            # Comparable sales
-│   │   ├── DCPanelTabs.tsx         # DC mode tab bar
-│   │   ├── DCScoreTab.tsx          # Composite DC score + sub-score breakdown
-│   │   ├── PowerTab.tsx            # Power infrastructure detail
-│   │   ├── FiberTab.tsx            # Fiber/network infrastructure detail
-│   │   ├── WaterTab.tsx            # Water/cooling infrastructure detail
-│   │   ├── EnvironTab.tsx          # Flood, seismic, climate risk
-│   │   ├── ParcelPanel.tsx         # Desktop slide-in panel (380px)
-│   │   ├── ParcelDrawer.tsx        # Mobile bottom drawer (Vaul)
-│   │   ├── PanelActionBar.tsx      # Save, brief, compare actions
-│   │   ├── BriefOverlay.tsx        # AI investment brief overlay
-│   │   └── EntityLookupCard.tsx    # LLC entity lookup UI
-│   ├── scout/
-│   │   ├── SiteScoutPanel.tsx      # Two-tier AI discovery UI
-│   │   ├── SubMarketCard.tsx       # Tier 1 sub-market result card
-│   │   ├── SubMarketOverlay.tsx    # Tier 1 bbox rectangles on map
-│   │   └── ScoutResultPins.tsx     # Tier 2 ranked parcel pins on map
-│   ├── comparison/
-│   │   ├── ComparisonTray.tsx      # Bottom-docked multi-site queue (up to 4)
-│   │   └── ComparisonTable.tsx     # Full-screen side-by-side comparison + AI narrative
 │   ├── layout/
+│   │   ├── TopBar.tsx              # Adaptive Nav + Search + Settings trigger
+│   │   ├── SettingsModal.tsx       # Feature flag & Tier selection UI
 │   │   ├── AppShell.tsx            # Responsive layout orchestrator
-│   │   ├── TopBar.tsx              # Nav + search + mode switcher
-│   │   ├── MapControls.tsx         # Zoom, GPS, layer controls
-│   │   ├── MapHUD.tsx              # Coordinate/zoom display
-│   │   └── MobileTabBar.tsx        # Bottom tab bar for mobile
-│   ├── search/
-│   │   ├── SearchBar.tsx           # Dual search (county records + Mapbox geocoding)
-│   │   └── SearchDropdown.tsx      # Grouped results dropdown
-│   └── saved/
-│       ├── SavedPropertiesList.tsx # Saved parcels and collections view
-│       └── SavedPropertyRow.tsx    # Individual saved parcel row
-├── hooks/
-│   ├── useViewportParcels.ts       # Debounced bbox parcel loading
-│   ├── useViewportZoning.ts        # Debounced bbox zoning loading
-│   ├── useParcelClick.ts           # Fetch property detail on panel open
-│   ├── useDCScore.ts               # Trigger HIFLD fetch + DC scoring on parcel select
-│   ├── useSiteScore.ts             # Phase 2 site scoring
-│   ├── useZoningSummary.ts         # AI zoning analysis
-│   ├── useComps.ts                 # Comparable sales
-│   ├── useSavedParcels.ts          # Supabase saved parcels
-│   ├── useCollections.ts           # Supabase collections
-│   ├── useGeolocation.ts           # Browser GPS
-│   ├── useMapboxSearch.ts          # Mapbox Search Box API
-│   └── useResponsive.ts            # 1024px desktop/mobile breakpoint
-├── lib/
-│   ├── arcgis.ts                   # Gwinnett County ArcGIS client
-│   ├── hifld.ts                    # HIFLD substation + TX line client
-│   ├── dc-scoring.ts               # DC infrastructure scoring engine
-│   ├── scoring.ts                  # Phase 2 site scoring engine
-│   ├── zoning-standards.ts         # Zoning classification rules
-│   ├── claude.ts                   # Anthropic client wrapper
-│   ├── constants.ts                # Map config, layer IDs, zoning colors
-│   ├── formatters.ts               # Currency, acres, dates, $/SF
-│   ├── types.ts                    # All TypeScript interfaces
-│   ├── supabase.ts                 # Browser Supabase client
-│   ├── supabase-server.ts          # Server Supabase client (SSR cookies)
-│   └── utils.ts                    # cn() classname utility
-└── store/
-    └── useAppStore.ts              # Zustand store — all app state and actions
+│   │   └── ...
+│   ├── crm/                        # Firm Intel (Phase 4) components
+│   ├── map/                        # All map-related components
+│   ├── panel/                      # Property detail panel & adaptive tabs
+│   └── ...
+├── store/
+│   └── useAppStore.ts              # Zustand store — includes feature flag state
 ```
 
 ---

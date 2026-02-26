@@ -1,6 +1,6 @@
 # Initial Concept
 
-Pocket Developer is an interactive parcel mapping and intelligence tool designed for DeThomas Development to transform raw parcel data into actionable development intelligence.
+Atlas CRE is an interactive parcel mapping and intelligence tool designed for DeThomas Development to transform raw parcel data into actionable development intelligence.
 
 # Product Definition
 

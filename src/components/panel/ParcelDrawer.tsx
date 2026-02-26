@@ -6,6 +6,7 @@ import {
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
+  DrawerDescription,
 } from "@/components/ui/drawer";
 import PanelContent from "./PanelContent";
 
@@ -27,6 +28,9 @@ export default function ParcelDrawer() {
           <DrawerTitle>
             {parcel?.site_address ?? "Parcel Details"}
           </DrawerTitle>
+          <DrawerDescription>
+            Detailed information for property {parcel?.apn}
+          </DrawerDescription>
         </DrawerHeader>
         <div className="max-h-[60vh] overflow-y-auto">
           <PanelContent />

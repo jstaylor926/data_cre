@@ -13,10 +13,18 @@ const TABS: { id: PanelTab; label: string; phase2?: boolean }[] = [
 export default function PanelTabs() {
   const activeTab = useAppStore((s) => s.activeTab);
   const setActiveTab = useAppStore((s) => s.setActiveTab);
+  const features = useAppStore((s) => s.features);
+
+  const filteredTabs = TABS.filter(tab => {
+    if (tab.id === 'score' && !features.enableAIZoning) return false;
+    if (tab.id === 'zoning' && !features.enableAIZoning) return false;
+    if (tab.id === 'comps' && !features.enableAutoComps) return false;
+    return true;
+  });
 
   return (
     <div className="flex border-b border-line">
-      {TABS.map((tab) => {
+      {filteredTabs.map((tab) => {
         const active = activeTab === tab.id;
         const accentClass = tab.phase2
           ? "border-violet text-violet"

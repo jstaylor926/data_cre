@@ -1,9 +1,9 @@
-# GEMINI.md - Project Context: Pocket Developer
+# GEMINI.md - Project Context: Atlas CRE
 
-This file provides essential context for Gemini CLI to assist in the development of **Pocket Developer**, a specialized Commercial Real Estate (CRE) parcel research and intelligence platform.
+This file provides essential context for Gemini CLI to assist in the development of **Atlas CRE**, a specialized Commercial Real Estate (CRE) parcel research and intelligence platform.
 
 ## Project Overview
-Pocket Developer is an interactive parcel mapping and intelligence tool designed for DeThomas Development. It focuses on Gwinnett County, Georgia, providing real-time property data, zoning analysis, and advanced site selection capabilities.
+Atlas CRE is an interactive parcel mapping and intelligence tool designed for DeThomas Development. It focuses on Gwinnett County, Georgia, providing real-time property data, zoning analysis, and advanced site selection capabilities.
 
 ### Core Mission
 To transform raw parcel data into actionable development intelligence, moving from basic mapping (Phase 1) to AI-driven site analysis (Phase 2), specialized infrastructure scoring for data centers (Phase 3), and a proprietary firm-wide intelligence platform (Phase 4).
@@ -65,27 +65,33 @@ A single Zustand store manages the global application state:
 
 ## Project Roadmap
 
-### Phase 1: LandGlide Replication (Current)
--   Interactive Mapbox parcel map.
--   Property detail panels (Ownership, Value, Zoning).
--   LLC Entity Lookup (Piercing LLC owners).
--   Saved Properties & Collections.
+### Phase 1: LandGlide Replication (Complete)
+- Interactive Mapbox parcel map.
+- Property detail panels (Ownership, Value, Zoning).
+- LLC Entity Lookup (Piercing LLC owners).
+- Saved Properties & Collections.
 
-### Phase 2: AI Site Analysis (Active)
--   **Site Score Card:** Composite 0-100 development score.
--   **Zoning AI:** Natural language interpretation of zoning ordinances.
--   **Auto-Comps:** Spatial query for recent comparable land sales.
--   **Deal History RAG:** Querying historical firm documents for site context.
+### Phase 2: AI Site Analysis (Complete)
+- **Site Score Card:** Composite 0-100 development score.
+- **Zoning AI:** Natural language interpretation of zoning ordinances.
+- **Auto-Comps:** Spatial query for recent comparable land sales.
+- **Deal History RAG:** Querying historical firm documents for site context.
 
-### Phase 3: Data Center Selector (Planned)
--   Infrastructure scoring (Power, Fiber, Water).
--   Environmental risk assessment (Flood, Wetlands).
--   Tier classification (Tier I-IV).
+### Phase 3: Data Center Selector (Complete)
+- Infrastructure scoring (Power, Fiber, Water).
+- Environmental risk assessment (Flood, Wetlands).
+- Tier classification (Tier I-IV).
 
-### Phase 4: Firm Intelligence Platform (Planned)
--   Proprietary ML scoring trained on firm-specific outcomes.
--   Full Deal Lifecycle/CRM.
--   White-label multi-tenancy.
+### Phase 4: Firm Intelligence Platform (Complete - Integrated)
+- Proprietary ML scoring trained on firm-specific outcomes.
+- Full Deal Lifecycle/CRM.
+- Multi-tenant architecture.
+
+### Next: Production Refinement (Active)
+- **Unified Product UX:** Transitioned from phased POCs to a single, adaptive application.
+- **Feature Flagging:** Tiered access (Free/Pro/Enterprise) via dynamic configuration.
+- **Authentication:** Integrating official Supabase Auth for production deployment.
+
 
 ## Key Files
 -   `src/lib/arcgis.ts`: Logic for querying Gwinnett County's ArcGIS services.
@@ -93,7 +99,7 @@ A single Zustand store manages the global application state:
 -   `src/lib/formatters.ts`: Standardized formatting for currency, acres, and dates.
 -   `src/hooks/useParcelClick.ts`: Orchestrates the transition from preview to full detail.
 -   `src/store/useAppStore.ts`: The source of truth for application state.
--   `project_notes.md`: Detailed feature and phase breakdowns.
+-   `docs/notes/project_notes.md`: Detailed feature and phase breakdowns.
 
 ## Development Conventions
 -   **Client Components:** Use `"use client"` for all components in `src/components/`.

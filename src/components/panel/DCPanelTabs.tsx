@@ -20,10 +20,11 @@ export default function DCPanelTabs() {
     <div className="flex border-b border-line overflow-x-auto">
       {TABS.map((tab) => {
         const active = dcActiveTab === tab.id;
-        const isCrit = tab.id === "environ" && dcScore?.disqualified;
+        const isCrit = (tab.id === "environ" || tab.id === "dc-score") && dcScore?.disqualified;
         return (
           <button
             key={tab.id}
+            type="button"
             onClick={() => setDCActiveTab(tab.id)}
             className={`flex flex-1 min-w-0 items-center justify-center gap-1 px-2 py-2.5 font-mono text-[10px] uppercase tracking-wider transition-colors border-b-2 whitespace-nowrap ${
               active

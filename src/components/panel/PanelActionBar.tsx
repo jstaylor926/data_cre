@@ -14,9 +14,8 @@ export default function PanelActionBar() {
   const setBriefStatus = useAppStore((s) => s.setBriefStatus);
   const siteScore = useAppStore((s) => s.siteScore);
   const activeProject = useAppStore((s) => s.activeProject);
-  const pathname = usePathname();
-  const isPhase2 = pathname?.includes("phase-2");
-  const isPhase4 = pathname?.includes("phase-4");
+  const features = useAppStore((s) => s.features);
+  
   const { savedParcels, isSaved, save, unsave } = useSavedParcels();
   const { collections, create } = useCollections();
 
@@ -92,13 +91,15 @@ export default function PanelActionBar() {
       </button>
 
       {/* LLC button */}
-      <button
-        onClick={() => setEntityLookupOpen(true)}
-        className="flex h-[30px] flex-1 items-center justify-center gap-1 rounded border border-line2 bg-ink4 font-mono text-[8px] uppercase tracking-wider text-mid transition-colors hover:border-teal hover:text-teal"
-      >
-        <Building2 size={10} />
-        LLC &rarr;
-      </button>
+      {features.enableEntityLookup && (
+        <button
+          onClick={() => setEntityLookupOpen(true)}
+          className="flex h-[30px] flex-1 items-center justify-center gap-1 rounded border border-line2 bg-ink4 font-mono text-[8px] uppercase tracking-wider text-mid transition-colors hover:border-teal hover:text-teal"
+        >
+          <Building2 size={10} />
+          LLC &rarr;
+        </button>
+      )}
 
       {/* Compare — coming soon tooltip */}
       <div className="group relative flex-[0.8]">
@@ -113,8 +114,8 @@ export default function PanelActionBar() {
         </span>
       </div>
 
-      {/* Brief — coming soon tooltip (active on Phase 2) */}
-      {isPhase2 ? (
+      {/* Brief / Link logic */}
+      {features.enableAIZoning ? (
         <button
           onClick={() => {
             setBriefStatus("generating");
@@ -126,7 +127,7 @@ export default function PanelActionBar() {
           <FileText size={9} />
           Brief
         </button>
-      ) : isPhase4 ? (
+      ) : features.enableFirmIntel ? (
         <button
           onClick={() => {
             // Logic to link to active project

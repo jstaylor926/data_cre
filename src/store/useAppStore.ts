@@ -29,7 +29,18 @@ export interface QuickCardData {
   lngLat: [number, number];
 }
 
+export interface FeatureFlags {
+  enableAIZoning: boolean;
+  enableAutoComps: boolean;
+  enableDCScoring: boolean;
+  enableFirmIntel: boolean;
+  enableEntityLookup: boolean;
+}
+
 interface AppState {
+  // Feature Flags
+  features: FeatureFlags;
+
   // Map
   selectedAPN: string | null;
   selectedParcel: Parcel | null;
@@ -146,12 +157,20 @@ interface AppState {
   setActiveOrg: (org: Organization | null) => void;
   setProjects: (projects: Project[]) => void;
   setActiveProject: (project: Project | null) => void;
+  setFeatures: (features: Partial<FeatureFlags>) => void;
 }
 
 export const useAppStore = create<AppState>()(
   persist(
     (set) => ({
       // Initial state
+      features: {
+        enableAIZoning: true,
+        enableAutoComps: true,
+        enableDCScoring: true,
+        enableFirmIntel: true,
+        enableEntityLookup: true,
+      },
       selectedAPN: null,
       selectedParcel: null,
       parcelLoading: false,
@@ -363,11 +382,13 @@ export const useAppStore = create<AppState>()(
       setActiveOrg: (activeOrg) => set({ activeOrg }),
       setProjects: (projects) => set({ projects }),
       setActiveProject: (activeProject) => set({ activeProject }),
+      setFeatures: (features) => set((s) => ({ features: { ...s.features, ...features } })),
     }),
     {
       name: "pd-map-prefs",
       // Only persist layer toggles and base map style — not transient UI state
       partialize: (state) => ({
+        features: state.features,
         baseMapStyle: state.baseMapStyle,
         showParcels: state.showParcels,
         showParcelFill: state.showParcelFill,

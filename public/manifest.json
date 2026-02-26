@@ -1,8 +1,8 @@
 {
-  "name": "Pocket Developer",
-  "short_name": "PocketDev",
+  "name": "Atlas CRE",
+  "short_name": "AtlasCRE",
   "description": "Commercial real estate parcel intelligence",
-  "start_url": "/phase-1",
+  "start_url": "/map",
   "display": "standalone",
   "background_color": "#0d0f12",
   "theme_color": "#00d4c8",

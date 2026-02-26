@@ -150,7 +150,7 @@ export default function BriefOverlay() {
       {/* Top Bar */}
       <div className="flex h-[52px] items-center gap-4 border-b border-line px-6">
         <div className="font-head text-sm tracking-widest text-bright">
-          Pocket<span className="text-violet">Dev</span>
+          Atlas<span className="text-violet">CRE</span>
         </div>
         <div className="font-mono text-[10px] uppercase tracking-wider text-violet flex-1">
           {isGenerating ? "Generating Site Brief…" : "Site Feasibility Brief"} &middot; {parcel.site_address}
@@ -350,7 +350,7 @@ function FallbackSummary({
       <p className="text-[13px] leading-relaxed text-mid mb-8">
         {parcel.site_address} is a {parcel.acres}-acre {parcel.zoning} parcel in {parcel.county} County,
         owned by {parcel.owner_name ?? "unknown"}.
-        The site scores {siteScore?.composite ?? "—"}/100 on the PocketDev Site Intelligence model.
+        The site scores {siteScore?.composite ?? "—"}/100 on the Atlas CRE Site Intelligence model.
       </p>
       <div className="grid grid-cols-3 gap-3">
         <KVCard label="Site Score" value={`${siteScore?.composite ?? "—"} / 100`} color="text-violet" />

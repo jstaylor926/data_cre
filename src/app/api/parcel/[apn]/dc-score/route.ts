@@ -42,11 +42,42 @@ export async function GET(
 
   // 2. Fetch infrastructure data in parallel
   const radius = effectiveRadius(mw);
-  const [rawSubs, nearestTxVoltage, fema] = await Promise.all([
+  
+  // Create a controller for the FCC timeout
+  const fccController = new AbortController();
+  const timeoutId = setTimeout(() => fccController.abort(), 3000);
+
+  const [rawSubs, nearestTxVoltage, fema, fiberCarriers] = await Promise.all([
     fetchSubstationsNear(lng, lat, radius),
     fetchNearestTxVoltage(lng, lat, 5),
     fetchFemaFloodZone(lng, lat),
+    (async () => {
+      try {
+        const fccUrl = `https://broadbandmap.fcc.gov/api/public/map/listAvailability?latitude=${lat}&longitude=${lng}&unit=0&category=Fixed%20Broadband`;
+        const fccRes = await fetch(fccUrl, { 
+          signal: fccController.signal,
+          cache: "no-store" 
+        });
+        clearTimeout(timeoutId);
+        if (fccRes.ok) {
+          const fccData = await fccRes.json();
+          const providers = fccData?.availability ?? [];
+          return [...new Set(
+            providers
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              .filter((p: any) => p.technology_code === 50)
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              .map((p: any) => p.brand_name as string)
+          )] as string[];
+        }
+      } catch (err) {
+        // FCC API unavailable or timed out — return empty
+        console.warn("FCC API fetch skipped or timed out:", err);
+      }
+      return [];
+    })()
   ]);
+  clearTimeout(timeoutId);
 
   // 3. Enrich substations with distances
   const substations: Substation[] = rawSubs.map((s) => ({
@@ -63,27 +94,6 @@ export async function GET(
 
   // 5. Build env flags from FEMA data
   const envFlags = buildEnvFlags(fema.zone, fema.subtype);
-
-  // 6. Fiber carriers — use FCC BDC API for real data
-  let fiberCarriers: string[] = [];
-  try {
-    const fccUrl = `https://broadbandmap.fcc.gov/api/public/map/listAvailability?latitude=${lat}&longitude=${lng}&unit=0&category=Fixed%20Broadband`;
-    const fccRes = await fetch(fccUrl, { cache: "no-store" });
-    if (fccRes.ok) {
-      const fccData = await fccRes.json();
-      // technology_code 50 = fiber; extract unique provider names with fiber
-      const providers = fccData?.availability ?? [];
-      fiberCarriers = [...new Set(
-        providers
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .filter((p: any) => p.technology_code === 50)
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .map((p: any) => p.brand_name as string)
-      )] as string[];
-    }
-  } catch {
-    // FCC API unavailable — leave empty, scoring will use neutral value
-  }
 
   const infrastructure: DCInfrastructure = {
     substations,

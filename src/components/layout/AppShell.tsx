@@ -4,6 +4,7 @@ import { useCallback, type MutableRefObject } from "react";
 import { useResponsive } from "@/hooks/useResponsive";
 import { useAppStore } from "@/store/useAppStore";
 import { useGeolocation } from "@/hooks/useGeolocation";
+import { useDCScore } from "@/hooks/useDCScore";
 import ParcelMap from "@/components/map/ParcelMap";
 import type { MapHandle } from "@/components/map/ParcelMap";
 import MapControls from "@/components/map/MapControls";
@@ -21,7 +22,11 @@ export default function AppShell({ mapRef }: AppShellProps) {
   const { isMobile } = useResponsive();
   const panelOpen = useAppStore((s) => s.panelOpen);
   const appMode = useAppStore((s) => s.appMode);
+  const selectedAPN = useAppStore((s) => s.selectedAPN);
   const { locate } = useGeolocation();
+
+  // Fetch DC infrastructure + compute score when a parcel is selected in datacenter mode
+  useDCScore(selectedAPN);
 
   const handleZoomIn = useCallback(() => {
     mapRef?.current?.zoomIn();
