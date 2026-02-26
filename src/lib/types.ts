@@ -122,6 +122,47 @@ export interface BriefSection {
   time?: string;
 }
 
+// ─── Phase 4: Firm Intelligence Platform ──────────────────────────────────────
+
+export interface Organization {
+  id: string;
+  name: string;
+  slug: string;
+  logo_url?: string | null;
+  created_at: string;
+  settings?: Record<string, any>;
+}
+
+export interface Project {
+  id: string;
+  org_id: string;
+  name: string;
+  description: string | null;
+  status: "active" | "archived" | "closed";
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Task {
+  id: string;
+  project_id: string;
+  title: string;
+  description: string | null;
+  status: "todo" | "in_progress" | "done";
+  due_date: string | null;
+  assigned_to?: string | null;
+  created_at: string;
+}
+
+export interface Note {
+  id: string;
+  project_id: string;
+  apn: string;
+  content: string;
+  author_id: string;
+  created_at: string;
+}
+
 // ─── Phase 3: Data Center Mode ───────────────────────────────────────────────
 
 export type AppMode = "dev" | "datacenter";
