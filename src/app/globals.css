@@ -46,7 +46,7 @@
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
 
-  /* Pocket Developer custom colors for Tailwind utilities */
+  /* Atlas CRE custom colors for Tailwind utilities */
   --color-ink: #0d0f12;
   --color-ink2: #141720;
   --color-ink3: #1b1f2a;
@@ -67,11 +67,11 @@
   --color-pd-green-dim: rgba(34, 197, 94, 0.1);
 }
 
-/* Pocket Developer — Dark-only design system */
+/* Atlas CRE — Dark-only design system */
 :root {
   --radius: 0.5rem;
 
-  /* Pocket Developer palette */
+  /* Atlas CRE palette */
   --ink: #0d0f12;
   --ink2: #141720;
   --ink3: #1b1f2a;
@@ -91,7 +91,7 @@
   --pd-green: #22c55e;
   --pd-green-dim: rgba(34, 197, 94, 0.1);
 
-  /* Map shadcn variables to Pocket Developer tokens */
+  /* Map shadcn variables to Atlas CRE tokens */
   --background: var(--ink);
   --foreground: var(--text);
   --card: var(--ink2);
@@ -139,7 +139,7 @@
   }
 }
 
-/* Utility classes for the Pocket Developer design system */
+/* Utility classes for the Atlas CRE design system */
 @layer utilities {
   .font-head {
     font-family: var(--font-head);

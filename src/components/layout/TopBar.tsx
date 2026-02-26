@@ -41,9 +41,9 @@ export default function TopBar({ onFlyTo, activeNav = "map", onNavChange }: TopB
       {/* Logo */}
       <h1 className="shrink-0 font-head text-base tracking-[0.06em] text-bright">
         {isMobile ? (
-          <>P<span className={accentClass}>{isDC ? "DC" : "D"}</span></>
+          <>A<span className={accentClass}>{isDC ? "DC" : "CRE"}</span></>
         ) : (
-          <>POCKET<span className={accentClass}>{isDC ? "DC" : "DEV"}</span></>
+          <>ATLAS<span className={accentClass}>{isDC ? "DC" : "CRE"}</span></>
         )}
       </h1>
 

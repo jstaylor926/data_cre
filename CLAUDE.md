@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Pocket Developer — a commercial real estate (CRE) parcel research tool. Next.js 16 app with Mapbox GL maps, Zustand state management, and Supabase backend (currently using in-memory mock stores during dev). Phase 1 is the active build: interactive parcel map, property detail panels, LLC entity lookup, saved collections.
+Atlas CRE — a commercial real estate (CRE) parcel research tool. Next.js 16 app with Mapbox GL maps, Zustand state management, and Supabase backend (currently using in-memory mock stores during dev). Phase 1 is the active build: interactive parcel map, property detail panels, LLC entity lookup, saved collections.
 
 ## Commands
 
