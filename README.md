@@ -4,7 +4,11 @@ A commercial real estate (CRE) parcel research and intelligence platform for Gwi
 
 ## Product Overview
 
+<<<<<<< HEAD
 Atlas CRE provides a tiered intelligence platform for site selection and property research, accessible via a professional landing page at `/` and a unified application at `/map`.
+=======
+Atlas CRE has three modes, accessible from the landing page at `/`:
+>>>>>>> 4a55aae98fa8798892afa95fc91a5a77b206b37b
 
 ### Core Intelligence Layers
 
