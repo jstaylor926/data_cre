@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getParcelsByOwner } from "@/lib/mock-data";
 import type { EntityResult } from "@/lib/types";
+import { isDevMode } from "@/lib/config";
 
 // Mock entity lookup data — simulates GA SOS scraping results
 const MOCK_ENTITIES: Record<string, Omit<EntityResult, "related_parcels">> = {
@@ -113,12 +114,20 @@ export async function POST(request: Request) {
     );
   }
 
-  // TODO: Replace with real GA SOS scraping + Supabase cache
-  // 1. Check entity_lookups cache table
-  // 2. If not cached, scrape ecorp.sos.ga.gov
-  // 3. Cache result
-  // 4. Cross-reference owner name against parcels table
+  // Prod mode: real GA SOS scraping not yet implemented
+  if (!isDevMode) {
+    // TODO: Replace with real GA SOS scraping + Supabase cache
+    // 1. Check entity_lookups cache table
+    // 2. If not cached, scrape ecorp.sos.ga.gov
+    // 3. Cache result
+    // 4. Cross-reference owner name against parcels table
+    return NextResponse.json(
+      { error: "Entity lookup not yet available in production" },
+      { status: 501 }
+    );
+  }
 
+  // Dev mode: use mock entity data
   // Simulate network delay
   await new Promise((resolve) => setTimeout(resolve, 500));
 

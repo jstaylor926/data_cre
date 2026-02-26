@@ -1,16 +1,21 @@
 import { NextResponse } from "next/server";
 import { createServerSupabase } from "@/lib/supabase-server";
-
-// TODO: Replace with auth.uid() when authentication is added
-const DEV_USER_ID = "dev-user";
+import { getUserId } from "@/lib/config";
 
 export async function GET() {
+  let userId: string;
+  try {
+    userId = getUserId();
+  } catch {
+    return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+  }
+
   const supabase = await createServerSupabase();
 
   const { data, error } = await supabase
     .from("saved_parcels")
     .select("*")
-    .eq("user_id", DEV_USER_ID)
+    .eq("user_id", userId)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -22,6 +27,13 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  let userId: string;
+  try {
+    userId = getUserId();
+  } catch {
+    return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+  }
+
   const body = await request.json();
   const { apn, notes, collection_id } = body as {
     apn: string;
@@ -40,7 +52,7 @@ export async function POST(request: Request) {
     .from("saved_parcels")
     .upsert(
       {
-        user_id: DEV_USER_ID,
+        user_id: userId,
         apn,
         notes: notes ?? null,
         collection_id: collection_id ?? null,
@@ -59,6 +71,13 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
+  let userId: string;
+  try {
+    userId = getUserId();
+  } catch {
+    return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+  }
+
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");
   const apn = searchParams.get("apn");
@@ -70,13 +89,13 @@ export async function DELETE(request: Request) {
       .from("saved_parcels")
       .delete()
       .eq("id", id)
-      .eq("user_id", DEV_USER_ID);
+      .eq("user_id", userId);
   } else if (apn) {
     await supabase
       .from("saved_parcels")
       .delete()
       .eq("apn", apn)
-      .eq("user_id", DEV_USER_ID);
+      .eq("user_id", userId);
   }
 
   return NextResponse.json({ ok: true });

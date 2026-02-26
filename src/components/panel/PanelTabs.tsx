@@ -1,8 +1,6 @@
 "use client";
 
 import { useAppStore } from "@/store/useAppStore";
-import { usePathname } from "next/navigation";
-import { Lock } from "lucide-react";
 import type { PanelTab } from "@/lib/types";
 
 const TABS: { id: PanelTab; label: string; phase2?: boolean }[] = [
@@ -15,13 +13,10 @@ const TABS: { id: PanelTab; label: string; phase2?: boolean }[] = [
 export default function PanelTabs() {
   const activeTab = useAppStore((s) => s.activeTab);
   const setActiveTab = useAppStore((s) => s.setActiveTab);
-  const pathname = usePathname();
-  const isPhase1 = pathname === "/phase-1";
 
   return (
     <div className="flex border-b border-line">
       {TABS.map((tab) => {
-        const locked = isPhase1 && tab.phase2;
         const active = activeTab === tab.id;
         const accentClass = tab.phase2
           ? "border-violet text-violet"
@@ -30,18 +25,14 @@ export default function PanelTabs() {
         return (
           <button
             key={tab.id}
-            onClick={() => !locked && setActiveTab(tab.id)}
-            disabled={locked}
+            onClick={() => setActiveTab(tab.id)}
             className={`flex flex-1 items-center justify-center gap-1 px-2 py-2.5 font-mono text-[10px] uppercase tracking-wider transition-colors border-b-2 ${
-              locked
-                ? "border-transparent text-pd-muted/40 cursor-not-allowed"
-                : active
-                  ? accentClass
-                  : "border-transparent text-pd-muted hover:text-mid"
+              active
+                ? accentClass
+                : "border-transparent text-pd-muted hover:text-mid"
             }`}
           >
             {tab.label}
-            {locked && <Lock size={8} className="opacity-40" />}
           </button>
         );
       })}

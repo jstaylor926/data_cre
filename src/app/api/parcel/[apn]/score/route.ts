@@ -3,6 +3,7 @@ import { fetchPropertyByPIN, mapTaxToParcel } from "@/lib/arcgis";
 import { getParcelByAPN } from "@/lib/mock-data";
 import { scoreParcel } from "@/lib/scoring";
 import { getAnthropicClient, HAIKU } from "@/lib/claude";
+import { isDevMode } from "@/lib/config";
 
 export async function GET(
   _request: Request,
@@ -18,10 +19,10 @@ export async function GET(
       parcel = mapTaxToParcel(attrs, apn);
     }
   } catch {
-    // Fall through to mock
+    // Fall through
   }
 
-  if (!parcel) {
+  if (!parcel && isDevMode) {
     parcel = getParcelByAPN(apn);
   }
 

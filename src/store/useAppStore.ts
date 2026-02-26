@@ -18,6 +18,8 @@ import type {
   ScoutSession,
   SubMarketCandidate,
   RankedCandidate,
+  Organization,
+  Project,
 } from "@/lib/types";
 
 export interface QuickCardData {
@@ -80,6 +82,12 @@ interface AppState {
   scoutSession: ScoutSession;
   scoutPanelOpen: boolean;
 
+  // Phase 4: Firm Intelligence
+  organizations: Organization[];
+  activeOrg: Organization | null;
+  projects: Project[];
+  activeProject: Project | null;
+
   // Actions
   showQuickCard: (data: QuickCardData) => void;
   dismissQuickCard: () => void;
@@ -132,6 +140,12 @@ interface AppState {
   addChatMessage: (msg: ChatMessage) => void;
   setBriefStatus: (status: BriefStatus) => void;
   setBriefOverlayOpen: (open: boolean) => void;
+
+  // Phase 4 Actions
+  setOrganizations: (orgs: Organization[]) => void;
+  setActiveOrg: (org: Organization | null) => void;
+  setProjects: (projects: Project[]) => void;
+  setActiveProject: (project: Project | null) => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -193,6 +207,12 @@ export const useAppStore = create<AppState>()(
         loading: false,
         error: null,
       },
+
+      // Phase 4 Initial state
+      organizations: [],
+      activeOrg: null,
+      projects: [],
+      activeProject: null,
 
       // Actions
 
@@ -337,6 +357,12 @@ export const useAppStore = create<AppState>()(
       addChatMessage: (msg) => set((s) => ({ chatHistory: [...s.chatHistory, msg] })),
       setBriefStatus: (briefStatus) => set({ briefStatus }),
       setBriefOverlayOpen: (isBriefOverlayOpen) => set({ isBriefOverlayOpen }),
+
+      // Phase 4 Actions
+      setOrganizations: (organizations) => set({ organizations }),
+      setActiveOrg: (activeOrg) => set({ activeOrg }),
+      setProjects: (projects) => set({ projects }),
+      setActiveProject: (activeProject) => set({ activeProject }),
     }),
     {
       name: "pd-map-prefs",
@@ -350,6 +376,8 @@ export const useAppStore = create<AppState>()(
         showRoadLabels: state.showRoadLabels,
         appMode: state.appMode,
         dcMwTarget: state.dcMwTarget,
+        activeOrg: state.activeOrg,
+        activeProject: state.activeProject,
       }),
     }
   )

@@ -1,6 +1,5 @@
 "use client";
 
-import { Lock } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import { useSiteScore } from "@/hooks/useSiteScore";
 
@@ -58,14 +57,8 @@ export default function ScoreTab() {
           <ScoreRow label="Zoning" value={siteScore.zoning} max={20} color="bg-green" />
           <ScoreRow label="Market" value={siteScore.market} max={20} color="bg-amber" />
           <ScoreRow label="Infra" value={siteScore.infrastructure} max={20} color="bg-teal" />
-          <ScoreRow label="Access" value={siteScore.access} max={20} color="bg-teal" pending />
-          <ScoreRow label="Demo" value={siteScore.demographics} max={20} color="bg-teal" pending />
-        </div>
-        <div className="mt-2 flex items-center gap-1.5 rounded border border-line2 bg-ink3 px-2 py-1.5">
-          <Lock size={9} className="shrink-0 text-pd-muted/60" />
-          <p className="font-mono text-[7px] text-pd-muted/70">
-            Access &amp; Demographics require traffic + census data integration — Phase 3
-          </p>
+          <ScoreRow label="Access" value={siteScore.access} max={20} color="bg-teal" />
+          <ScoreRow label="Demo" value={siteScore.demographics} max={20} color="bg-teal" />
         </div>
       </div>
 
@@ -121,37 +114,29 @@ function ScoreRow({
   value,
   max,
   color,
-  pending,
 }: {
   label: string;
   value: number;
   max: number;
   color: string;
-  pending?: boolean;
 }) {
   const percentage = (value / max) * 100;
   return (
-    <div className={`flex items-center gap-3 ${pending ? "opacity-40" : ""}`}>
+    <div className="flex items-center gap-3">
       <span className="w-20 flex-shrink-0 font-mono text-[9px] uppercase tracking-wider text-mid">
         {label}
       </span>
       <div className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-ink4">
         <div
-          className={`h-full rounded-full transition-all duration-1000 ${
-            pending ? "bg-ink4" : color
-          }`}
-          style={{ width: pending ? "60%" : `${percentage}%` }}
+          className={`h-full rounded-full transition-all duration-1000 ${color}`}
+          style={{ width: `${percentage}%` }}
         />
       </div>
-      {pending ? (
-        <Lock size={9} className="w-6 flex-shrink-0 text-pd-muted/60" />
-      ) : (
-        <span className={`w-6 flex-shrink-0 text-right font-mono text-[9px] ${
-          color === "bg-green" ? "text-green" : color === "bg-amber" ? "text-amber" : "text-bright"
-        }`}>
-          {value}
-        </span>
-      )}
+      <span className={`w-6 flex-shrink-0 text-right font-mono text-[9px] ${
+        color === "bg-green" ? "text-green" : color === "bg-amber" ? "text-amber" : "text-bright"
+      }`}>
+        {value}
+      </span>
     </div>
   );
 }

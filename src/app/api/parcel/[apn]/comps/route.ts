@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { fetchPropertyByPIN, mapTaxToParcel } from "@/lib/arcgis";
 import { getParcelByAPN } from "@/lib/mock-data";
 import type { Comp } from "@/lib/types";
+import { isDevMode } from "@/lib/config";
 
 const BASE_URL =
   "https://services3.arcgis.com/RfpmnkSAQleRbndX/arcgis/rest/services/Property_and_Tax/FeatureServer";
@@ -59,12 +60,15 @@ export async function GET(
   }
 
   if (!subjectParcel) {
-    const mock = getParcelByAPN(apn);
-    if (!mock) {
-      return NextResponse.json({ error: "Parcel not found" }, { status: 404 });
+    if (isDevMode) {
+      const mock = getParcelByAPN(apn);
+      if (!mock) {
+        return NextResponse.json({ error: "Parcel not found" }, { status: 404 });
+      }
+      // Can't do spatial comps without real coordinates — return empty
+      return NextResponse.json([]);
     }
-    // Can't do spatial comps without real coordinates — return empty
-    return NextResponse.json([]);
+    return NextResponse.json({ error: "Parcel not found" }, { status: 404 });
   }
 
   // 2. Get subject centroid from parcels layer

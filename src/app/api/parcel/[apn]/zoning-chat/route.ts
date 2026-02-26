@@ -2,6 +2,7 @@ import { getAnthropicClient, HAIKU } from "@/lib/claude";
 import { getZoningStandards } from "@/lib/zoning-standards";
 import { fetchPropertyByPIN, mapTaxToParcel } from "@/lib/arcgis";
 import { getParcelByAPN } from "@/lib/mock-data";
+import { isDevMode } from "@/lib/config";
 
 export async function POST(
   request: Request,
@@ -24,9 +25,11 @@ export async function POST(
       address = p.site_address;
     }
   } catch {
-    const mock = getParcelByAPN(apn);
-    zoning = mock?.zoning ?? null;
-    address = mock?.site_address ?? null;
+    if (isDevMode) {
+      const mock = getParcelByAPN(apn);
+      zoning = mock?.zoning ?? null;
+      address = mock?.site_address ?? null;
+    }
   }
 
   const zoningSummary = getZoningStandards(zoning);

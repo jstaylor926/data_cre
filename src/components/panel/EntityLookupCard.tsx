@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Building2, ChevronRight, FlaskConical, Loader2, Check } from "lucide-react";
+import { Building2, ChevronRight, Loader2, Check } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import type { EntityResult, Parcel } from "@/lib/types";
 import { formatAcres } from "@/lib/formatters";
@@ -55,7 +55,7 @@ export default function EntityLookupCard({ ownerName }: EntityLookupCardProps) {
       const msg = (err as Error).message;
       setError(
         msg === "Entity not found"
-          ? "Not in demo dataset — GA SOS integration planned for Phase 3"
+          ? "Entity not found in Georgia Secretary of State records."
           : msg
       );
     } finally {
@@ -125,10 +125,6 @@ export default function EntityLookupCard({ ownerName }: EntityLookupCardProps) {
                 }`}
               >
                 {result.status?.includes("Active") ? "Active" : result.status}
-              </span>
-              <span className="ml-auto flex items-center gap-1 rounded border border-violet/20 bg-violet/10 px-1.5 py-0.5 font-mono text-[7px] uppercase tracking-wider text-violet/70">
-                <FlaskConical size={8} />
-                Demo
               </span>
             </div>
 

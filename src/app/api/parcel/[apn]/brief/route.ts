@@ -3,6 +3,7 @@ import { fetchPropertyByPIN, mapTaxToParcel } from "@/lib/arcgis";
 import { getParcelByAPN } from "@/lib/mock-data";
 import { scoreParcel } from "@/lib/scoring";
 import { getZoningStandards } from "@/lib/zoning-standards";
+import { isDevMode } from "@/lib/config";
 
 export async function GET(
   _request: Request,
@@ -18,7 +19,7 @@ export async function GET(
   } catch {
     // fall through
   }
-  if (!parcel) parcel = getParcelByAPN(apn);
+  if (!parcel && isDevMode) parcel = getParcelByAPN(apn);
   if (!parcel) {
     return new Response(JSON.stringify({ error: "Parcel not found" }), {
       status: 404,

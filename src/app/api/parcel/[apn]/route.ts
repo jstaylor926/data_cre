@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { fetchPropertyByPIN, mapTaxToParcel } from "@/lib/arcgis";
 import { getParcelByAPN } from "@/lib/mock-data";
+import { isDevMode } from "@/lib/config";
 
 export async function GET(
   _request: Request,
@@ -20,18 +21,17 @@ export async function GET(
       });
     }
   } catch (err) {
-    console.error("County data fetch failed, falling back to mock:", err);
+    console.error("County data fetch failed:", err);
   }
 
-  // Fallback to mock data for non-Gwinnett parcels or if county API is down
-  const parcel = getParcelByAPN(apn);
-
-  if (!parcel) {
-    return NextResponse.json(
-      { error: "Parcel not found" },
-      { status: 404 }
-    );
+  // Dev mode: fallback to mock data for non-Gwinnett parcels or if county API is down
+  if (isDevMode) {
+    const parcel = getParcelByAPN(apn);
+    if (parcel) return NextResponse.json(parcel);
   }
 
-  return NextResponse.json(parcel);
+  return NextResponse.json(
+    { error: "Parcel not found" },
+    { status: 404 }
+  );
 }

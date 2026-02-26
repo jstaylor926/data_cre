@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { fetchPropertyByPIN, mapTaxToParcel } from "@/lib/arcgis";
 import { getParcelByAPN } from "@/lib/mock-data";
 import { getZoningStandards } from "@/lib/zoning-standards";
+import { isDevMode } from "@/lib/config";
 
 export async function GET(
   _request: Request,
@@ -18,10 +19,10 @@ export async function GET(
       zoning = p.zoning;
     }
   } catch {
-    // Fall through to mock
+    // Fall through
   }
 
-  if (!zoning) {
+  if (!zoning && isDevMode) {
     const mock = getParcelByAPN(apn);
     zoning = mock?.zoning ?? null;
   }

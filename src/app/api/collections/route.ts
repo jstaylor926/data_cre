@@ -1,15 +1,21 @@
 import { NextResponse } from "next/server";
 import { createServerSupabase } from "@/lib/supabase-server";
-
-const DEV_USER_ID = "dev-user";
+import { getUserId } from "@/lib/config";
 
 export async function GET() {
+  let userId: string;
+  try {
+    userId = getUserId();
+  } catch {
+    return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+  }
+
   const supabase = await createServerSupabase();
 
   const { data, error } = await supabase
     .from("collections")
     .select("*")
-    .eq("user_id", DEV_USER_ID)
+    .eq("user_id", userId)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -21,6 +27,13 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  let userId: string;
+  try {
+    userId = getUserId();
+  } catch {
+    return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+  }
+
   const body = await request.json();
   const { name } = body as { name: string };
 
@@ -33,7 +46,7 @@ export async function POST(request: Request) {
   const { data, error } = await supabase
     .from("collections")
     .insert({
-      user_id: DEV_USER_ID,
+      user_id: userId,
       name,
     })
     .select()
@@ -48,6 +61,13 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
+  let userId: string;
+  try {
+    userId = getUserId();
+  } catch {
+    return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+  }
+
   const body = await request.json();
   const { id, name } = body as { id: string; name: string };
 
@@ -61,7 +81,7 @@ export async function PATCH(request: Request) {
     .from("collections")
     .update({ name })
     .eq("id", id)
-    .eq("user_id", DEV_USER_ID)
+    .eq("user_id", userId)
     .select()
     .single();
 
@@ -74,6 +94,13 @@ export async function PATCH(request: Request) {
 }
 
 export async function DELETE(request: Request) {
+  let userId: string;
+  try {
+    userId = getUserId();
+  } catch {
+    return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+  }
+
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");
 
@@ -87,7 +114,7 @@ export async function DELETE(request: Request) {
     .from("collections")
     .delete()
     .eq("id", id)
-    .eq("user_id", DEV_USER_ID);
+    .eq("user_id", userId);
 
   return NextResponse.json({ ok: true });
 }

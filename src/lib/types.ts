@@ -165,7 +165,7 @@ export interface Note {
 
 // ─── Phase 3: Data Center Mode ───────────────────────────────────────────────
 
-export type AppMode = "dev" | "datacenter";
+export type AppMode = "dev" | "datacenter" | "phase4";
 
 export type DCPanelTab = "dc-score" | "power" | "fiber" | "water" | "environ";
 

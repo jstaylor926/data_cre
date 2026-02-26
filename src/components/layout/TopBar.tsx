@@ -43,7 +43,7 @@ export default function TopBar({ onFlyTo, activeNav = "map", onNavChange }: TopB
         {isMobile ? (
           <>P<span className={accentClass}>{isDC ? "DC" : "D"}</span></>
         ) : (
-          <>POCKET<span className={accentClass}>{isDC ? "DC" : "DEV"}</span></>
+          <>POCKET <span className={accentClass}>{isDC ? "DC" : "DEVELOPER"}</span></>
         )}
       </h1>
 

@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { Heart, Building2, FileText, GitCompare, Check, Plus } from "lucide-react";
+import { Heart, Building2, FileText, GitCompare, Check, Plus, Briefcase } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import { useSavedParcels } from "@/hooks/useSavedParcels";
 import { useCollections } from "@/hooks/useCollections";
@@ -13,8 +13,10 @@ export default function PanelActionBar() {
   const setBriefOverlayOpen = useAppStore((s) => s.setBriefOverlayOpen);
   const setBriefStatus = useAppStore((s) => s.setBriefStatus);
   const siteScore = useAppStore((s) => s.siteScore);
+  const activeProject = useAppStore((s) => s.activeProject);
   const pathname = usePathname();
   const isPhase2 = pathname?.includes("phase-2");
+  const isPhase4 = pathname?.includes("phase-4");
   const { savedParcels, isSaved, save, unsave } = useSavedParcels();
   const { collections, create } = useCollections();
 
@@ -98,16 +100,20 @@ export default function PanelActionBar() {
         LLC &rarr;
       </button>
 
-      {/* Compare (ghost — Phase 1 placeholder) */}
-      <button
-        disabled
-        className="flex h-[30px] flex-[0.8] items-center justify-center gap-1 rounded border border-line bg-transparent font-mono text-[8px] uppercase tracking-wider text-pd-muted/50 cursor-not-allowed"
-      >
-        <GitCompare size={9} />
-        Compare
-      </button>
+      {/* Compare — coming soon tooltip */}
+      <div className="group relative flex-[0.8]">
+        <button
+          className="flex h-[30px] w-full items-center justify-center gap-1 rounded border border-line/40 bg-transparent font-mono text-[8px] uppercase tracking-wider text-pd-muted/30 transition-colors hover:border-line hover:text-pd-muted/50"
+        >
+          <GitCompare size={9} />
+          Compare
+        </button>
+        <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-ink px-2 py-1 font-mono text-[8px] text-mid opacity-0 shadow-lg transition-opacity group-hover:opacity-100 border border-line2">
+          Coming soon
+        </span>
+      </div>
 
-      {/* Brief button — active on Phase 2 */}
+      {/* Brief — coming soon tooltip (active on Phase 2) */}
       {isPhase2 ? (
         <button
           onClick={() => {
@@ -120,14 +126,29 @@ export default function PanelActionBar() {
           <FileText size={9} />
           Brief
         </button>
-      ) : (
+      ) : isPhase4 ? (
         <button
-          disabled
-          className="flex h-[30px] flex-[0.8] items-center justify-center gap-1 rounded border border-line bg-transparent font-mono text-[8px] uppercase tracking-wider text-pd-muted/50 cursor-not-allowed"
+          onClick={() => {
+            // Logic to link to active project
+            console.log("Linking", selectedAPN, "to project", activeProject?.id);
+          }}
+          className="flex h-[30px] flex-[0.8] items-center justify-center gap-1 rounded border border-pd-teal/40 bg-pd-teal/10 font-mono text-[8px] uppercase tracking-wider text-pd-teal transition-colors hover:border-pd-teal"
         >
-          <FileText size={9} />
-          Brief
+          <Briefcase size={9} />
+          Link
         </button>
+      ) : (
+        <div className="group relative flex-[0.8]">
+          <button
+            className="flex h-[30px] w-full items-center justify-center gap-1 rounded border border-line/40 bg-transparent font-mono text-[8px] uppercase tracking-wider text-pd-muted/30 transition-colors hover:border-line hover:text-pd-muted/50"
+          >
+            <FileText size={9} />
+            Brief
+          </button>
+          <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-ink px-2 py-1 font-mono text-[8px] text-mid opacity-0 shadow-lg transition-opacity group-hover:opacity-100 border border-line2">
+            Coming soon
+          </span>
+        </div>
       )}
 
       {/* Collection popup */}
