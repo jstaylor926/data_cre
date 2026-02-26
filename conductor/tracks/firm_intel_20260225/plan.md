@@ -1,11 +1,11 @@
 # Implementation Plan: Firm Intelligence Platform Core Architecture
 
-## Phase 1: Foundation
+## Phase 1: Foundation [checkpoint: eed5696]
 - [x] Task: Database Schema for CRM and Multi-Tenancy (41d37e8)
     - [x] Create Supabase migrations for `organizations`, `projects`, `tasks`, and `notes` tables.
     - [x] Implement Row-Level Security (RLS) to ensure strict data isolation between organizations.
     - [x] Write integration tests to verify multi-tenant data isolation.
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Foundation' (Protocol in workflow.md)
+- [ ] Task: Conductor - User Manual Verification 'Phase 1: Foundation [checkpoint: eed5696]' (Protocol in workflow.md)
 
 ## Phase 2: Core CRM Functionality
 - [ ] Task: CRM Dashboard and Project Management
