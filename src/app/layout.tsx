@@ -32,19 +32,19 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Pocket Developer",
+  title: "Atlas CRE",
   description: "Commercial real estate parcel intelligence — interactive maps, parcel data, LLC entity lookup, and saved collections.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "PocketDev",
+    title: "AtlasCRE",
   },
   openGraph: {
-    title: "Pocket Developer",
+    title: "Atlas CRE",
     description: "Commercial real estate parcel intelligence",
     type: "website",
-    siteName: "Pocket Developer",
+    siteName: "Atlas CRE",
   },
   robots: {
     index: true,

@@ -2,7 +2,7 @@ I have good context on the project. Let me build out a comprehensive phased brea
 
 ---
 
-# Pocket Developer — Phased Feature Roadmap
+# Atlas CRE — Phased Feature Roadmap
 
 ## Phase 1: LandGlide Replication (The Foundation)
 **Goal:** Build a fully functional parcel intelligence layer on Mapbox that matches and exceeds what LandGlide offers. This is your demo-ready MVP for DeThomas.
@@ -445,7 +445,7 @@ Ready to go into Phase 3 (Data Center Site Selector) or do you want to start sca
 
 
 # Phase 3: Data Center Site Selector
-**Goal:** Transform Pocket Developer into a specialized tool for evaluating parcels as potential data center sites — scoring power infrastructure, fiber, utilities, environmental risk, and regulatory fit. This is the feature that opens the door beyond DeThomas to a much larger market.
+**Goal:** Transform Atlas CRE into a specialized tool for evaluating parcels as potential data center sites — scoring power infrastructure, fiber, utilities, environmental risk, and regulatory fit. This is the feature that opens the door beyond DeThomas to a much larger market.
 
 ---
 
@@ -893,7 +893,7 @@ All infrastructure datasets are one-time ingests with quarterly refresh cycles. 
 
 **Total Phase 3 timeline:** 8–10 weeks. By the end of Phase 3, you have a product that can compete directly with specialized tools like SiteCompli or custom broker GIS platforms — at a fraction of what those firms charge, and with an AI layer none of them have.
 
-**Market expansion unlocked:** At Phase 3 completion, Pocket Developer is no longer just a DeThomas tool. It's a sellable product to data center developers, site consultants, economic development agencies, and utility companies doing load forecasting. That's a completely different and substantially larger revenue conversation.
+**Market expansion unlocked:** At Phase 3 completion, Atlas CRE is no longer just a DeThomas tool. It's a sellable product to data center developers, site consultants, economic development agencies, and utility companies doing load forecasting. That's a completely different and substantially larger revenue conversation.
 
 ---
 
@@ -901,7 +901,7 @@ Ready to go into Phase 4 (Firm Intelligence Platform + white-label) or do you wa
 
 
 # Phase 4: Firm Intelligence Platform
-**Goal:** Transform Pocket Developer from a smart site tool into a proprietary, white-labeled intelligence platform that becomes deeply embedded in a firm's institutional knowledge and decision-making workflow. The product stops being software they use and starts being infrastructure they depend on.
+**Goal:** Transform Atlas CRE from a smart site tool into a proprietary, white-labeled intelligence platform that becomes deeply embedded in a firm's institutional knowledge and decision-making workflow. The product stops being software they use and starts being infrastructure they depend on.
 
 ---
 
@@ -1156,7 +1156,7 @@ CREATE POLICY org_isolation ON deals
 -- Same pattern for every sensitive table
 ```
 
-**Branding System:** Each org's `branding` JSONB column drives a CSS custom properties injection at the Next.js layout level. The platform renders in the firm's colors, with their logo in the header, their name in the page title. For enterprise clients this is table stakes — they don't want their team using a tool that says "Pocket Developer" in the corner.
+**Branding System:** Each org's `branding` JSONB column drives a CSS custom properties injection at the Next.js layout level. The platform renders in the firm's colors, with their logo in the header, their name in the page title. For enterprise clients this is table stakes — they don't want their team using a tool that says "Atlas CRE" in the corner.
 
 ```typescript
 // app/layout.tsx
@@ -1284,7 +1284,7 @@ export function ModelPerformanceCard({ stats }: { stats: ModelStats }) {
 
 ## Feature 4.6 — External API & Webhook Layer
 
-**What it is:** A documented REST API that lets enterprise clients pipe Pocket Developer data into their own internal systems — financial models in Excel, ERP systems, BI tools like Tableau or Power BI, or their own custom applications. Webhooks push real-time events (deal stage changes, new high-scoring sites in a watch area) to external systems automatically.
+**What it is:** A documented REST API that lets enterprise clients pipe Atlas CRE data into their own internal systems — financial models in Excel, ERP systems, BI tools like Tableau or Power BI, or their own custom applications. Webhooks push real-time events (deal stage changes, new high-scoring sites in a watch area) to external systems automatically.
 
 **Implementation:**
 

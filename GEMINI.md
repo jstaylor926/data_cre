@@ -1,9 +1,9 @@
-# GEMINI.md - Project Context: Pocket Developer
+# GEMINI.md - Project Context: Atlas CRE
 
-This file provides essential context for Gemini CLI to assist in the development of **Pocket Developer**, a specialized Commercial Real Estate (CRE) parcel research and intelligence platform.
+This file provides essential context for Gemini CLI to assist in the development of **Atlas CRE**, a specialized Commercial Real Estate (CRE) parcel research and intelligence platform.
 
 ## Project Overview
-Pocket Developer is an interactive parcel mapping and intelligence tool designed for DeThomas Development. It focuses on Gwinnett County, Georgia, providing real-time property data, zoning analysis, and advanced site selection capabilities.
+Atlas CRE is an interactive parcel mapping and intelligence tool designed for DeThomas Development. It focuses on Gwinnett County, Georgia, providing real-time property data, zoning analysis, and advanced site selection capabilities.
 
 ### Core Mission
 To transform raw parcel data into actionable development intelligence, moving from basic mapping (Phase 1) to AI-driven site analysis (Phase 2), specialized infrastructure scoring for data centers (Phase 3), and a proprietary firm-wide intelligence platform (Phase 4).

@@ -8,7 +8,7 @@ export default function Home() {
       <div className="max-w-6xl mx-auto space-y-12">
         <header className="space-y-4 text-center md:text-left">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-            Pocket Developer
+            Atlas CRE
           </h1>
           <p className="text-lg md:text-xl text-zinc-600 dark:text-zinc-400 max-w-3xl">
             A comprehensive commercial real estate intelligence platform, evolving from core parcel mapping

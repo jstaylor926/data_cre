@@ -1,10 +1,10 @@
-# Pocket Developer
+# Atlas CRE
 
 A commercial real estate (CRE) parcel research tool for Gwinnett County, Georgia. Built for DeThomas Development to streamline property due diligence and data center site selection with an interactive parcel map, instant property previews, AI-powered scoring, and persistent saved collections.
 
 ## What It Does
 
-Pocket Developer has three modes, accessible from the landing page at `/`:
+Atlas CRE has three modes, accessible from the landing page at `/`:
 
 **Phase 1 — Standard CRE research.** Renders 307,000+ real parcel boundaries on an interactive Mapbox map. Click any parcel for an instant preview card, then open a full property panel with ownership, assessed values, zoning, deed history, legal descriptions, and LLC entity lookups sourced from Gwinnett County ArcGIS services.
 
