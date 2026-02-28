@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState, useEffect } from "react";
+import { useCallback, useRef, useState } from "react";
 import { TopBar } from "@/components/layout/TopBar";
 import MobileTabBar from "@/components/layout/MobileTabBar";
 import AppShell from "@/components/layout/AppShell";
@@ -10,7 +10,7 @@ import { useParcelClick } from "@/hooks/useParcelClick";
 import { useResponsive } from "@/hooks/useResponsive";
 import { useAppStore } from "@/store/useAppStore";
 import type { MapHandle } from "@/components/map/ParcelMap";
-import { Bell, Settings } from "lucide-react";
+import { Bell } from "lucide-react";
 
 export default function AppDashboard() {
   useParcelClick();
@@ -18,9 +18,7 @@ export default function AppDashboard() {
   const [activeNav, setActiveNav] = useState("map");
   const mapRef = useRef<MapHandle>(null);
   const selectParcel = useAppStore((s) => s.selectParcel);
-
-  // For Step 2: This will be managed by feature flags
-  const enableFirmIntel = true; 
+  const enableFirmIntel = useAppStore((s) => s.features.enableFirmIntel);
 
   const handleFlyTo = useCallback((lng: number, lat: number) => {
     mapRef.current?.flyTo(lng, lat);

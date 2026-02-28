@@ -14,7 +14,7 @@
  */
 
 import { getAnthropicClient, HAIKU, SONNET } from "@/lib/claude";
-import { fetchSubstationsNear, fetchNearestTxVoltage } from "@/lib/hifld";
+import { fetchFemaFloodZone, fetchNearestTxVoltage, fetchSubstationsNear } from "@/lib/hifld";
 import type { ScoutIntent, SubMarketCandidate } from "@/lib/types";
 
 // ── Haiku: parse natural language intent ─────────────────────────────────────
@@ -143,9 +143,10 @@ async function validateSubMarket(
   const [lng, lat] = market.center;
   const radius = mw > 100 ? 35 : mw > 10 ? 20 : 10;
 
-  const [substations, maxTxVoltage] = await Promise.all([
+  const [substations, maxTxVoltage, floodZone] = await Promise.all([
     fetchSubstationsNear(lng, lat, radius).catch(() => []),
     fetchNearestTxVoltage(lng, lat, 10).catch(() => null),
+    fetchFemaFloodZone(lng, lat).catch(() => ({ zone: null, subtype: null })),
   ]);
 
   const substationCount = substations.length;
@@ -189,9 +190,13 @@ async function validateSubMarket(
     else score += 4;
   }
 
-  // Flood risk: rough proxy from bbox latitude (lowlands tend to be south of certain lat)
-  const floodRisk: SubMarketCandidate["floodRisk"] =
-    substationCount === 0 ? "unknown" : lat < 31.5 ? "moderate" : "low";
+  const zone = floodZone.zone?.toUpperCase().trim() ?? null;
+  let floodRisk: SubMarketCandidate["floodRisk"] = "unknown";
+  if (zone) {
+    if (zone.startsWith("A") || zone.startsWith("V")) floodRisk = "high";
+    else if (zone.startsWith("X")) floodRisk = "low";
+    else floodRisk = "moderate";
+  }
 
   return {
     id: market.id,

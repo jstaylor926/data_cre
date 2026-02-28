@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import type { Organization, Project, Task, Note } from '@/lib/types';
+import type { Organization } from '@/lib/types';
 
 describe('Phase 4 Foundation Types', () => {
   it('should have Phase 4 types defined', () => {

@@ -6,8 +6,8 @@
  *   Zoning       — commercial desirability of the zone code
  *   Market       — assessed value per acre as proxy for market depth
  *   Infrastructure — improvement ratio (built environment quality)
- *   Access       — placeholder 12 (requires traffic/transit data)
- *   Demographics — placeholder 12 (requires census data)
+ *   Access       — parcel-level proxy score (until traffic/transit integration)
+ *   Demographics — parcel-level proxy score (until census integration)
  */
 import type { Parcel } from "./types";
 import type { SiteScore } from "./types";
@@ -85,6 +85,74 @@ function scoreInfrastructure(
   return 7; // Land-heavy (vacant / teardown)
 }
 
+function clampScore(value: number): number {
+  return Math.max(0, Math.min(20, Math.round(value)));
+}
+
+// ─── Access Proxy Score ───────────────────────────────────────────────────────
+// Proxy until traffic/transit APIs are integrated.
+function scoreAccess(parcel: Parcel): number {
+  let score = 8;
+  const zoning = parcel.zoning?.trim().toUpperCase() ?? "";
+  const acres = parcel.acres ?? 0;
+
+  if (parcel.site_address) score += 2;
+
+  if (
+    zoning.startsWith("C") ||
+    zoning.startsWith("M") ||
+    zoning.startsWith("I") ||
+    zoning.startsWith("OI") ||
+    zoning.startsWith("O-I") ||
+    zoning.startsWith("MU") ||
+    zoning.startsWith("TND")
+  ) {
+    score += 5;
+  } else if (zoning.startsWith("R")) {
+    score += 1;
+  }
+
+  if (acres >= 20) score += 5;
+  else if (acres >= 5) score += 4;
+  else if (acres >= 1) score += 3;
+  else if (acres > 0) score += 1;
+
+  return clampScore(score);
+}
+
+// ─── Demographics Proxy Score ────────────────────────────────────────────────
+// Proxy until census and mobility feeds are integrated.
+function scoreDemographics(parcel: Parcel): number {
+  let score = 8;
+  const assessed = parcel.assessed_total ?? 0;
+  const acres = parcel.acres ?? 0;
+  const perAcre = acres > 0 ? assessed / acres : 0;
+  const landUse = parcel.land_use_code?.toUpperCase() ?? "";
+  const address = parcel.site_address?.toUpperCase() ?? "";
+
+  if (perAcre >= 1_200_000) score += 6;
+  else if (perAcre >= 750_000) score += 5;
+  else if (perAcre >= 450_000) score += 4;
+  else if (perAcre >= 250_000) score += 3;
+  else if (perAcre > 0) score += 1;
+
+  if (landUse.includes("COMM") || landUse.includes("OFFICE") || landUse.includes("IND")) {
+    score += 2;
+  }
+
+  if (
+    address.includes("LAWRENCEVILLE") ||
+    address.includes("DULUTH") ||
+    address.includes("SUWANEE") ||
+    address.includes("NORCROSS") ||
+    address.includes("BUFORD")
+  ) {
+    score += 2;
+  }
+
+  return clampScore(score);
+}
+
 // ─── Tier Labels ─────────────────────────────────────────────────────────────
 
 function tierLabel(composite: number): string {
@@ -101,8 +169,8 @@ export function scoreParcel(parcel: Parcel): SiteScore {
   const zoning       = scoreZoning(parcel.zoning);
   const market       = scoreMarket(parcel.assessed_total, parcel.acres);
   const infrastructure = scoreInfrastructure(parcel.improvement_value, parcel.assessed_total);
-  const access       = 12; // Placeholder — requires traffic API
-  const demographics = 12; // Placeholder — requires census API
+  const access       = scoreAccess(parcel);
+  const demographics = scoreDemographics(parcel);
 
   const composite = zoning + market + infrastructure + access + demographics;
 

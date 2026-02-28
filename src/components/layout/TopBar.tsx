@@ -2,7 +2,6 @@
 
 import { useResponsive } from "@/hooks/useResponsive";
 import { useAppStore } from "@/store/useAppStore";
-import { usePathname } from "next/navigation";
 import SearchBar from "@/components/search/SearchBar";
 import Link from "next/link";
 import { SettingsModal } from "./SettingsModal";
@@ -27,7 +26,6 @@ export function TopBar({ onFlyTo, activeNav = "map", onNavChange }: TopBarProps)
   const setAppMode = useAppStore((s) => s.setAppMode);
   const setDCScore = useAppStore((s) => s.setDCScore);
   const setDCInfrastructure = useAppStore((s) => s.setDCInfrastructure);
-  const pathname = usePathname();
   const features = useAppStore((s) => s.features);
   
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);

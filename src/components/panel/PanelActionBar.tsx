@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { usePathname } from "next/navigation";
 import { Heart, Building2, FileText, GitCompare, Check, Plus, Briefcase } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import { useSavedParcels } from "@/hooks/useSavedParcels";

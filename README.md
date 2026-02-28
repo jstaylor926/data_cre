@@ -4,11 +4,7 @@ A commercial real estate (CRE) parcel research and intelligence platform for Gwi
 
 ## Product Overview
 
-<<<<<<< HEAD
 Atlas CRE provides a tiered intelligence platform for site selection and property research, accessible via a professional landing page at `/` and a unified application at `/map`.
-=======
-Atlas CRE has three modes, accessible from the landing page at `/`:
->>>>>>> 4a55aae98fa8798892afa95fc91a5a77b206b37b
 
 ### Core Intelligence Layers
 
@@ -76,6 +72,7 @@ Parcels and zoning load dynamically by viewport bounding box. Infrastructure dat
 Create `.env.local`:
 
 ```
+NEXT_PUBLIC_APP_MODE=prod
 NEXT_PUBLIC_MAPBOX_TOKEN=your_mapbox_token
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
@@ -101,10 +98,13 @@ Open [http://localhost:3000](http://localhost:3000). The landing page links to a
 supabase db push
 
 # Or run the SQL directly in the Supabase SQL Editor
-# File: supabase/migrations/20260221000000_dev_saved_parcels.sql
+# Files:
+# - supabase/migrations/20260221000000_dev_saved_parcels.sql
+# - supabase/migrations/20260225000000_phase4_crm.sql
+# - supabase/migrations/20260228000100_harden_auth_rls.sql
 ```
 
-The migration uses `TEXT` user IDs (default: `dev-user`) so it works without Supabase Auth configured.
+Saved parcel and CRM tables currently use `TEXT` `user_id` columns. Production-safe access is enforced by RLS + Supabase-auth JWT identity; there is no hardcoded `dev-user` default.
 
 ---
 
@@ -129,6 +129,7 @@ src/
 │   ├── map/page.tsx                # Unified Application (All features)
 │   └── api/
 │       ├── parcel/[apn]/           # Property detail, score, zoning, comps, brief, dc-score
+│       ├── crm/                    # Organizations, projects, tasks, notes APIs (Phase 4 foundation)
 │       ├── ...                     # Other API routes
 ├── components/
 │   ├── layout/
@@ -148,6 +149,8 @@ src/
 
 ## Feature Status
 
+Status Source of Truth (updated Feb 28, 2026): this README section is canonical for phase completion status. The checklist `.docx` is historical reference only.
+
 ### Phase 1 — CRE Research ✅ Complete
 
 - Real parcel boundaries from Gwinnett County (307K+ parcels, loaded by viewport)
@@ -162,23 +165,24 @@ src/
 - Layer toggles: parcels, parcel fill, zoning, saved pins, road labels
 - Multiple base map styles: streets, satellite, light, dark
 
-### Phase 2 — Site Intelligence ✅ Complete
+### Phase 2 — Site Intelligence ⚠️ Partial / Beta
 
-- AI site scoring with weighted criteria (access, zoning, utilities, size) — Claude Haiku
+- AI site scoring with weighted criteria is live, but access/demographics are currently proxy-scored from parcel attributes (traffic + census integrations pending)
 - AI zoning analysis: plain-English summary of current zoning, permitted uses, variances — streaming
 - Zoning AI chat for follow-up questions on any parcel
-- Comparable sales: nearby sold parcels with price, $/SF, distance
-- Firm activity history: LLC ownership patterns and associated entity graph
+- Comparable analysis currently uses county assessed values (not transaction history) and marks date as assessed snapshot
+- Firm history panel is present, but deal-history ingestion/RAG matching is not yet integrated
+- Entity lookup is mock-enabled in dev mode; production endpoint currently returns `501 Not Implemented`
 - Investment brief generator: one-click AI narrative covering deal thesis, risk, and comps — streaming
 - Phase 2 tabs live on the Phase 1 dashboard via the same panel
 
-### Phase 3 — Data Center Mode ✅ Complete
+### Phase 3 — Data Center Mode ⚠️ Beta (Functional, Data Gaps Remain)
 
 **DC Parcel Scoring**
 - Composite DC suitability score (0–100) with sub-scores: Power, Fiber, Water, Environmental
 - Power tab: nearest substation distance, voltage (kV), operator, transmission line access, estimated available capacity
 - Fiber tab: proximity to carrier exchange points, estimated dark fiber availability, latency zone
-- Water tab: cooling water availability, watershed, municipal service area, flood zone
+- Water tab: cooling demand estimates and watershed context are present; authoritative water-capacity integration is still pending
 - Environmental tab: FEMA flood zone, 100/500-year risk, seismic zone, climate risk factors
 - Disqualification flags for hard blockers (flood zone AE/VE, no substation within 20 miles, etc.)
 - All infrastructure data validated against live HIFLD federal datasets
@@ -190,9 +194,17 @@ src/
 
 **Site Scout — AI Discovery**
 - Tier 1 (Open Discovery): Describe a project in natural language → Claude identifies candidate sub-markets using geographic reasoning → HIFLD validates real substation data at each location → ranked results with rationale streamed back
+- Flood risk classification is now based on live FEMA zone lookups at each candidate market center; full parcel-level flood screening is still handled in Tier 2 scoring
 - Tier 2 (Area Search): Pick a sub-market or use current map view → batch-scores all viable parcels in the bbox → full DC score on top 5 → numbered map pins with color-coded results
 - Sub-market bbox overlays appear on the map as dashed rectangles during Tier 1
 - Example queries: hyperscale I-85 corridor, edge deployment near fiber exchange, low-flood-risk Alabama site
+
+### Phase 4 — Firm Intelligence 🧱 Foundation Only
+
+- Core schema exists for organizations, memberships, projects, tasks, and notes
+- Multi-tenant RLS is now hardened to org-scoped policies (no broad `USING (true)` access)
+- Core CRUD APIs now exist for organizations, projects, tasks, and notes under `/api/crm/*`
+- CRM route/UI is functional but still foundation-level (search/create/list only, advanced workflow automation not shipped)
 
 ---
 

@@ -21,7 +21,7 @@ No test runner is configured yet. Playwright is installed as a dev dependency bu
 ## Environment Variables
 
 Required in `.env.local`:
-- `NEXT_PUBLIC_APP_MODE` — `"dev"` (default) or `"prod"`. Dev mode enables mock data fallbacks, a hardcoded dev-user, and mock entity lookup. Prod mode requires real data sources and authentication. Config lives in `src/lib/config.ts`.
+- `NEXT_PUBLIC_APP_MODE` — `"dev"` or `"prod"` (default). Dev mode enables mock-data fallbacks; prod mode requires real data sources and authentication. Config lives in `src/lib/config.ts`.
 - `NEXT_PUBLIC_MAPBOX_TOKEN` — Mapbox API key (map rendering + geocoding)
 - `NEXT_PUBLIC_SUPABASE_URL` — Supabase instance URL
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` — Supabase anonymous key

@@ -1,27 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Bebas_Neue, IBM_Plex_Mono, Barlow } from "next/font/google";
 import "./globals.css";
-
-const bebasNeue = Bebas_Neue({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--font-head",
-  display: "swap",
-});
-
-const ibmPlexMono = IBM_Plex_Mono({
-  weight: ["300", "400", "500"],
-  subsets: ["latin"],
-  variable: "--font-mono",
-  display: "swap",
-});
-
-const barlow = Barlow({
-  weight: ["300", "400", "500", "600", "700"],
-  subsets: ["latin"],
-  variable: "--font-body",
-  display: "swap",
-});
 
 export const viewport: Viewport = {
   themeColor: "#00d4c8",
@@ -59,9 +37,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body
-        className={`${bebasNeue.variable} ${ibmPlexMono.variable} ${barlow.variable} antialiased`}
-      >
+      <body className="antialiased">
         {children}
       </body>
     </html>

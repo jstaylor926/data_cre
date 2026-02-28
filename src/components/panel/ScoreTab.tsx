@@ -62,7 +62,7 @@ export default function ScoreTab() {
         </div>
       </div>
 
-      {/* Firm History — placeholder until RAG is wired */}
+      {/* Firm History */}
       {firmHistory.length > 0 ? (
         <div className="rounded-lg border border-amber/20 bg-amber-dim p-3">
           <div className="mb-3 flex items-center justify-between">
@@ -101,7 +101,7 @@ export default function ScoreTab() {
             Firm History
           </p>
           <p className="mt-1 font-mono text-[9px] text-mid/60">
-            Deal history coming soon
+            No matching historical deals were found for this parcel yet.
           </p>
         </div>
       )}

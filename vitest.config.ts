@@ -1,6 +1,6 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
-// @ts-ignore
+// @ts-expect-error - package does not currently expose compatible typings for this import form
 import tsconfigPaths from 'vitest-tsconfig-paths';
 
 export default defineConfig({

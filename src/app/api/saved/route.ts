@@ -1,16 +1,15 @@
 import { NextResponse } from "next/server";
 import { createServerSupabase } from "@/lib/supabase-server";
-import { getUserId } from "@/lib/config";
+import { AUTH_REQUIRED_ERROR, requireAuthenticatedUserId } from "@/lib/auth";
 
 export async function GET() {
+  const supabase = await createServerSupabase();
   let userId: string;
   try {
-    userId = getUserId();
+    userId = await requireAuthenticatedUserId(supabase);
   } catch {
-    return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    return NextResponse.json({ error: AUTH_REQUIRED_ERROR }, { status: 401 });
   }
-
-  const supabase = await createServerSupabase();
 
   const { data, error } = await supabase
     .from("saved_parcels")
@@ -27,11 +26,12 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const supabase = await createServerSupabase();
   let userId: string;
   try {
-    userId = getUserId();
+    userId = await requireAuthenticatedUserId(supabase);
   } catch {
-    return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    return NextResponse.json({ error: AUTH_REQUIRED_ERROR }, { status: 401 });
   }
 
   const body = await request.json();
@@ -44,8 +44,6 @@ export async function POST(request: Request) {
   if (!apn) {
     return NextResponse.json({ error: "apn is required" }, { status: 400 });
   }
-
-  const supabase = await createServerSupabase();
 
   // Upsert: if already saved, return existing
   const { data, error } = await supabase
@@ -71,18 +69,17 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
+  const supabase = await createServerSupabase();
   let userId: string;
   try {
-    userId = getUserId();
+    userId = await requireAuthenticatedUserId(supabase);
   } catch {
-    return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    return NextResponse.json({ error: AUTH_REQUIRED_ERROR }, { status: 401 });
   }
 
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");
   const apn = searchParams.get("apn");
-
-  const supabase = await createServerSupabase();
 
   if (id) {
     await supabase

@@ -37,7 +37,6 @@ describe('Multi-tenancy Integration', () => {
   });
 
   it('should not allow access to projects from another organization', async () => {
-    const activeOrgId = 'org-1';
     const otherOrgId = 'org-2';
     
     // Simulate RLS blocking access

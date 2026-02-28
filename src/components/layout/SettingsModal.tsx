@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Shield, Zap, Brain, Briefcase, Building2, Layers, Check } from 'lucide-react';
 import { useAppStore, FeatureFlags } from '@/store/useAppStore';
@@ -49,13 +49,7 @@ const TIERS = [
 
 export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   const { features, setFeatures } = useAppStore();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!isOpen || !mounted) return null;
+  if (!isOpen || typeof document === "undefined") return null;
 
   const toggleFeature = (key: keyof FeatureFlags) => {
     setFeatures({ [key]: !features[key] });
@@ -170,7 +164,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 }
 
 function FeatureToggle({ icon, label, description, active, onToggle }: { 
-  icon: React.ReactNode, 
+  icon: ReactNode, 
   label: string, 
   description: string, 
   active: boolean, 

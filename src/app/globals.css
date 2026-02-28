@@ -70,6 +70,9 @@
 /* Atlas CRE — Dark-only design system */
 :root {
   --radius: 0.5rem;
+  --font-head: "Bebas Neue", "Arial Narrow", "Impact", "Helvetica Neue", sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
+  --font-body: "Barlow", "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 
   /* Atlas CRE palette */
   --ink: #0d0f12;

@@ -25,7 +25,7 @@ describe('Multi-tenancy Schema', () => {
 
   it('should have projects table with org_id', async () => {
     const { supabase } = await import('@/lib/supabase');
-    const { data, error } = await supabase.from('projects').select('*').eq('org_id', 'org-1');
+    const { error } = await supabase.from('projects').select('*').eq('org_id', 'org-1');
     expect(error).toBeNull();
   });
 });

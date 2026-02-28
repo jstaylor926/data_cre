@@ -130,7 +130,7 @@ export interface Organization {
   slug: string;
   logo_url?: string | null;
   created_at: string;
-  settings?: Record<string, any>;
+  settings?: Record<string, unknown>;
 }
 
 export interface Project {

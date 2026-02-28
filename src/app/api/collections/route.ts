@@ -1,16 +1,15 @@
 import { NextResponse } from "next/server";
 import { createServerSupabase } from "@/lib/supabase-server";
-import { getUserId } from "@/lib/config";
+import { AUTH_REQUIRED_ERROR, requireAuthenticatedUserId } from "@/lib/auth";
 
 export async function GET() {
+  const supabase = await createServerSupabase();
   let userId: string;
   try {
-    userId = getUserId();
+    userId = await requireAuthenticatedUserId(supabase);
   } catch {
-    return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    return NextResponse.json({ error: AUTH_REQUIRED_ERROR }, { status: 401 });
   }
-
-  const supabase = await createServerSupabase();
 
   const { data, error } = await supabase
     .from("collections")
@@ -27,11 +26,12 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const supabase = await createServerSupabase();
   let userId: string;
   try {
-    userId = getUserId();
+    userId = await requireAuthenticatedUserId(supabase);
   } catch {
-    return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    return NextResponse.json({ error: AUTH_REQUIRED_ERROR }, { status: 401 });
   }
 
   const body = await request.json();
@@ -40,8 +40,6 @@ export async function POST(request: Request) {
   if (!name) {
     return NextResponse.json({ error: "name is required" }, { status: 400 });
   }
-
-  const supabase = await createServerSupabase();
 
   const { data, error } = await supabase
     .from("collections")
@@ -61,11 +59,12 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
+  const supabase = await createServerSupabase();
   let userId: string;
   try {
-    userId = getUserId();
+    userId = await requireAuthenticatedUserId(supabase);
   } catch {
-    return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    return NextResponse.json({ error: AUTH_REQUIRED_ERROR }, { status: 401 });
   }
 
   const body = await request.json();
@@ -74,8 +73,6 @@ export async function PATCH(request: Request) {
   if (!id || !name) {
     return NextResponse.json({ error: "id and name are required" }, { status: 400 });
   }
-
-  const supabase = await createServerSupabase();
 
   const { data, error } = await supabase
     .from("collections")
@@ -94,11 +91,12 @@ export async function PATCH(request: Request) {
 }
 
 export async function DELETE(request: Request) {
+  const supabase = await createServerSupabase();
   let userId: string;
   try {
-    userId = getUserId();
+    userId = await requireAuthenticatedUserId(supabase);
   } catch {
-    return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    return NextResponse.json({ error: AUTH_REQUIRED_ERROR }, { status: 401 });
   }
 
   const { searchParams } = new URL(request.url);
@@ -107,8 +105,6 @@ export async function DELETE(request: Request) {
   if (!id) {
     return NextResponse.json({ error: "id is required" }, { status: 400 });
   }
-
-  const supabase = await createServerSupabase();
 
   await supabase
     .from("collections")

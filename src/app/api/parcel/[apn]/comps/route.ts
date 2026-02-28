@@ -185,7 +185,7 @@ export async function GET(
       address: String(addr),
       distance: Math.round(dist * 100) / 100,
       acres,
-      date: new Date().toISOString().slice(0, 7), // Current month as proxy
+      date: "assessed_snapshot", // Transaction history unavailable in county open data feed
       price: assessed, // Assessed value (not sale price — county data)
       psf: Math.round(psf * 100) / 100,
       coordinates: [compLng, compLat],
