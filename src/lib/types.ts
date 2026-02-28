@@ -197,6 +197,8 @@ export interface DCInfrastructure {
   fiberCarriers: string[];
   tieDistance: number | null;
   waterCapacity: number | null;
+  waterSystemName: string | null;
+  waterPopulationServed: number | null;
   utilityTerritory: string | null;
 }
 

@@ -4,17 +4,23 @@ import { getParcelByAPN } from "@/lib/mock-data";
 import { scoreParcel } from "@/lib/scoring";
 import { getZoningStandards } from "@/lib/zoning-standards";
 import { isDevMode } from "@/lib/config";
+import { createServerSupabase } from "@/lib/supabase-server";
+import { resolveCapabilityContext } from "@/lib/capabilities";
+import { createEmbedding } from "@/lib/embeddings";
 
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ apn: string }> }
 ) {
   const { apn } = await params;
+  const supabase = await createServerSupabase();
+  const context = await resolveCapabilityContext(supabase);
 
   // Gather parcel data
   let parcel;
+  let attrs;
   try {
-    const attrs = await fetchPropertyByPIN(apn);
+    attrs = await fetchPropertyByPIN(apn);
     if (attrs) parcel = mapTaxToParcel(attrs, apn);
   } catch {
     // fall through
@@ -25,6 +31,37 @@ export async function GET(
       status: 404,
       headers: { "Content-Type": "application/json" },
     });
+  }
+
+  // Gather Firm History RAG context if authorized
+  let historyText = "No historical firm data or matching deal documents found for this site.";
+  if (context.authenticated && context.user?.user_metadata?.org_id && context.capabilities["crm.view"]) {
+    try {
+      const orgId = context.user.user_metadata.org_id;
+      const queryText = `
+        Parcel APN: ${apn}
+        Address: ${parcel.site_address ?? "Unknown"}
+        Legal: ${parcel.legal_desc ?? "Unknown"}
+        Owner: ${parcel.owner_name ?? "Unknown"}
+      `.trim();
+      
+      const embedding = await createEmbedding(queryText);
+      const { data: matches } = await supabase.rpc("match_deal_documents", {
+        query_embedding: embedding,
+        match_threshold: 0.5,
+        match_count: 3,
+        filter_org_id: orgId,
+      });
+
+      if (matches && matches.length > 0) {
+        historyText = matches.map((m: { metadata?: { filename?: string }; similarity: number; content: string }) => 
+          `[Document: ${m.metadata?.filename || 'Untitled'}] (Similarity: ${Math.round(m.similarity * 100)}%)
+           Content Snippet: ${m.content}`
+        ).join("\n\n");
+      }
+    } catch (err) {
+      console.warn("Brief generation: Firm history fetch failed", err);
+    }
   }
 
   const score = scoreParcel(parcel);
@@ -59,6 +96,9 @@ ${standardsText}
 Use Classifications:
 ${flagsText}
 
+Historical Firm Intelligence & Past Deal Documents:
+${historyText}
+
 Write a professional 5-section Site Intelligence Brief using the following structure. Use markdown headers for each section. Be factual, data-driven, and concise. No filler language.
 
 # Executive Summary
@@ -70,11 +110,11 @@ Explain each of the 5 scoring dimensions and what they mean for this specific pa
 # Zoning & Regulatory Analysis
 Summarize the zoning classification, key permitted uses, and any notable restrictions or CUP requirements. Identify the highest-value use permitted by right.
 
-# Comparable Properties & Market Context
-Discuss the general market context for ${parcel.zoning ?? "this zoning class"} properties in Gwinnett County. Note any relevant market trends. (Note: specific sale comp data is not available from county records — base this on general market knowledge of the Gwinnett submarket.)
+# Historical Context & Firm Intelligence
+Incorporate the "Historical Firm Intelligence" provided above. Discuss any relevant past deals, proforma insights, or internal documents that match this site. If no matches were found, note that this is a new submarket or property type for the firm.
 
 # Risk Analysis & Recommendations
-Identify 3-5 specific risks or due diligence items. Close with a clear action recommendation (acquire for development, monitor, pass, etc.) and why.`;
+Identify 3-5 specific risks or due diligence items based on BOTH current data and historical intelligence. Close with a clear action recommendation (acquire for development, monitor, pass, etc.) and why.`;
 
   const client = getAnthropicClient();
   const encoder = new TextEncoder();

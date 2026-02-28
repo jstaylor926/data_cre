@@ -4,6 +4,7 @@ import {
   fetchSubstationsNear,
   fetchNearestTxVoltage,
   fetchFemaFloodZone,
+  fetchWaterSystemData,
 } from "@/lib/hifld";
 import { buildEnvFlags, effectiveRadius } from "@/lib/dc-scoring";
 import type { DCInfrastructure, Substation } from "@/lib/types";
@@ -47,10 +48,11 @@ export async function GET(
   const fccController = new AbortController();
   const timeoutId = setTimeout(() => fccController.abort(), 3000);
 
-  const [rawSubs, nearestTxVoltage, fema, fiberCarriers] = await Promise.all([
+  const [rawSubs, nearestTxVoltage, fema, water, fiberCarriers] = await Promise.all([
     fetchSubstationsNear(lng, lat, radius),
     fetchNearestTxVoltage(lng, lat, 5),
     fetchFemaFloodZone(lng, lat),
+    fetchWaterSystemData(lng, lat),
     (async () => {
       try {
         const fccUrl = `https://broadbandmap.fcc.gov/api/public/map/listAvailability?latitude=${lat}&longitude=${lng}&unit=0&category=Fixed%20Broadband`;
@@ -103,7 +105,9 @@ export async function GET(
     envFlags,
     fiberCarriers,
     tieDistance,
-    waterCapacity: null, // Phase 3.2 — EPA SDWIS integration
+    waterCapacity: water.population, // Use population as a proxy for system scale
+    waterSystemName: water.name,
+    waterPopulationServed: water.population,
     utilityTerritory: substations[0]?.operator ?? null,
   };
 

@@ -147,3 +147,38 @@ export async function fetchFemaFloodZone(
     return { zone: null, subtype: null };
   }
 }
+
+/**
+ * Query EPA SDWIS (via ArcGIS) for the water system serving a specific point.
+ */
+export async function fetchWaterSystemData(
+  lng: number,
+  lat: number
+): Promise<{ name: string | null; population: number | null }> {
+  const WATER_URL =
+    "https://services.arcgis.com/cJ9vO99S79isU896/arcgis/rest/services/Water_System_Service_Areas/FeatureServer/0/query";
+
+  const params = new URLSearchParams({
+    geometry: `${lng},${lat}`,
+    geometryType: "esriGeometryPoint",
+    inSR: "4326",
+    spatialRel: "esriSpatialRelIntersects",
+    outFields: "PWS_NAME,POPULATION_SERVED_COUNT",
+    returnGeometry: "false",
+    f: "json",
+  });
+
+  try {
+    const res = await fetch(`${WATER_URL}?${params}`, { cache: "no-store" });
+    if (!res.ok) return { name: null, population: null };
+
+    const json = await res.json();
+    const feature = json?.features?.[0];
+    return {
+      name: feature?.attributes?.PWS_NAME ?? null,
+      population: Number(feature?.attributes?.POPULATION_SERVED_COUNT ?? 0),
+    };
+  } catch {
+    return { name: null, population: null };
+  }
+}

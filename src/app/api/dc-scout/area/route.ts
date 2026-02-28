@@ -223,8 +223,11 @@ export async function POST(request: Request) {
                   candidate.centroid[0], candidate.centroid[1], -84.3963, 33.7567
                 ),
                 waterCapacity: null,
-                utilityTerritory: nearSubs[0]?.operator ?? null,
-              };
+                waterSystemName: null,
+                waterPopulationServed: null,
+                utilityTerritory: nearSubs[0]?.operator ?? "Unknown",
+                };
+
               const dcScore = computeDCScore(fallbackInfra, mw);
               return { rank: i + 1, ...candidate, dcScore, infrastructure: fallbackInfra };
             }
