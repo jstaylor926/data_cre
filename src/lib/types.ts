@@ -17,6 +17,7 @@ export interface Parcel {
   deed_refs?: string[];
   previous_owners?: string[];
   geom?: GeoJSON.MultiPolygon | null;
+  is_partial?: boolean;
 }
 
 export interface SavedParcel {

@@ -216,6 +216,27 @@ export function mapTaxToParcel(
 }
 
 /**
+ * Search for parcels by owner name.
+ * Used by Entity Lookup to find all holdings of a specific LLC or principal.
+ */
+export async function fetchParcelsByOwner(ownerName: string): Promise<Record<string, unknown>[]> {
+  const res = await queryLayer(TAX_TABLE_LAYER, {
+    where: `OWNER1 LIKE '%${ownerName.toUpperCase().replace(/'/g, "''")}%'`,
+    outFields: "PIN,OWNER1,LOCADDR,LOCCITY,LOCSTATE,LOCZIP,LEGALAC,PCDESC,ZONING,TOTVAL1",
+    returnGeometry: false,
+    f: "json",
+    resultRecordCount: 50, // Limit for quick lookup
+  });
+
+  if (!res.ok) {
+    throw new Error(`ArcGIS owner search failed: ${res.status}`);
+  }
+
+  const data = await res.json();
+  return data.features?.map((f: { attributes: Record<string, unknown> }) => f.attributes) || [];
+}
+
+/**
  * Compute the centroid [lng, lat] of a parcel polygon by PIN.
  * Used by Phase 3 DC score API to locate the parcel for proximity queries.
  */

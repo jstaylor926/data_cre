@@ -30,6 +30,8 @@ export async function GET(
     if (parcel) return NextResponse.json(parcel);
   }
 
+  console.warn(`[API] Parcel not found in any source: ${apn}`);
+
   return NextResponse.json(
     { error: "Parcel not found" },
     { status: 404 }

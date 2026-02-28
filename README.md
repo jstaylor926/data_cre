@@ -103,10 +103,12 @@ supabase db push
 # - supabase/migrations/20260225000000_phase4_crm.sql
 # - supabase/migrations/20260228000100_harden_auth_rls.sql
 # - supabase/migrations/20260228010100_phase1_capabilities.sql
+# - supabase/migrations/20260228020100_entity_lookups.sql
 ```
 
 Saved parcel and CRM tables currently use `TEXT` `user_id` columns. Production-safe access is enforced by RLS + Supabase-auth JWT identity; there is no hardcoded `dev-user` default.
 Effective UI feature flags are resolved from account capabilities at `/api/me/context` (guest/authenticated fallback + optional `user_capability_overrides`).
+Admin users (with `admin.capabilities.manage`) can now manage these overrides directly via the Settings modal.
 
 ---
 
@@ -174,7 +176,7 @@ Status Source of Truth (updated Feb 28, 2026): this README section is canonical 
 - Zoning AI chat for follow-up questions on any parcel
 - Comparable analysis currently uses county assessed values (not transaction history) and marks date as assessed snapshot
 - Firm history panel is present, but deal-history ingestion/RAG matching is not yet integrated
-- Entity lookup is mock-enabled in dev mode; production endpoint currently returns `501 Not Implemented`
+- Entity lookup is live with a production-ready path including Supabase caching and real-time ArcGIS parcel cross-referencing.
 - Investment brief generator: one-click AI narrative covering deal thesis, risk, and comps — streaming
 - Phase 2 tabs live on the Phase 1 dashboard via the same panel
 
@@ -207,6 +209,8 @@ Status Source of Truth (updated Feb 28, 2026): this README section is canonical 
 - Multi-tenant RLS is now hardened to org-scoped policies (no broad `USING (true)` access)
 - Core CRUD APIs now exist for organizations, projects, tasks, and notes under `/api/crm/*`
 - CRM route/UI is functional but still foundation-level (search/create/list only, advanced workflow automation not shipped)
+- Admin-only Capability Management UI and API are live, allowing per-user overrides of feature flags.
+- CI/CD pipeline (GitHub Actions) is established to enforce linting, type-checking, unit tests, and E2E coverage.
 
 ---
 

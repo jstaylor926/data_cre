@@ -33,7 +33,23 @@ export function useParcelClick() {
       signal: controller.signal,
     })
       .then((res) => {
-        if (!res.ok) throw new Error(`${res.status}`);
+        if (!res.ok) {
+          if (res.status === 404) {
+            // Handle 404 gracefully — the parcel exists on the map but full tax data is missing.
+            // We'll fall back to the basic data we have from the map click.
+            const quickCardData = useAppStore.getState().quickCardData;
+            if (quickCardData && quickCardData.pin === selectedAPN) {
+              return {
+                apn: quickCardData.pin,
+                site_address: quickCardData.address,
+                acres: quickCardData.acres,
+                county: "Gwinnett",
+                is_partial: true, // Flag to indicate limited data
+              };
+            }
+          }
+          throw new Error(`${res.status}`);
+        }
         return res.json();
       })
       .then((parcel) => {

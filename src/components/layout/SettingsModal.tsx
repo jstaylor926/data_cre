@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { createPortal } from "react-dom";
 import {
   X,
@@ -10,11 +11,13 @@ import {
   Building2,
   Layers,
   Check,
+  UserPlus,
+  ShieldAlert,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useCapabilities } from "@/components/capabilities/CapabilityProvider";
-import type { CapabilityKey } from "@/lib/capability-constants";
+import { CAPABILITY_KEYS, type CapabilityKey } from "@/lib/capability-constants";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -62,7 +65,43 @@ const FEATURE_ROWS: Array<{
 export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   const { status: authStatus, user } = useAuth();
   const { status: capabilityStatus, hasCapability } = useCapabilities();
+  
+  // Admin State
+  const [adminUserId, setAdminUserId] = useState("");
+  const [adminCapability, setAdminCapability] = useState<CapabilityKey>(CAPABILITY_KEYS[0]);
+  const [updating, setUpdating] = useState(false);
+  const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
+
   if (!isOpen || typeof document === "undefined") return null;
+
+  const handleUpdateCapability = async (enabled: boolean) => {
+    if (!adminUserId) return;
+    setUpdating(true);
+    setMessage(null);
+
+    try {
+      const res = await fetch("/api/admin/capabilities", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: adminUserId,
+          capability: adminCapability,
+          enabled,
+          reason: `Admin manual ${enabled ? "grant" : "revoke"} via UI`,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to update");
+
+      setMessage({ text: `Successfully ${enabled ? "granted" : "revoked"} ${adminCapability}`, type: "success" });
+    } catch (err) {
+      const error = err as Error;
+      setMessage({ text: error.message, type: "error" });
+    } finally {
+      setUpdating(false);
+    }
+  };
 
   return createPortal(
     <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-ink/80 p-4 backdrop-blur-sm sm:p-6">
@@ -133,15 +172,72 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
           <div className="rounded-xl border border-line2 bg-ink3 p-4">
             <p className="font-mono text-[10px] uppercase tracking-widest text-pd-muted">
-              Admin Capability
+              Admin Scope
             </p>
-            <p className="mt-2 text-xs text-text">
+            <p className="mt-2 text-xs text-text flex items-center gap-2">
               Capability Management:{" "}
-              <span className={hasCapability("admin.capabilities.manage") ? "text-teal" : "text-pd-muted"}>
+              <span className={hasCapability("admin.capabilities.manage") ? "text-pd-teal" : "text-pd-muted"}>
                 {hasCapability("admin.capabilities.manage") ? "Enabled" : "Disabled"}
               </span>
+              {hasCapability("admin.capabilities.manage") && <ShieldAlert size={12} className="text-pd-teal" />}
             </p>
           </div>
+
+          {hasCapability("admin.capabilities.manage") && (
+            <div className="rounded-xl border border-line2 bg-ink3 p-4 space-y-4">
+              <p className="font-mono text-[10px] uppercase tracking-widest text-pd-teal flex items-center gap-2">
+                <UserPlus size={12} />
+                Override Management
+              </p>
+              
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-[10px] text-pd-muted mb-1 uppercase tracking-wider">Target User ID</label>
+                  <input 
+                    type="text" 
+                    placeholder="User UUID..." 
+                    className="w-full bg-ink4 border border-line2 rounded px-3 py-2 text-xs text-bright focus:outline-none focus:border-pd-teal font-mono"
+                    value={adminUserId}
+                    onChange={(e) => setAdminUserId(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-pd-muted mb-1 uppercase tracking-wider">Capability</label>
+                  <select 
+                    className="w-full bg-ink4 border border-line2 rounded px-3 py-2 text-xs text-bright focus:outline-none focus:border-pd-teal"
+                    value={adminCapability}
+                    onChange={(e) => setAdminCapability(e.target.value as CapabilityKey)}
+                  >
+                    {CAPABILITY_KEYS.map(key => (
+                      <option key={key} value={key}>{key}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex items-center gap-3 pt-1">
+                  <Button 
+                    onClick={() => handleUpdateCapability(true)}
+                    disabled={!adminUserId || updating}
+                    className="h-8 bg-pd-teal text-ink text-[11px] font-bold px-4"
+                  >
+                    GRANT
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    onClick={() => handleUpdateCapability(false)}
+                    disabled={!adminUserId || updating}
+                    className="h-8 border-line2 text-pd-muted hover:text-bright text-[11px] px-4"
+                  >
+                    REVOKE
+                  </Button>
+                </div>
+                {message && (
+                  <p className={`text-[10px] font-medium ${message.type === 'error' ? 'text-rose-400' : 'text-pd-teal'}`}>
+                    {message.text}
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="shrink-0 border-t border-line bg-ink3/50 px-6 py-4">
