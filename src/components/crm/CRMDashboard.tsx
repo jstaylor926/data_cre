@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import type { Project } from '@/lib/types';
 import { useAuth } from '@/components/auth/AuthProvider';
+import { useCapabilities } from '@/components/capabilities/CapabilityProvider';
 
 function parseErrorMessage(data: unknown, fallback: string): string {
   if (data && typeof data === "object" && "error" in data && typeof data.error === "string") {
@@ -21,8 +22,13 @@ function createOrgSlug(): string {
 
 export const CRMDashboard = () => {
   const { status: authStatus, openAuthModal } = useAuth();
+  const { status: capabilityStatus, hasCapability } = useCapabilities();
   const isAuthenticated = authStatus === "authenticated";
   const authRequired = authStatus === "unauthenticated";
+  const canViewCRM = hasCapability("crm.view");
+  const canCreateProjects = hasCapability("crm.projects.write");
+  const accessDenied =
+    authStatus === "authenticated" && capabilityStatus === "ready" && !canViewCRM;
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [query, setQuery] = useState('');
   const [projects, setProjects] = useState<Project[]>([]);
@@ -31,7 +37,7 @@ export const CRMDashboard = () => {
   const [error, setError] = useState<string | null>(null);
 
   const loadProjects = useCallback(async () => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated || !canViewCRM) {
       setProjects([]);
       setLoading(false);
       setError(null);
@@ -57,15 +63,15 @@ export const CRMDashboard = () => {
     } finally {
       setLoading(false);
     }
-  }, [isAuthenticated]);
+  }, [canViewCRM, isAuthenticated]);
 
   useEffect(() => {
-    if (authStatus === "loading") {
+    if (authStatus === "loading" || capabilityStatus === "loading") {
       setLoading(true);
       return;
     }
     void loadProjects();
-  }, [authStatus, loadProjects]);
+  }, [authStatus, capabilityStatus, loadProjects]);
 
   const ensureOrganizationId = useCallback(async (): Promise<string> => {
     const existingRes = await fetch('/api/crm/organizations', { cache: 'no-store' });
@@ -101,6 +107,10 @@ export const CRMDashboard = () => {
       openAuthModal();
       return;
     }
+    if (!canCreateProjects) {
+      setError("Your account can view CRM but cannot create projects.");
+      return;
+    }
     setCreating(true);
     setError(null);
 
@@ -130,7 +140,7 @@ export const CRMDashboard = () => {
     } finally {
       setCreating(false);
     }
-  }, [ensureOrganizationId, isAuthenticated, openAuthModal, projects.length]);
+  }, [canCreateProjects, ensureOrganizationId, isAuthenticated, openAuthModal, projects.length]);
 
   const filteredProjects = useMemo(() => {
     const term = query.trim().toLowerCase();
@@ -152,10 +162,10 @@ export const CRMDashboard = () => {
       </p>
       <Button
         onClick={handleCreateProject}
-        disabled={creating}
+        disabled={creating || !canCreateProjects}
         className="mt-4 bg-pd-teal hover:bg-pd-teal/90 text-ink font-semibold"
       >
-        {creating ? 'Creating...' : 'Create First Project'}
+        {creating ? 'Creating...' : canCreateProjects ? 'Create First Project' : 'Read Only'}
       </Button>
     </Card>
   );
@@ -180,6 +190,20 @@ export const CRMDashboard = () => {
     );
   }
 
+  if (accessDenied) {
+    return (
+      <div className="flex h-full flex-col items-center justify-center gap-3 p-8 text-center">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full border border-line2 text-pd-muted">
+          <Briefcase size={18} />
+        </div>
+        <p className="text-[13px] text-text">CRM access is disabled for this account</p>
+        <p className="max-w-xs font-mono text-[10px] text-pd-muted">
+          Your capability profile does not include CRM workspace access.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col h-full bg-ink p-6 overflow-y-auto">
       <header className="flex items-center justify-between mb-8">
@@ -195,11 +219,11 @@ export const CRMDashboard = () => {
         
         <Button
           onClick={handleCreateProject}
-          disabled={creating}
+          disabled={creating || !canCreateProjects}
           className="bg-pd-teal hover:bg-pd-teal/90 text-ink font-semibold flex items-center gap-2"
         >
           {creating ? <Loader2 size={18} className="animate-spin" /> : <Plus size={18} />}
-          {creating ? 'Creating...' : 'New Project'}
+          {creating ? 'Creating...' : canCreateProjects ? 'New Project' : 'Read Only'}
         </Button>
       </header>
 

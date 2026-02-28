@@ -17,9 +17,22 @@ export default function PanelActionBar() {
   const features = useAppStore((s) => s.features);
   const { openAuthModal } = useAuth();
   
-  const { savedParcels, authRequired: savedAuthRequired, isSaved, save, unsave } = useSavedParcels();
-  const { collections, authRequired: collectionsAuthRequired, create } = useCollections();
+  const {
+    savedParcels,
+    authRequired: savedAuthRequired,
+    accessDenied: savedAccessDenied,
+    isSaved,
+    save,
+    unsave,
+  } = useSavedParcels();
+  const {
+    collections,
+    authRequired: collectionsAuthRequired,
+    accessDenied: collectionsAccessDenied,
+    create,
+  } = useCollections();
   const authRequired = savedAuthRequired || collectionsAuthRequired;
+  const accessDenied = savedAccessDenied || collectionsAccessDenied;
 
   const [showCollPopup, setShowCollPopup] = useState(false);
   const [creatingNew, setCreatingNew] = useState(false);
@@ -48,6 +61,7 @@ export default function PanelActionBar() {
       openAuthModal();
       return;
     }
+    if (accessDenied) return;
     if (saved) {
       await unsave(selectedAPN);
       setShowCollPopup(false);
@@ -86,17 +100,19 @@ export default function PanelActionBar() {
       {/* Save button */}
       <button
         onClick={handleSaveClick}
-        disabled={authRequired}
+        disabled={accessDenied}
         className={`flex h-[30px] flex-1 items-center justify-center gap-1.5 rounded font-mono text-[8px] uppercase tracking-wider transition-colors ${
-          authRequired
+          accessDenied
             ? "cursor-not-allowed bg-ink4 text-mid"
+            : authRequired
+            ? "border border-teal bg-teal-dim text-teal"
             : saved
             ? "bg-amber text-ink font-semibold"
             : "bg-teal text-ink font-semibold"
         }`}
       >
         <Heart size={10} fill={saved ? "currentColor" : "none"} />
-        {authRequired ? "Sign In" : saved ? "Saved" : "Save"}
+        {accessDenied ? "No Access" : authRequired ? "Sign In" : saved ? "Saved" : "Save"}
       </button>
 
       {/* LLC button */}

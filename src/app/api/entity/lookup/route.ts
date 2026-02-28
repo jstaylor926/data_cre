@@ -2,6 +2,12 @@ import { NextResponse } from "next/server";
 import { getParcelsByOwner } from "@/lib/mock-data";
 import type { EntityResult } from "@/lib/types";
 import { isDevMode } from "@/lib/config";
+import { createServerSupabase } from "@/lib/supabase-server";
+import {
+  CAPABILITY_FORBIDDEN_ERROR,
+  hasCapability,
+  resolveCapabilityContext,
+} from "@/lib/capabilities";
 
 // Mock entity lookup data — simulates GA SOS scraping results
 const MOCK_ENTITIES: Record<string, Omit<EntityResult, "related_parcels">> = {
@@ -104,6 +110,15 @@ const MOCK_ENTITIES: Record<string, Omit<EntityResult, "related_parcels">> = {
 };
 
 export async function POST(request: Request) {
+  const supabase = await createServerSupabase();
+  const context = await resolveCapabilityContext(supabase);
+  if (!hasCapability(context.capabilities, "feature.entity_lookup")) {
+    return NextResponse.json(
+      { error: CAPABILITY_FORBIDDEN_ERROR, capability: "feature.entity_lookup" },
+      { status: 403 }
+    );
+  }
+
   const body = await request.json();
   const { llc_name } = body as { llc_name: string };
 

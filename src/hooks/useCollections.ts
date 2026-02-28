@@ -3,16 +3,21 @@
 import { useState, useEffect, useCallback } from "react";
 import type { Collection } from "@/lib/types";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { useCapabilities } from "@/components/capabilities/CapabilityProvider";
 
 export function useCollections() {
   const [collections, setCollections] = useState<Collection[]>([]);
   const [loading, setLoading] = useState(false);
   const { status, openAuthModal } = useAuth();
+  const { status: capabilityStatus, hasCapability } = useCapabilities();
   const isAuthenticated = status === "authenticated";
   const authRequired = status === "unauthenticated";
+  const canManage = hasCapability("collections.manage");
+  const accessDenied =
+    status === "authenticated" && capabilityStatus === "ready" && !canManage;
 
   const refresh = useCallback(async () => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated || !canManage) {
       setCollections([]);
       setLoading(false);
       return;
@@ -26,21 +31,23 @@ export function useCollections() {
         setCollections(data);
       } else if (res.status === 401) {
         setCollections([]);
+      } else if (res.status === 403) {
+        setCollections([]);
       }
     } catch {
       // Ignore fetch errors during dev
     } finally {
       setLoading(false);
     }
-  }, [isAuthenticated]);
+  }, [canManage, isAuthenticated]);
 
   useEffect(() => {
-    if (status === "loading") {
+    if (status === "loading" || capabilityStatus === "loading") {
       setLoading(true);
       return;
     }
     void refresh();
-  }, [refresh, status]);
+  }, [capabilityStatus, refresh, status]);
 
   const create = useCallback(
     async (name: string) => {
@@ -48,6 +55,7 @@ export function useCollections() {
         openAuthModal();
         return null;
       }
+      if (!canManage) return null;
       const res = await fetch("/api/collections", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -61,7 +69,7 @@ export function useCollections() {
       if (res.status === 401) openAuthModal();
       return null;
     },
-    [isAuthenticated, openAuthModal, refresh]
+    [canManage, isAuthenticated, openAuthModal, refresh]
   );
 
   const rename = useCallback(
@@ -70,6 +78,7 @@ export function useCollections() {
         openAuthModal();
         return;
       }
+      if (!canManage) return;
       const res = await fetch("/api/collections", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -81,7 +90,7 @@ export function useCollections() {
         openAuthModal();
       }
     },
-    [isAuthenticated, openAuthModal, refresh]
+    [canManage, isAuthenticated, openAuthModal, refresh]
   );
 
   const remove = useCallback(
@@ -90,11 +99,21 @@ export function useCollections() {
         openAuthModal();
         return;
       }
+      if (!canManage) return;
       await fetch(`/api/collections?id=${id}`, { method: "DELETE" });
       await refresh();
     },
-    [isAuthenticated, openAuthModal, refresh]
+    [canManage, isAuthenticated, openAuthModal, refresh]
   );
 
-  return { collections, loading, authRequired, create, rename, remove, refresh };
+  return {
+    collections,
+    loading,
+    authRequired,
+    accessDenied,
+    create,
+    rename,
+    remove,
+    refresh,
+  };
 }

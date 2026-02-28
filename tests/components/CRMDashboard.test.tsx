@@ -13,6 +13,28 @@ vi.mock('@/components/auth/AuthProvider', () => ({
   }),
 }));
 
+vi.mock('@/components/capabilities/CapabilityProvider', () => ({
+  useCapabilities: () => ({
+    status: 'ready',
+    capabilities: {
+      "saved.read": true,
+      "saved.write": true,
+      "collections.manage": true,
+      "feature.ai_zoning": true,
+      "feature.auto_comps": true,
+      "feature.dc_scoring": true,
+      "feature.entity_lookup": true,
+      "crm.view": true,
+      "crm.projects.write": true,
+      "crm.tasks.write": true,
+      "crm.notes.write": true,
+      "admin.capabilities.manage": true,
+    },
+    hasCapability: () => true,
+    refresh: vi.fn(),
+  }),
+}));
+
 import { CRMDashboard } from '@/components/crm/CRMDashboard';
 
 describe('CRMDashboard', () => {

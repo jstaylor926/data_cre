@@ -1,14 +1,15 @@
 import { NextResponse } from "next/server";
 import { createServerSupabase } from "@/lib/supabase-server";
-import { AUTH_REQUIRED_ERROR, requireAuthenticatedUserId } from "@/lib/auth";
+import { authorizationErrorResponse } from "@/lib/api-auth";
+import { requireUserCapability } from "@/lib/capabilities";
 
 export async function GET() {
   const supabase = await createServerSupabase();
   let userId: string;
   try {
-    userId = await requireAuthenticatedUserId(supabase);
-  } catch {
-    return NextResponse.json({ error: AUTH_REQUIRED_ERROR }, { status: 401 });
+    ({ userId } = await requireUserCapability(supabase, "collections.manage"));
+  } catch (error) {
+    return authorizationErrorResponse(error);
   }
 
   const { data, error } = await supabase
@@ -29,9 +30,9 @@ export async function POST(request: Request) {
   const supabase = await createServerSupabase();
   let userId: string;
   try {
-    userId = await requireAuthenticatedUserId(supabase);
-  } catch {
-    return NextResponse.json({ error: AUTH_REQUIRED_ERROR }, { status: 401 });
+    ({ userId } = await requireUserCapability(supabase, "collections.manage"));
+  } catch (error) {
+    return authorizationErrorResponse(error);
   }
 
   const body = await request.json();
@@ -62,9 +63,9 @@ export async function PATCH(request: Request) {
   const supabase = await createServerSupabase();
   let userId: string;
   try {
-    userId = await requireAuthenticatedUserId(supabase);
-  } catch {
-    return NextResponse.json({ error: AUTH_REQUIRED_ERROR }, { status: 401 });
+    ({ userId } = await requireUserCapability(supabase, "collections.manage"));
+  } catch (error) {
+    return authorizationErrorResponse(error);
   }
 
   const body = await request.json();
@@ -94,9 +95,9 @@ export async function DELETE(request: Request) {
   const supabase = await createServerSupabase();
   let userId: string;
   try {
-    userId = await requireAuthenticatedUserId(supabase);
-  } catch {
-    return NextResponse.json({ error: AUTH_REQUIRED_ERROR }, { status: 401 });
+    ({ userId } = await requireUserCapability(supabase, "collections.manage"));
+  } catch (error) {
+    return authorizationErrorResponse(error);
   }
 
   const { searchParams } = new URL(request.url);

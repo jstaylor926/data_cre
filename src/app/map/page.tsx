@@ -19,6 +19,7 @@ export default function AppDashboard() {
   const mapRef = useRef<MapHandle>(null);
   const selectParcel = useAppStore((s) => s.selectParcel);
   const enableFirmIntel = useAppStore((s) => s.features.enableFirmIntel);
+  const resolvedNav = activeNav === "crm" && !enableFirmIntel ? "map" : activeNav;
 
   const handleFlyTo = useCallback((lng: number, lat: number) => {
     mapRef.current?.flyTo(lng, lat);
@@ -43,27 +44,27 @@ export default function AppDashboard() {
     <div className="flex h-screen w-screen flex-col bg-ink">
       <TopBar
         onFlyTo={handleFlyTo}
-        activeNav={activeNav}
+        activeNav={resolvedNav}
         onNavChange={handleNavChange}
       />
 
-      {activeNav === "map" && (
+      {resolvedNav === "map" && (
         <AppShell mapRef={mapRef} />
       )}
 
-      {activeNav === "crm" && enableFirmIntel && (
+      {resolvedNav === "crm" && enableFirmIntel && (
         <div className="flex-1 overflow-hidden">
           <CRMDashboard />
         </div>
       )}
 
-      {activeNav === "saved" && (
+      {resolvedNav === "saved" && (
         <div className="flex-1 overflow-y-auto">
           <SavedPropertiesList onSelectParcel={handleSelectSavedParcel} />
         </div>
       )}
 
-      {activeNav === "alerts" && (
+      {resolvedNav === "alerts" && (
         <div className="flex flex-1 flex-col items-center justify-center gap-3 p-12">
           <div className="flex h-12 w-12 items-center justify-center rounded-full border border-line2 bg-ink3 text-pd-muted">
             <Bell size={22} />
@@ -76,7 +77,7 @@ export default function AppDashboard() {
       )}
 
       {isMobile && (
-        <MobileTabBar activeTab={activeNav} onTabChange={handleNavChange} />
+        <MobileTabBar activeTab={resolvedNav} onTabChange={handleNavChange} />
       )}
     </div>
   );

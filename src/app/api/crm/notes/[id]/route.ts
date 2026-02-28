@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { AUTH_REQUIRED_ERROR, requireAuthenticatedUserId } from "@/lib/auth";
+import { authorizationErrorResponse } from "@/lib/api-auth";
+import { requireUserCapability } from "@/lib/capabilities";
 import { createServerSupabase } from "@/lib/supabase-server";
 
 interface UpdateNotePayload {
@@ -17,9 +18,9 @@ export async function PATCH(
 
   const supabase = await createServerSupabase();
   try {
-    await requireAuthenticatedUserId(supabase);
-  } catch {
-    return NextResponse.json({ error: AUTH_REQUIRED_ERROR }, { status: 401 });
+    await requireUserCapability(supabase, "crm.notes.write");
+  } catch (error) {
+    return authorizationErrorResponse(error);
   }
 
   const body = (await request.json()) as UpdateNotePayload;
@@ -54,9 +55,9 @@ export async function DELETE(
 
   const supabase = await createServerSupabase();
   try {
-    await requireAuthenticatedUserId(supabase);
-  } catch {
-    return NextResponse.json({ error: AUTH_REQUIRED_ERROR }, { status: 401 });
+    await requireUserCapability(supabase, "crm.notes.write");
+  } catch (error) {
+    return authorizationErrorResponse(error);
   }
 
   const { error } = await supabase.from("notes").delete().eq("id", id);

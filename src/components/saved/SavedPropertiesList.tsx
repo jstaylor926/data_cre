@@ -19,6 +19,7 @@ export default function SavedPropertiesList({
     savedParcels,
     loading: savedLoading,
     authRequired: savedAuthRequired,
+    accessDenied: savedAccessDenied,
     updateNotes,
     moveToCollection,
   } = useSavedParcels();
@@ -26,6 +27,7 @@ export default function SavedPropertiesList({
     collections,
     loading: colLoading,
     authRequired: collectionsAuthRequired,
+    accessDenied: collectionsAccessDenied,
     create,
     rename,
     remove,
@@ -46,6 +48,7 @@ export default function SavedPropertiesList({
 
   const loading = savedLoading || colLoading;
   const authRequired = savedAuthRequired || collectionsAuthRequired;
+  const accessDenied = savedAccessDenied || collectionsAccessDenied;
 
   // Fetch real parcel data for all saved APNs
   useEffect(() => {
@@ -141,6 +144,20 @@ export default function SavedPropertiesList({
         >
           Sign In
         </button>
+      </div>
+    );
+  }
+
+  if (accessDenied) {
+    return (
+      <div className="flex h-full flex-col items-center justify-center gap-3 p-8 text-center">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full border border-line2 text-pd-muted">
+          <Bookmark size={18} />
+        </div>
+        <p className="text-[13px] text-text">Saved properties are disabled for this account</p>
+        <p className="max-w-xs font-mono text-[10px] text-pd-muted">
+          Your current capability profile does not include saved parcels or collections.
+        </p>
       </div>
     );
   }

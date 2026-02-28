@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { AUTH_REQUIRED_ERROR, requireAuthenticatedUserId } from "@/lib/auth";
+import { authorizationErrorResponse } from "@/lib/api-auth";
+import { requireUserCapability } from "@/lib/capabilities";
 import { createServerSupabase } from "@/lib/supabase-server";
 
 interface NewOrganizationPayload {
@@ -11,9 +12,9 @@ interface NewOrganizationPayload {
 export async function GET() {
   const supabase = await createServerSupabase();
   try {
-    await requireAuthenticatedUserId(supabase);
-  } catch {
-    return NextResponse.json({ error: AUTH_REQUIRED_ERROR }, { status: 401 });
+    await requireUserCapability(supabase, "crm.view");
+  } catch (error) {
+    return authorizationErrorResponse(error);
   }
 
   const { data, error } = await supabase
@@ -32,9 +33,9 @@ export async function POST(request: Request) {
   const supabase = await createServerSupabase();
   let userId: string;
   try {
-    userId = await requireAuthenticatedUserId(supabase);
-  } catch {
-    return NextResponse.json({ error: AUTH_REQUIRED_ERROR }, { status: 401 });
+    ({ userId } = await requireUserCapability(supabase, "crm.projects.write"));
+  } catch (error) {
+    return authorizationErrorResponse(error);
   }
 
   const body = (await request.json()) as NewOrganizationPayload;

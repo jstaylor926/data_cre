@@ -3,16 +3,22 @@
 import { useState, useEffect, useCallback } from "react";
 import type { SavedParcel } from "@/lib/types";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { useCapabilities } from "@/components/capabilities/CapabilityProvider";
 
 export function useSavedParcels() {
   const [savedParcels, setSavedParcels] = useState<SavedParcel[]>([]);
   const [loading, setLoading] = useState(false);
   const { status, openAuthModal } = useAuth();
+  const { status: capabilityStatus, hasCapability } = useCapabilities();
   const isAuthenticated = status === "authenticated";
   const authRequired = status === "unauthenticated";
+  const canRead = hasCapability("saved.read");
+  const canWrite = hasCapability("saved.write");
+  const accessDenied =
+    status === "authenticated" && capabilityStatus === "ready" && !canRead;
 
   const refresh = useCallback(async () => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated || !canRead) {
       setSavedParcels([]);
       setLoading(false);
       return;
@@ -26,21 +32,23 @@ export function useSavedParcels() {
         setSavedParcels(data);
       } else if (res.status === 401) {
         setSavedParcels([]);
+      } else if (res.status === 403) {
+        setSavedParcels([]);
       }
     } catch {
       // Ignore fetch errors during dev
     } finally {
       setLoading(false);
     }
-  }, [isAuthenticated]);
+  }, [canRead, isAuthenticated]);
 
   useEffect(() => {
-    if (status === "loading") {
+    if (status === "loading" || capabilityStatus === "loading") {
       setLoading(true);
       return;
     }
     void refresh();
-  }, [refresh, status]);
+  }, [capabilityStatus, refresh, status]);
 
   const isSaved = useCallback(
     (apn: string) => savedParcels.some((p) => p.apn === apn),
@@ -53,6 +61,7 @@ export function useSavedParcels() {
         openAuthModal();
         return;
       }
+      if (!canWrite) return;
       const res = await fetch("/api/saved", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -68,7 +77,7 @@ export function useSavedParcels() {
         openAuthModal();
       }
     },
-    [isAuthenticated, openAuthModal, refresh]
+    [canWrite, isAuthenticated, openAuthModal, refresh]
   );
 
   const updateNotes = useCallback(
@@ -77,6 +86,7 @@ export function useSavedParcels() {
         openAuthModal();
         return;
       }
+      if (!canWrite) return;
       const res = await fetch("/api/saved", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -88,7 +98,7 @@ export function useSavedParcels() {
         openAuthModal();
       }
     },
-    [isAuthenticated, openAuthModal, refresh]
+    [canWrite, isAuthenticated, openAuthModal, refresh]
   );
 
   const moveToCollection = useCallback(
@@ -97,6 +107,7 @@ export function useSavedParcels() {
         openAuthModal();
         return;
       }
+      if (!canWrite) return;
       const res = await fetch("/api/saved", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -108,7 +119,7 @@ export function useSavedParcels() {
         openAuthModal();
       }
     },
-    [isAuthenticated, openAuthModal, refresh]
+    [canWrite, isAuthenticated, openAuthModal, refresh]
   );
 
   const unsave = useCallback(
@@ -117,16 +128,18 @@ export function useSavedParcels() {
         openAuthModal();
         return;
       }
+      if (!canWrite) return;
       await fetch(`/api/saved?apn=${apn}`, { method: "DELETE" });
       await refresh();
     },
-    [isAuthenticated, openAuthModal, refresh]
+    [canWrite, isAuthenticated, openAuthModal, refresh]
   );
 
   return {
     savedParcels,
     loading,
     authRequired,
+    accessDenied,
     isSaved,
     save,
     updateNotes,

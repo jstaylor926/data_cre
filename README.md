@@ -25,8 +25,8 @@ A proprietary platform layer for multi-tenant CRM, deal pipeline tracking, and i
 ## Technical Architecture
 
 - **Unified Application**: Consolidated all experimental phases into a single `/map` route with an adaptive UI.
-- **Feature Flag System**: Granular control over high-value features (AI, DC, CRM) via the Zustand store and a dedicated Settings Modal.
-- **Membership Simulation**: Built-in tier presets (Free, Pro, Enterprise) to demonstrate tiered value propositions.
+- **Capability-Governed Feature Flags**: Effective feature access is now account-scoped via `/api/me/context` capability resolution and synchronized into Zustand for UI gating.
+- **Account Access Console**: Settings modal now reports effective account capabilities and admin scope instead of local tier simulation.
 - **Dark-Mode Only**: A custom design system optimized for high-density data visualization.
 
 ---
@@ -102,9 +102,11 @@ supabase db push
 # - supabase/migrations/20260221000000_dev_saved_parcels.sql
 # - supabase/migrations/20260225000000_phase4_crm.sql
 # - supabase/migrations/20260228000100_harden_auth_rls.sql
+# - supabase/migrations/20260228010100_phase1_capabilities.sql
 ```
 
 Saved parcel and CRM tables currently use `TEXT` `user_id` columns. Production-safe access is enforced by RLS + Supabase-auth JWT identity; there is no hardcoded `dev-user` default.
+Effective UI feature flags are resolved from account capabilities at `/api/me/context` (guest/authenticated fallback + optional `user_capability_overrides`).
 
 ---
 
@@ -134,7 +136,7 @@ src/
 ├── components/
 │   ├── layout/
 │   │   ├── TopBar.tsx              # Adaptive Nav + Search + Settings trigger
-│   │   ├── SettingsModal.tsx       # Feature flag & Tier selection UI
+│   │   ├── SettingsModal.tsx       # Account capability / access status UI
 │   │   ├── AppShell.tsx            # Responsive layout orchestrator
 │   │   └── ...
 │   ├── crm/                        # Firm Intel (Phase 4) components
