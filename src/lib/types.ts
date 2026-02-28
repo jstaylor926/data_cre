@@ -58,7 +58,7 @@ export interface SearchResult {
 
 export type BaseMapStyle = "streets" | "satellite" | "hybrid";
 
-export type PanelTab = "data" | "score" | "zoning" | "comps";
+export type PanelTab = "data" | "score" | "zoning" | "comps" | "history";
 
 export interface SiteScore {
   composite: number;

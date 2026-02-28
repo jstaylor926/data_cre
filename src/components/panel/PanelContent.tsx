@@ -5,6 +5,7 @@ import ParcelDataTab from "./ParcelDataTab";
 import ScoreTab from "./ScoreTab";
 import ZoningTab from "./ZoningTab";
 import CompsTab from "./CompsTab";
+import HistoryTab from "./HistoryTab";
 import PanelTabs from "./PanelTabs";
 import PanelActionBar from "./PanelActionBar";
 import EntityLookupCard from "./EntityLookupCard";
@@ -107,6 +108,7 @@ export default function PanelContent() {
         {activeTab === "score" && <ScoreTab />}
         {activeTab === "zoning" && <ZoningTab />}
         {activeTab === "comps" && <CompsTab />}
+        {activeTab === "history" && <HistoryTab />}
       </div>
 
       {/* Action bar */}

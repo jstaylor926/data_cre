@@ -8,6 +8,7 @@ const TABS: { id: PanelTab; label: string; phase2?: boolean }[] = [
   { id: "score", label: "Score", phase2: true },
   { id: "zoning", label: "Zoning", phase2: true },
   { id: "comps", label: "Comps", phase2: true },
+  { id: "history", label: "History", phase2: true },
 ];
 
 export default function PanelTabs() {
@@ -19,6 +20,7 @@ export default function PanelTabs() {
     if (tab.id === 'score' && !features.enableAIZoning) return false;
     if (tab.id === 'zoning' && !features.enableAIZoning) return false;
     if (tab.id === 'comps' && !features.enableAutoComps) return false;
+    if (tab.id === 'history' && !features.enableFirmIntel) return false;
     return true;
   });
 

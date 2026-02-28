@@ -33,6 +33,7 @@ export interface CapabilityContext {
   user: {
     id: string;
     email: string | null;
+    user_metadata?: Record<string, unknown>;
   } | null;
   capabilities: CapabilityMap;
   features: FeatureFlags;
@@ -109,6 +110,7 @@ export async function resolveCapabilityContext(
       ? {
           id: user.id,
           email: user.email ?? null,
+          user_metadata: user.user_metadata,
         }
       : null,
     capabilities,
