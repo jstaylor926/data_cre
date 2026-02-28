@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import ClientProviders from "@/components/providers/ClientProviders";
 import "./globals.css";
 
 export const viewport: Viewport = {
@@ -38,7 +39,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className="antialiased">
-        {children}
+        <ClientProviders>{children}</ClientProviders>
       </body>
     </html>
   );

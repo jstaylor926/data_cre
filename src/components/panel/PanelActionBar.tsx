@@ -5,6 +5,7 @@ import { Heart, Building2, FileText, GitCompare, Check, Plus, Briefcase } from "
 import { useAppStore } from "@/store/useAppStore";
 import { useSavedParcels } from "@/hooks/useSavedParcels";
 import { useCollections } from "@/hooks/useCollections";
+import { useAuth } from "@/components/auth/AuthProvider";
 
 export default function PanelActionBar() {
   const selectedAPN = useAppStore((s) => s.selectedAPN);
@@ -14,9 +15,11 @@ export default function PanelActionBar() {
   const siteScore = useAppStore((s) => s.siteScore);
   const activeProject = useAppStore((s) => s.activeProject);
   const features = useAppStore((s) => s.features);
+  const { openAuthModal } = useAuth();
   
-  const { savedParcels, isSaved, save, unsave } = useSavedParcels();
-  const { collections, create } = useCollections();
+  const { savedParcels, authRequired: savedAuthRequired, isSaved, save, unsave } = useSavedParcels();
+  const { collections, authRequired: collectionsAuthRequired, create } = useCollections();
+  const authRequired = savedAuthRequired || collectionsAuthRequired;
 
   const [showCollPopup, setShowCollPopup] = useState(false);
   const [creatingNew, setCreatingNew] = useState(false);
@@ -41,6 +44,10 @@ export default function PanelActionBar() {
 
   const handleSaveClick = async () => {
     if (!selectedAPN) return;
+    if (authRequired) {
+      openAuthModal();
+      return;
+    }
     if (saved) {
       await unsave(selectedAPN);
       setShowCollPopup(false);
@@ -79,14 +86,17 @@ export default function PanelActionBar() {
       {/* Save button */}
       <button
         onClick={handleSaveClick}
+        disabled={authRequired}
         className={`flex h-[30px] flex-1 items-center justify-center gap-1.5 rounded font-mono text-[8px] uppercase tracking-wider transition-colors ${
-          saved
+          authRequired
+            ? "cursor-not-allowed bg-ink4 text-mid"
+            : saved
             ? "bg-amber text-ink font-semibold"
             : "bg-teal text-ink font-semibold"
         }`}
       >
         <Heart size={10} fill={saved ? "currentColor" : "none"} />
-        {saved ? "Saved" : "Save"}
+        {authRequired ? "Sign In" : saved ? "Saved" : "Save"}
       </button>
 
       {/* LLC button */}

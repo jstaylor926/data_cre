@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import type { Project } from '@/lib/types';
+import { useAuth } from '@/components/auth/AuthProvider';
 
 function parseErrorMessage(data: unknown, fallback: string): string {
   if (data && typeof data === "object" && "error" in data && typeof data.error === "string") {
@@ -19,6 +20,9 @@ function createOrgSlug(): string {
 }
 
 export const CRMDashboard = () => {
+  const { status: authStatus, openAuthModal } = useAuth();
+  const isAuthenticated = authStatus === "authenticated";
+  const authRequired = authStatus === "unauthenticated";
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [query, setQuery] = useState('');
   const [projects, setProjects] = useState<Project[]>([]);
@@ -27,6 +31,13 @@ export const CRMDashboard = () => {
   const [error, setError] = useState<string | null>(null);
 
   const loadProjects = useCallback(async () => {
+    if (!isAuthenticated) {
+      setProjects([]);
+      setLoading(false);
+      setError(null);
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -46,11 +57,15 @@ export const CRMDashboard = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [isAuthenticated]);
 
   useEffect(() => {
+    if (authStatus === "loading") {
+      setLoading(true);
+      return;
+    }
     void loadProjects();
-  }, [loadProjects]);
+  }, [authStatus, loadProjects]);
 
   const ensureOrganizationId = useCallback(async (): Promise<string> => {
     const existingRes = await fetch('/api/crm/organizations', { cache: 'no-store' });
@@ -82,6 +97,10 @@ export const CRMDashboard = () => {
   }, []);
 
   const handleCreateProject = useCallback(async () => {
+    if (!isAuthenticated) {
+      openAuthModal();
+      return;
+    }
     setCreating(true);
     setError(null);
 
@@ -111,7 +130,7 @@ export const CRMDashboard = () => {
     } finally {
       setCreating(false);
     }
-  }, [ensureOrganizationId, projects.length]);
+  }, [ensureOrganizationId, isAuthenticated, openAuthModal, projects.length]);
 
   const filteredProjects = useMemo(() => {
     const term = query.trim().toLowerCase();
@@ -140,6 +159,26 @@ export const CRMDashboard = () => {
       </Button>
     </Card>
   );
+
+  if (authRequired) {
+    return (
+      <div className="flex h-full flex-col items-center justify-center gap-3 p-8 text-center">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full border border-line2 text-pd-muted">
+          <Briefcase size={18} />
+        </div>
+        <p className="text-[13px] text-text">Sign in to access CRM projects</p>
+        <p className="max-w-xs font-mono text-[10px] text-pd-muted">
+          Projects, tasks, and notes are organization-scoped and require authentication.
+        </p>
+        <button
+          onClick={openAuthModal}
+          className="rounded border border-teal bg-teal-dim px-3 py-1.5 font-mono text-[9px] uppercase tracking-wider text-teal transition-colors hover:bg-teal/20"
+        >
+          Sign In
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-full bg-ink p-6 overflow-y-auto">

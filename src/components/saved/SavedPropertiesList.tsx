@@ -6,6 +6,7 @@ import { useSavedParcels } from "@/hooks/useSavedParcels";
 import { useCollections } from "@/hooks/useCollections";
 import type { Parcel, Collection } from "@/lib/types";
 import SavedPropertyRow from "./SavedPropertyRow";
+import { useAuth } from "@/components/auth/AuthProvider";
 
 interface SavedPropertiesListProps {
   onSelectParcel?: (apn: string, centroid?: [number, number]) => void;
@@ -14,8 +15,22 @@ interface SavedPropertiesListProps {
 export default function SavedPropertiesList({
   onSelectParcel,
 }: SavedPropertiesListProps) {
-  const { savedParcels, loading: savedLoading, updateNotes, moveToCollection } = useSavedParcels();
-  const { collections, loading: colLoading, create, rename, remove } = useCollections();
+  const {
+    savedParcels,
+    loading: savedLoading,
+    authRequired: savedAuthRequired,
+    updateNotes,
+    moveToCollection,
+  } = useSavedParcels();
+  const {
+    collections,
+    loading: colLoading,
+    authRequired: collectionsAuthRequired,
+    create,
+    rename,
+    remove,
+  } = useCollections();
+  const { openAuthModal } = useAuth();
   const [activeCollection, setActiveCollection] = useState<string | null>(null);
   const [creatingNew, setCreatingNew] = useState(false);
   const [newName, setNewName] = useState("");
@@ -30,6 +45,7 @@ export default function SavedPropertiesList({
   const [parcelData, setParcelData] = useState<Record<string, Parcel & { centroid?: [number, number] }>>({});
 
   const loading = savedLoading || colLoading;
+  const authRequired = savedAuthRequired || collectionsAuthRequired;
 
   // Fetch real parcel data for all saved APNs
   useEffect(() => {
@@ -108,6 +124,26 @@ export default function SavedPropertiesList({
     },
     [parcelData, onSelectParcel]
   );
+
+  if (authRequired) {
+    return (
+      <div className="flex h-full flex-col items-center justify-center gap-3 p-8 text-center">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full border border-line2 text-pd-muted">
+          <Bookmark size={18} />
+        </div>
+        <p className="text-[13px] text-text">Sign in to view saved properties</p>
+        <p className="max-w-xs font-mono text-[10px] text-pd-muted">
+          Saved parcels and collections are account-scoped and require authentication.
+        </p>
+        <button
+          onClick={openAuthModal}
+          className="rounded border border-teal bg-teal-dim px-3 py-1.5 font-mono text-[9px] uppercase tracking-wider text-teal transition-colors hover:bg-teal/20"
+        >
+          Sign In
+        </button>
+      </div>
+    );
+  }
 
   if (loading) {
     return (

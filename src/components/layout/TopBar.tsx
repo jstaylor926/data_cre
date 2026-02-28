@@ -6,6 +6,7 @@ import SearchBar from "@/components/search/SearchBar";
 import Link from "next/link";
 import { SettingsModal } from "./SettingsModal";
 import { useState } from "react";
+import { useAuth } from "@/components/auth/AuthProvider";
 
 export interface TopBarProps {
   onFlyTo?: (lng: number, lat: number) => void;
@@ -27,6 +28,7 @@ export function TopBar({ onFlyTo, activeNav = "map", onNavChange }: TopBarProps)
   const setDCScore = useAppStore((s) => s.setDCScore);
   const setDCInfrastructure = useAppStore((s) => s.setDCInfrastructure);
   const features = useAppStore((s) => s.features);
+  const { status: authStatus, user, openAuthModal, signOut } = useAuth();
   
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
@@ -107,10 +109,28 @@ export function TopBar({ onFlyTo, activeNav = "map", onNavChange }: TopBarProps)
         </div>
       )}
 
+      {authStatus === "authenticated" ? (
+        <button
+          onClick={() => void signOut()}
+          title={user?.email ?? "Signed in"}
+          className="flex h-7 items-center rounded border border-line2 bg-ink4 px-2.5 font-mono text-[9px] uppercase tracking-wider text-mid transition-colors hover:border-teal hover:text-teal"
+        >
+          {isMobile ? "Out" : "Sign Out"}
+        </button>
+      ) : (
+        <button
+          onClick={openAuthModal}
+          disabled={authStatus === "loading"}
+          className="flex h-7 items-center rounded border border-line2 bg-ink4 px-2.5 font-mono text-[9px] uppercase tracking-wider text-mid transition-colors hover:border-teal hover:text-teal disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {authStatus === "loading" ? "Auth..." : "Sign In"}
+        </button>
+      )}
+
       {/* Avatar */}
       <button 
         onClick={() => setIsSettingsOpen(true)}
-        className={`ml-auto flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-line2 bg-ink4 font-mono text-[9px] lg:ml-0 transition-colors hover:border-pd-teal ${isDC ? "text-orange-400" : "text-teal"}`}>
+        className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-line2 bg-ink4 font-mono text-[9px] transition-colors hover:border-pd-teal ${isDC ? "text-orange-400" : "text-teal"}`}>
         JT
       </button>
     </header>

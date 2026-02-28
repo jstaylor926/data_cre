@@ -1,15 +1,16 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Phase 4 CRM', () => {
-  test('should allow navigating to CRM dashboard', async ({ page }) => {
+  test('should show sign-in state when CRM is opened unauthenticated', async ({ page }) => {
     await page.goto('/map');
     await page.getByRole('button', { name: 'CRM' }).click();
-    await expect(page.getByRole('heading', { name: 'Firm Projects' })).toBeVisible();
+    await expect(page.getByText('Sign in to access CRM projects')).toBeVisible();
   });
 
-  test('should show CRM create controls', async ({ page }) => {
+  test('should open auth modal from CRM sign-in CTA', async ({ page }) => {
     await page.goto('/map');
     await page.getByRole('button', { name: 'CRM' }).click();
-    await expect(page.getByRole('button', { name: 'New Project' })).toBeVisible();
+    await page.getByRole('button', { name: 'Sign In' }).nth(1).click();
+    await expect(page.getByRole('heading', { name: 'SIGN IN' })).toBeVisible();
   });
 });
