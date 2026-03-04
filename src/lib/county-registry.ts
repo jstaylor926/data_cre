@@ -197,7 +197,7 @@ const fulton: CountyConfig = {
   parcelOutFields: "ParcelID,Address,LandAcres",
   searchOutFields: "ParcelID,Owner,Address,LandAcres,TotAssess",
 
-  supportsGeoJSON: false,
+  supportsGeoJSON: true,
   multiFieldAddress: false,
 
   defaultCenter: [-84.39, 33.749],
