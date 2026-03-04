@@ -49,7 +49,7 @@ export function TopBar({ onFlyTo, activeNav = "map", onNavChange }: TopBarProps)
   const accentClass = isDC ? "text-orange-400" : "text-teal";
 
   return (
-    <header className="flex h-12 shrink-0 items-center gap-3 border-b border-line bg-ink/95 px-4 backdrop-blur-sm">
+    <header className="flex h-12 shrink-0 items-center gap-3 border-b border-line bg-ink/95 px-4 backdrop-blur-sm z-50">
       <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
       
       {/* Logo */}
