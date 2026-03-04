@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fetchParcelsByBBox } from "@/lib/arcgis";
-import { getCountyOrNull, type CountyConfig } from "@/lib/county-registry";
+import { getCountyOrNull, getCounty, DEFAULT_COUNTY_ID, type CountyConfig } from "@/lib/county-registry";
 
 /**
  * GET /api/parcels/bbox?west=...&south=...&east=...&north=...&county=gwinnett
  *
  * Returns GeoJSON FeatureCollection of parcel polygons within the bounding box.
- * The `county` param selects which county's ArcGIS service to query (defaults to Gwinnett).
+ * Properties are normalized to standard field names (PIN, ADDRESS, CALCULATEDACREAGE)
+ * regardless of the upstream county's native field names.
  */
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -30,6 +31,32 @@ export async function GET(request: NextRequest) {
 
   try {
     const geojson = await fetchParcelsByBBox(west, south, east, north, county);
+
+    // Normalize feature properties to standard field names so the map UI
+    // doesn't need county-specific awareness (PIN, ADDRESS, CALCULATEDACREAGE).
+    const c = county ?? getCounty(DEFAULT_COUNTY_ID);
+    const { apn: apnField, address: addressField, acres: acresField } = c.fields;
+    const needsNormalization =
+      apnField !== "PIN" || (addressField && addressField !== "ADDRESS") || (acresField && acresField !== "CALCULATEDACREAGE");
+
+    if (needsNormalization && geojson.features) {
+      // Pick first non-pipe segment of address field (pipe = multi-field concat)
+      const addrKey = addressField?.split("|")[0] ?? null;
+      for (const feature of geojson.features) {
+        const props = feature.properties;
+        if (!props) continue;
+        if (apnField !== "PIN" && props[apnField] !== undefined) {
+          props.PIN = props[apnField];
+        }
+        if (addrKey && addrKey !== "ADDRESS" && props[addrKey] !== undefined) {
+          props.ADDRESS = props[addrKey];
+        }
+        if (acresField && acresField !== "CALCULATEDACREAGE" && props[acresField] !== undefined) {
+          props.CALCULATEDACREAGE = props[acresField];
+        }
+      }
+    }
+
     return NextResponse.json(geojson, {
       headers: {
         "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",

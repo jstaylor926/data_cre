@@ -51,6 +51,30 @@ function queryUrl(county: CountyConfig, layerId: number, params: ArcGISQueryPara
 }
 
 async function queryLayer(county: CountyConfig, layerId: number, params: ArcGISQueryParams): Promise<Response> {
+  // MapServer endpoints often reject long GET URLs (especially spatial queries).
+  // Use POST with form-encoded body for MapServer; GET for FeatureServer.
+  if (county.serviceType === "MapServer") {
+    const baseUrl = getLayerQueryUrl(county, layerId);
+    const defaults: ArcGISQueryParams = {
+      where: "1=1",
+      outSR: "4326",
+      f: county.supportsGeoJSON ? "geojson" : "json",
+      returnGeometry: true,
+    };
+    const merged = { ...defaults, ...params };
+    const body = new URLSearchParams();
+    for (const [key, value] of Object.entries(merged)) {
+      if (value !== undefined && value !== null) {
+        body.set(key, String(value));
+      }
+    }
+    return fetch(baseUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: body.toString(),
+      cache: "no-store",
+    });
+  }
   const url = queryUrl(county, layerId, params);
   return fetch(url, { cache: "no-store" });
 }
@@ -78,15 +102,19 @@ export async function fetchParcelsByBBox(
 ): Promise<GeoJSON.FeatureCollection> {
   const c = county ?? defaultCounty();
   const geometry = `${west},${south},${east},${north}`;
-  const res = await queryLayer(c, c.parcelLayerId, {
+  const queryParams: ArcGISQueryParams = {
     geometry,
     geometryType: "esriGeometryEnvelope",
     inSR: "4326",
     spatialRel: "esriSpatialRelIntersects",
     outFields: c.parcelOutFields,
-    resultRecordCount: PAGE_SIZE,
     f: c.supportsGeoJSON ? "geojson" : "json",
-  });
+  };
+  // MapServer endpoints may not support pagination
+  if (c.serviceType !== "MapServer") {
+    queryParams.resultRecordCount = PAGE_SIZE;
+  }
+  const res = await queryLayer(c, c.parcelLayerId, queryParams);
 
   if (!res.ok) {
     throw new Error(`ArcGIS parcel query failed for ${c.name}: ${res.status}`);
@@ -179,15 +207,18 @@ export async function fetchZoningByBBox(
   const geometry = `${west},${south},${east},${north}`;
   const zoningFields = [c.zoningLayerField, c.zoningLayerDescField].filter(Boolean).join(",");
 
-  const res = await queryLayer(c, c.zoningLayerId, {
+  const zoningParams: ArcGISQueryParams = {
     geometry,
     geometryType: "esriGeometryEnvelope",
     inSR: "4326",
     spatialRel: "esriSpatialRelIntersects",
     outFields: zoningFields || "*",
-    resultRecordCount: PAGE_SIZE,
     f: c.supportsGeoJSON ? "geojson" : "json",
-  });
+  };
+  if (c.serviceType !== "MapServer") {
+    zoningParams.resultRecordCount = PAGE_SIZE;
+  }
+  const res = await queryLayer(c, c.zoningLayerId, zoningParams);
 
   if (!res.ok) {
     throw new Error(`ArcGIS zoning query failed for ${c.name}: ${res.status}`);

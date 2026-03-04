@@ -80,7 +80,7 @@ export default function ParcelMap({ mapRef }: ParcelMapProps) {
     if (quickCardData) return quickCardData.lngLat;
     if (!selectedAPN || !parcelGeojson) return null;
     const feature = parcelGeojson.features.find(
-      (f) => f.properties?.PIN === selectedAPN
+      (f) => f.properties?.PIN === selectedAPN || f.properties?.apn === selectedAPN
     );
     if (!feature || feature.geometry.type !== 'Polygon') return null;
     const coords = feature.geometry.coordinates[0];
