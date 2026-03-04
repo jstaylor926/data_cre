@@ -27,8 +27,9 @@ export function useDCScore(apn: string | null) {
       setDCScore(null);
 
       try {
+        const countyId = useAppStore.getState().activeCountyId;
         const res = await fetch(
-          `/api/parcel/${encodeURIComponent(pin)}/dc-score`,
+          `/api/parcel/${encodeURIComponent(pin)}/dc-score?county=${countyId}`,
           { signal: controller.signal, cache: "no-store" }
         );
         if (!res.ok) return;

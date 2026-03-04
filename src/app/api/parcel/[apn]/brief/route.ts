@@ -7,21 +7,33 @@ import { isDevMode } from "@/lib/config";
 import { createServerSupabase } from "@/lib/supabase-server";
 import { resolveCapabilityContext } from "@/lib/capabilities";
 import { createEmbedding } from "@/lib/embeddings";
+import {
+  getCountyOrNull,
+  getCounty,
+  DEFAULT_COUNTY_ID,
+  type CountyConfig,
+} from "@/lib/county-registry";
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ apn: string }> }
 ) {
   const { apn } = await params;
   const supabase = await createServerSupabase();
   const context = await resolveCapabilityContext(supabase);
 
+  // Resolve county config from query param
+  const url = new URL(request.url);
+  const countyId = url.searchParams.get("county");
+  const county: CountyConfig = countyId
+    ? getCountyOrNull(countyId) ?? getCounty(DEFAULT_COUNTY_ID)
+    : getCounty(DEFAULT_COUNTY_ID);
+
   // Gather parcel data
   let parcel;
-  let attrs;
   try {
-    attrs = await fetchPropertyByPIN(apn);
-    if (attrs) parcel = mapTaxToParcel(attrs, apn);
+    const attrs = await fetchPropertyByPIN(apn, county);
+    if (attrs) parcel = mapTaxToParcel(attrs, apn, county);
   } catch {
     // fall through
   }
@@ -44,7 +56,7 @@ export async function GET(
         Legal: ${parcel.legal_desc ?? "Unknown"}
         Owner: ${parcel.owner_name ?? "Unknown"}
       `.trim();
-      
+
       const embedding = await createEmbedding(queryText);
       const { data: matches } = await supabase.rpc("match_deal_documents", {
         query_embedding: embedding,
@@ -54,7 +66,7 @@ export async function GET(
       });
 
       if (matches && matches.length > 0) {
-        historyText = matches.map((m: { metadata?: { filename?: string }; similarity: number; content: string }) => 
+        historyText = matches.map((m: { metadata?: { filename?: string }; similarity: number; content: string }) =>
           `[Document: ${m.metadata?.filename || 'Untitled'}] (Similarity: ${Math.round(m.similarity * 100)}%)
            Content Snippet: ${m.content}`
         ).join("\n\n");
@@ -69,7 +81,10 @@ export async function GET(
   const standardsText = zoningSummary.standards.map((s) => `• ${s.label}: ${s.value}`).join("\n");
   const flagsText = zoningSummary.flags.map((f) => `• ${f.label} [${f.type}]`).join("\n");
 
-  const prompt = `You are a senior commercial real estate analyst producing a formal Site Intelligence Brief for a Gwinnett County, Georgia property.
+  // Use dynamic county name instead of hardcoded "Gwinnett County, Georgia"
+  const countyLabel = `${county.fullName}, ${county.state === "GA" ? "Georgia" : county.state}`;
+
+  const prompt = `You are a senior commercial real estate analyst producing a formal Site Intelligence Brief for a ${countyLabel} property.
 
 Subject Property:
 - APN: ${apn}

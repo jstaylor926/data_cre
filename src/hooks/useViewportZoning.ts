@@ -25,8 +25,11 @@ export function useViewportZoning() {
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastBBoxRef = useRef<string>("");
 
+  const activeCountyId = useAppStore((s) => s.activeCountyId);
+
   const fetchZoning = useCallback(async (bbox: BBox) => {
-    const key = `${bbox.west.toFixed(4)},${bbox.south.toFixed(4)},${bbox.east.toFixed(4)},${bbox.north.toFixed(4)}`;
+    const countyId = useAppStore.getState().activeCountyId;
+    const key = `${countyId}:${bbox.west.toFixed(4)},${bbox.south.toFixed(4)},${bbox.east.toFixed(4)},${bbox.north.toFixed(4)}`;
     if (key === lastBBoxRef.current) return;
     lastBBoxRef.current = key;
 
@@ -36,7 +39,7 @@ export function useViewportZoning() {
 
     setLoading(true);
     try {
-      const url = `/api/zoning/bbox?west=${bbox.west}&south=${bbox.south}&east=${bbox.east}&north=${bbox.north}`;
+      const url = `/api/zoning/bbox?west=${bbox.west}&south=${bbox.south}&east=${bbox.east}&north=${bbox.north}&county=${countyId}`;
       const res = await fetch(url, { signal: controller.signal });
       if (!res.ok) throw new Error(`${res.status}`);
       const data = await res.json();
@@ -64,6 +67,12 @@ export function useViewportZoning() {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, []);
+
+  // Clear cache when county changes
+  useEffect(() => {
+    lastBBoxRef.current = "";
+    setGeojson(null);
+  }, [activeCountyId]);
 
   const isZoomedIn = zoom >= MIN_ZONING_ZOOM;
   const shouldFetch = showZoning && isZoomedIn;

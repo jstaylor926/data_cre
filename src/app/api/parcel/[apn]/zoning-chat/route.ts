@@ -3,24 +3,33 @@ import { getZoningStandards } from "@/lib/zoning-standards";
 import { fetchPropertyByPIN, mapTaxToParcel } from "@/lib/arcgis";
 import { getParcelByAPN } from "@/lib/mock-data";
 import { isDevMode } from "@/lib/config";
+import { getCountyOrNull, getCounty, DEFAULT_COUNTY_ID, type CountyConfig } from "@/lib/county-registry";
 
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ apn: string }> }
 ) {
   const { apn } = await params;
-  const { message, history } = await request.json() as {
+  const body = await request.json() as {
     message: string;
     history: Array<{ role: "user" | "assistant"; content: string }>;
   };
+  const { message, history } = body;
+
+  // Resolve county from query param
+  const url = new URL(request.url);
+  const countyId = url.searchParams.get("county");
+  const county: CountyConfig = countyId
+    ? getCountyOrNull(countyId) ?? getCounty(DEFAULT_COUNTY_ID)
+    : getCounty(DEFAULT_COUNTY_ID);
 
   // Fetch zoning context
   let zoning: string | null = null;
   let address: string | null = null;
   try {
-    const attrs = await fetchPropertyByPIN(apn);
+    const attrs = await fetchPropertyByPIN(apn, county);
     if (attrs) {
-      const p = mapTaxToParcel(attrs, apn);
+      const p = mapTaxToParcel(attrs, apn, county);
       zoning = p.zoning;
       address = p.site_address;
     }
@@ -40,7 +49,8 @@ export async function POST(
     .map((f) => `• ${f.label} [${f.type}]`)
     .join("\n");
 
-  const systemPrompt = `You are a commercial real estate zoning analyst specializing in Gwinnett County, Georgia. You answer precise, actionable questions about zoning regulations based on the Gwinnett County Unified Development Ordinance (UDO).
+  const countyLabel = `${county.fullName}, ${county.state === "GA" ? "Georgia" : county.state}`;
+  const systemPrompt = `You are a commercial real estate zoning analyst specializing in ${countyLabel}. You answer precise, actionable questions about zoning regulations based on the county's zoning ordinance.
 
 Current parcel context:
 - APN: ${apn}
@@ -57,7 +67,7 @@ Rules:
 - Be concise and direct. No marketing language.
 - Always cite relevant UDO section numbers when stating specific requirements.
 - Flag any conditional use permit (CUP) requirements explicitly.
-- If you're not certain, say so and recommend the user confirm with the Gwinnett County Planning Division.
+- If you're not certain, say so and recommend the user confirm with the ${county.name} County Planning Division.
 - When there is a specific regulatory constraint, prefix it with ⚠ on a new line.`;
 
   const client = getAnthropicClient();

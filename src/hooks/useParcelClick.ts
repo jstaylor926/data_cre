@@ -2,15 +2,17 @@
 
 import { useEffect, useRef } from "react";
 import { useAppStore } from "@/store/useAppStore";
+import { getCounty } from "@/lib/county-registry";
 
 /**
  * Watches selectedAPN + panelOpen in the store and fetches parcel data from the API.
  * Only fetches when the full panel is open (not for quick card preview).
- * Queries Gwinnett County ArcGIS via our proxy, falls back to mock data.
+ * Queries the active county's ArcGIS via our proxy, falls back to mock data.
  */
 export function useParcelClick() {
   const selectedAPN = useAppStore((s) => s.selectedAPN);
   const panelOpen = useAppStore((s) => s.panelOpen);
+  const activeCountyId = useAppStore((s) => s.activeCountyId);
   const setSelectedParcel = useAppStore((s) => s.setSelectedParcel);
   const setParcelLoading = useAppStore((s) => s.setParcelLoading);
   const abortRef = useRef<AbortController | null>(null);
@@ -29,7 +31,7 @@ export function useParcelClick() {
 
     setParcelLoading(true);
 
-    fetch(`/api/parcel/${encodeURIComponent(selectedAPN)}`, {
+    fetch(`/api/parcel/${encodeURIComponent(selectedAPN)}?county=${activeCountyId}`, {
       signal: controller.signal,
     })
       .then((res) => {
@@ -37,13 +39,15 @@ export function useParcelClick() {
           if (res.status === 404) {
             // Handle 404 gracefully — the parcel exists on the map but full tax data is missing.
             // We'll fall back to the basic data we have from the map click.
-            const quickCardData = useAppStore.getState().quickCardData;
+            const state = useAppStore.getState();
+            const quickCardData = state.quickCardData;
+            const county = getCounty(state.activeCountyId);
             if (quickCardData && quickCardData.pin === selectedAPN) {
               return {
                 apn: quickCardData.pin,
                 site_address: quickCardData.address,
                 acres: quickCardData.acres,
-                county: "Gwinnett",
+                county: county.name,
                 is_partial: true, // Flag to indicate limited data
               };
             }
@@ -65,5 +69,5 @@ export function useParcelClick() {
     return () => {
       controller.abort();
     };
-  }, [selectedAPN, panelOpen, setSelectedParcel, setParcelLoading]);
+  }, [selectedAPN, panelOpen, activeCountyId, setSelectedParcel, setParcelLoading]);
 }

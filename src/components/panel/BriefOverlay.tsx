@@ -86,7 +86,8 @@ export default function BriefOverlay() {
       (async () => {
         try {
           if (!selectedAPN) return;
-          const res = await fetch(`/api/parcel/${encodeURIComponent(selectedAPN)}/brief`, {
+          const countyId = useAppStore.getState().activeCountyId;
+          const res = await fetch(`/api/parcel/${encodeURIComponent(selectedAPN)}/brief?county=${countyId}`, {
             signal: controller.signal,
           });
           if (!res.ok || !res.body) throw new Error("Brief API failed");

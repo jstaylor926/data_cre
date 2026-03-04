@@ -1,22 +1,26 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { fetchPropertyByPIN, mapTaxToParcel } from "@/lib/arcgis";
+import { getCountyOrNull } from "@/lib/county-registry";
 import { getParcelByAPN } from "@/lib/mock-data";
 import { scoreParcel } from "@/lib/scoring";
 import { getAnthropicClient, HAIKU } from "@/lib/claude";
 import { isDevMode } from "@/lib/config";
 
 export async function GET(
-  _request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ apn: string }> }
 ) {
   const { apn } = await params;
+  const url = new URL(request.url);
+  const countyId = url.searchParams.get("county");
+  const county = countyId ? getCountyOrNull(countyId) ?? undefined : undefined;
 
   // 1. Fetch parcel data
   let parcel;
   try {
-    const attrs = await fetchPropertyByPIN(apn);
+    const attrs = await fetchPropertyByPIN(apn, county);
     if (attrs) {
-      parcel = mapTaxToParcel(attrs, apn);
+      parcel = mapTaxToParcel(attrs, apn, county);
     }
   } catch {
     // Fall through

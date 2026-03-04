@@ -1,19 +1,15 @@
 "use client";
 
 import { useAppStore } from "@/store/useAppStore";
+import { getCounty } from "@/lib/county-registry";
 
 export default function MapHUD() {
   const lat = useAppStore((s) => s.viewportLat);
   const lng = useAppStore((s) => s.viewportLng);
   const zoom = useAppStore((s) => s.viewportZoom);
-  const selectedParcel = useAppStore((s) => s.selectedParcel);
+  const activeCountyId = useAppStore((s) => s.activeCountyId);
 
-  // Show selected parcel's county, or derive from viewport position
-  const county = selectedParcel?.county
-    ? `${selectedParcel.county.toUpperCase()} CO`
-    : lat > 33.85
-      ? "GWINNETT CO"
-      : "FULTON CO";
+  const county = `${getCounty(activeCountyId).name.toUpperCase()} CO`;
 
   return (
     <>

@@ -17,11 +17,14 @@ export default function SavedPins({ savedParcels }: SavedPinsProps) {
   // Real centroids fetched from the batch API
   const [centroids, setCentroids] = useState<Record<string, [number, number]>>({});
 
+  const activeCountyId = useAppStore((s) => s.activeCountyId);
+
   useEffect(() => {
     if (savedParcels.length === 0) return;
 
     const pins = savedParcels.map((sp) => sp.apn).join(",");
-    fetch(`/api/parcel/batch?pins=${encodeURIComponent(pins)}`)
+    const countyId = useAppStore.getState().activeCountyId;
+    fetch(`/api/parcel/batch?pins=${encodeURIComponent(pins)}&county=${countyId}`)
       .then((res) => (res.ok ? res.json() : {}))
       .then((data: Record<string, { centroid?: [number, number] }>) => {
         const result: Record<string, [number, number]> = {};
@@ -33,7 +36,7 @@ export default function SavedPins({ savedParcels }: SavedPinsProps) {
         setCentroids(result);
       })
       .catch(() => {});
-  }, [savedParcels]);
+  }, [savedParcels, activeCountyId]);
 
   return (
     <>

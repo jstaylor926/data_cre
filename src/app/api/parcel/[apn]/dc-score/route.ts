@@ -1,5 +1,6 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getParcelCentroid } from "@/lib/arcgis";
+import { getCountyOrNull } from "@/lib/county-registry";
 import {
   fetchSubstationsNear,
   fetchNearestTxVoltage,
@@ -27,15 +28,17 @@ function haversineMiles(lng1: number, lat1: number, lng2: number, lat2: number):
 }
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ apn: string }> }
 ) {
   const { apn } = await params;
   const { searchParams } = new URL(request.url);
   const mw = Math.max(0.1, Math.min(500, Number(searchParams.get("mw") ?? 10)));
+  const countyId = searchParams.get("county");
+  const county = countyId ? getCountyOrNull(countyId) ?? undefined : undefined;
 
   // 1. Get parcel centroid
-  const centroid = await getParcelCentroid(apn);
+  const centroid = await getParcelCentroid(apn, county);
   if (!centroid) {
     return NextResponse.json({ error: "Parcel not found" }, { status: 404 });
   }

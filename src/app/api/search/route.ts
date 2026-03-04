@@ -1,20 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
-
-const TAX_TABLE_URL =
-  "https://services3.arcgis.com/RfpmnkSAQleRbndX/arcgis/rest/services/Property_and_Tax/FeatureServer/3/query";
-
-const PARCELS_URL =
-  "https://services3.arcgis.com/RfpmnkSAQleRbndX/arcgis/rest/services/Property_and_Tax/FeatureServer/0/query";
+import {
+  getCountyOrNull,
+  getCounty,
+  getLayerQueryUrl,
+  DEFAULT_COUNTY_ID,
+  type CountyConfig,
+} from "@/lib/county-registry";
 
 /**
- * GET /api/search?q=...
+ * GET /api/search?q=...&county=gwinnett
  *
- * Searches Gwinnett County property data by:
+ * Searches county property data by:
  * - PIN (exact or partial match)
  * - Owner name (contains match)
  * - Address (contains match)
  *
  * Returns up to 8 results with PIN, owner, address, zoning, and centroid coordinates.
+ * The `county` query param selects which county to search (defaults to Gwinnett).
  */
 export async function GET(request: NextRequest) {
   const q = request.nextUrl.searchParams.get("q")?.trim();
@@ -23,17 +25,50 @@ export async function GET(request: NextRequest) {
     return NextResponse.json([]);
   }
 
+  // Resolve county config
+  const countyId = request.nextUrl.searchParams.get("county");
+  const county: CountyConfig = countyId
+    ? getCountyOrNull(countyId) ?? getCounty(DEFAULT_COUNTY_ID)
+    : getCounty(DEFAULT_COUNTY_ID);
+
+  const { fields } = county;
+
   // Escape single quotes for ArcGIS SQL
   const escaped = q.replace(/'/g, "''").toUpperCase();
 
-  // Build WHERE clause: search PIN, owner, and address
-  const where = `UPPER(PIN) LIKE '%${escaped}%' OR UPPER(OWNER1) LIKE '%${escaped}%' OR UPPER(LOCADDR) LIKE '%${escaped}%'`;
+  // Build WHERE clause using county-specific field names
+  const whereParts: string[] = [];
+  whereParts.push(`UPPER(${fields.apn}) LIKE '%${escaped}%'`);
+  if (fields.owner) whereParts.push(`UPPER(${fields.owner}) LIKE '%${escaped}%'`);
+  if (fields.address) {
+    // For multi-field addresses, search the first field (street address)
+    const addrField = county.multiFieldAddress
+      ? fields.address.split("|")[0]
+      : fields.address;
+    whereParts.push(`UPPER(${addrField}) LIKE '%${escaped}%'`);
+  }
+  const where = whereParts.join(" OR ");
+
+  // Build outFields list for the tax/search query
+  const searchFields: string[] = [fields.apn];
+  if (fields.owner) searchFields.push(fields.owner);
+  if (fields.address) {
+    if (county.multiFieldAddress) {
+      // Include all address sub-fields
+      searchFields.push(...fields.address.split("|"));
+    } else {
+      searchFields.push(fields.address);
+    }
+  }
+  if (fields.zoning) searchFields.push(fields.zoning);
+  if (fields.acres) searchFields.push(fields.acres);
 
   try {
-    // Query tax table for matches
-    const taxUrl = new URL(TAX_TABLE_URL);
+    // Query tax/parcel table for matches
+    const layerId = county.taxLayerId ?? county.parcelLayerId;
+    const taxUrl = new URL(getLayerQueryUrl(county, layerId));
     taxUrl.searchParams.set("where", where);
-    taxUrl.searchParams.set("outFields", "PIN,OWNER1,LOCADDR,LOCCITY,ZONING,LEGALAC");
+    taxUrl.searchParams.set("outFields", searchFields.join(","));
     taxUrl.searchParams.set("returnGeometry", "false");
     taxUrl.searchParams.set("resultRecordCount", "8");
     taxUrl.searchParams.set("f", "json");
@@ -49,43 +84,86 @@ export async function GET(request: NextRequest) {
     }
 
     // Get centroids for the matched PINs from the parcels layer
-    const pins = features.map((f: { attributes: { PIN: string } }) => f.attributes.PIN);
-    const pinWhere = pins.map((p: string) => `PIN='${p.replace(/'/g, "''")}'`).join(" OR ");
+    const apnField = fields.apn;
+    const pins = features.map(
+      (f: { attributes: Record<string, unknown> }) => String(f.attributes[apnField] ?? "")
+    );
+    const pinWhere = pins
+      .map((p: string) => `${apnField}='${p.replace(/'/g, "''")}'`)
+      .join(" OR ");
 
-    const parcelUrl = new URL(PARCELS_URL);
+    const parcelUrl = new URL(getLayerQueryUrl(county, county.parcelLayerId));
     parcelUrl.searchParams.set("where", pinWhere);
-    parcelUrl.searchParams.set("outFields", "PIN");
+    parcelUrl.searchParams.set("outFields", apnField);
     parcelUrl.searchParams.set("returnGeometry", "true");
     parcelUrl.searchParams.set("outSR", "4326");
-    parcelUrl.searchParams.set("returnCentroid", "true");
-    parcelUrl.searchParams.set("f", "geojson");
+    if (county.supportsGeoJSON) {
+      parcelUrl.searchParams.set("returnCentroid", "true");
+      parcelUrl.searchParams.set("f", "geojson");
+    } else {
+      parcelUrl.searchParams.set("f", "json");
+    }
 
     const parcelRes = await fetch(parcelUrl.toString());
     const parcelData = parcelRes.ok ? await parcelRes.json() : { features: [] };
 
     // Build a PIN → centroid lookup
     const centroids: Record<string, [number, number]> = {};
-    for (const pf of parcelData.features || []) {
-      if (pf.properties?.PIN && pf.geometry?.type === "Polygon") {
-        const coords = pf.geometry.coordinates[0];
-        const lng = coords.reduce((s: number, c: number[]) => s + c[0], 0) / coords.length;
-        const lat = coords.reduce((s: number, c: number[]) => s + c[1], 0) / coords.length;
-        centroids[pf.properties.PIN] = [lng, lat];
+
+    if (county.supportsGeoJSON) {
+      // GeoJSON format
+      for (const pf of parcelData.features || []) {
+        const pin = pf.properties?.[apnField];
+        if (pin && pf.geometry?.type === "Polygon") {
+          const coords = pf.geometry.coordinates[0];
+          const lng = coords.reduce((s: number, c: number[]) => s + c[0], 0) / coords.length;
+          const lat = coords.reduce((s: number, c: number[]) => s + c[1], 0) / coords.length;
+          centroids[String(pin)] = [lng, lat];
+        }
+      }
+    } else {
+      // Esri JSON format (MapServer)
+      for (const pf of parcelData.features || []) {
+        const pin = pf.attributes?.[apnField];
+        const geom = pf.geometry;
+        if (pin && geom) {
+          if (geom.x !== undefined && geom.y !== undefined) {
+            centroids[String(pin)] = [geom.x, geom.y];
+          } else if (geom.rings) {
+            const ring: number[][] = geom.rings[0];
+            const lng = ring.reduce((s: number, p: number[]) => s + p[0], 0) / ring.length;
+            const lat = ring.reduce((s: number, p: number[]) => s + p[1], 0) / ring.length;
+            centroids[String(pin)] = [lng, lat];
+          }
+        }
       }
     }
 
     // Combine tax data with coordinates
     const results = features.map((f: { attributes: Record<string, unknown> }) => {
       const a = f.attributes;
-      const pin = String(a.PIN || "");
+      const pin = String(a[apnField] || "");
       const coords = centroids[pin] || null;
+
+      // Build address from county-specific fields
+      let address: string | null = null;
+      if (fields.address) {
+        if (county.multiFieldAddress) {
+          const parts = fields.address.split("|").map((field) => a[field]);
+          address = parts.filter(Boolean).join(", ");
+        } else {
+          address = a[fields.address] ? String(a[fields.address]) : null;
+        }
+      }
+
       return {
         pin,
-        owner: a.OWNER1 || null,
-        address: [a.LOCADDR, a.LOCCITY].filter(Boolean).join(", "),
-        zoning: a.ZONING || null,
-        acres: a.LEGALAC || null,
+        owner: fields.owner ? a[fields.owner] || null : null,
+        address: address || null,
+        zoning: fields.zoning ? a[fields.zoning] || null : null,
+        acres: fields.acres ? a[fields.acres] || null : null,
         coordinates: coords,
+        county: county.id,
       };
     });
 

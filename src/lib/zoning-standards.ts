@@ -1,6 +1,6 @@
 /**
- * Gwinnett County zoning code → ZoningSummary lookup table.
- * Source: Gwinnett County Unified Development Ordinance (UDO)
+ * Zoning code → ZoningSummary lookup table.
+ * Currently covers Gwinnett County UDO codes; other counties will need additional entries.
  */
 import type { ZoningSummary, ZoningFlag, ZoningStandard } from "./types";
 
@@ -282,7 +282,7 @@ export function getZoningStandards(code: string | null): ZoningSummary {
       name: `Zoning District ${normalized}`,
       flags: [{ label: "Verify with county", type: "conditional" }],
       standards: [
-        { label: "Note", value: "Standards not yet mapped — check Gwinnett UDO" },
+        { label: "Note", value: "Standards not yet mapped — check county zoning ordinance" },
       ],
     };
   }

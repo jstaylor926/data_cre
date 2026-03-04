@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fetchZoningByBBox } from "@/lib/arcgis";
+import { getCountyOrNull, type CountyConfig } from "@/lib/county-registry";
 
 /**
- * GET /api/zoning/bbox?west=...&south=...&east=...&north=...
+ * GET /api/zoning/bbox?west=...&south=...&east=...&north=...&county=gwinnett
  *
  * Returns GeoJSON FeatureCollection of zoning polygons within the bounding box.
+ * The `county` param selects which county's ArcGIS service to query (defaults to Gwinnett).
  */
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -20,8 +22,14 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  // Resolve county config
+  const countyId = searchParams.get("county");
+  const county: CountyConfig | undefined = countyId
+    ? getCountyOrNull(countyId) ?? undefined
+    : undefined;
+
   try {
-    const geojson = await fetchZoningByBBox(west, south, east, north);
+    const geojson = await fetchZoningByBBox(west, south, east, north, county);
     return NextResponse.json(geojson, {
       headers: {
         "Cache-Control": "public, s-maxage=600, stale-while-revalidate=1200",

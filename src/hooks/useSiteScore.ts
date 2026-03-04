@@ -6,6 +6,7 @@ import { useAppStore } from "@/store/useAppStore";
 export function useSiteScore(apn: string | null) {
   const siteScore = useAppStore((s) => s.siteScore);
   const setSiteScore = useAppStore((s) => s.setSiteScore);
+  const activeCountyId = useAppStore((s) => s.activeCountyId);
 
   useEffect(() => {
     if (!apn) return;
@@ -15,7 +16,7 @@ export function useSiteScore(apn: string | null) {
 
     let cancelled = false;
 
-    fetch(`/api/parcel/${encodeURIComponent(apn)}/score`)
+    fetch(`/api/parcel/${encodeURIComponent(apn)}/score?county=${activeCountyId}`)
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (!cancelled && data) setSiteScore(data);
@@ -27,7 +28,7 @@ export function useSiteScore(apn: string | null) {
     return () => {
       cancelled = true;
     };
-  }, [apn, setSiteScore]);
+  }, [apn, activeCountyId, setSiteScore]);
 
   return siteScore;
 }

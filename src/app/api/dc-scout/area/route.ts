@@ -13,9 +13,8 @@ import { getAnthropicClient, HAIKU } from "@/lib/claude";
 import { fetchSubstationsNear } from "@/lib/hifld";
 import { computeDCScore, effectiveRadius, buildEnvFlags } from "@/lib/dc-scoring";
 import type { RankedCandidate, DCInfrastructure } from "@/lib/types";
-
-const PARCEL_API =
-  "https://services.arcgis.com/FPVzDMFGKaEQWcaJ/arcgis/rest/services/Gwinnett_County_Parcels/FeatureServer/0/query";
+import { getCountyOrNull, getCounty, getLayerQueryUrl, DEFAULT_COUNTY_ID } from "@/lib/county-registry";
+import type { CountyConfig } from "@/lib/county-registry";
 
 // Minimum acreage to be a viable data center site
 const MIN_ACRES = 5;
@@ -86,11 +85,14 @@ function quickScore(
 export async function POST(request: Request) {
   let bbox: [number, number, number, number];
   let mw: number;
+  let county: CountyConfig;
 
   try {
     const body = await request.json();
     bbox = body.bbox;
     mw = Math.max(0.1, Math.min(500, Number(body.mw ?? 10)));
+    const countyId = body.county ?? DEFAULT_COUNTY_ID;
+    county = getCountyOrNull(countyId) ?? getCounty(DEFAULT_COUNTY_ID);
     if (!Array.isArray(bbox) || bbox.length !== 4) {
       return new Response("bbox must be [west, south, east, north]", { status: 400 });
     }
@@ -103,6 +105,15 @@ export async function POST(request: Request) {
   const centerLat = (south + north) / 2;
   const encoder = new TextEncoder();
 
+  // Resolve county-specific field names
+  const apnField = county.fields.apn;
+  const addressField = county.fields.address?.split("|")[0] ?? "ADDRESS";
+  const acresField = county.fields.acres ?? "CALCULATEDACREAGE";
+  const zoningField = county.fields.zoning ?? "ZONING";
+  const zoningDescField = county.fields.zoningDesc ?? "ZONING_DESC";
+  const parcelLayerId = county.parcelLayerId;
+  const parcelQueryUrl = getLayerQueryUrl(county, parcelLayerId);
+
   const stream = new ReadableStream({
     async start(controller) {
       const send = (event: string, data: unknown) => {
@@ -112,22 +123,26 @@ export async function POST(request: Request) {
       };
 
       try {
-        // Step 1 — fetch parcels in bbox from Gwinnett ArcGIS
-        send("status", "Fetching parcels in area…");
+        // Step 1 — fetch parcels in bbox from county ArcGIS
+        send("status", `Fetching parcels in ${county.name} County…`);
+        const outFields = [apnField, addressField, acresField, zoningField, zoningDescField].join(",");
+        const whereClause = acresField !== "CALCULATEDACREAGE"
+          ? `${acresField} >= ${MIN_ACRES}`
+          : `CALCULATEDACREAGE >= ${MIN_ACRES}`;
         const params = new URLSearchParams({
-          where: `CALCULATEDACREAGE >= ${MIN_ACRES}`,
+          where: whereClause,
           geometry: JSON.stringify({ xmin: west, ymin: south, xmax: east, ymax: north }),
           geometryType: "esriGeometryEnvelope",
           inSR: "4326",
           spatialRel: "esriSpatialRelIntersects",
-          outFields: "PIN,ADDRESS,CALCULATEDACREAGE,ZONING,ZONING_DESC",
+          outFields,
           returnGeometry: "true",
           outSR: "4326",
           resultRecordCount: "100",
-          f: "json",
+          f: county.supportsGeoJSON ? "geojson" : "json",
         });
 
-        const parcelRes = await fetch(`${PARCEL_API}?${params}`, { cache: "no-store" });
+        const parcelRes = await fetch(`${parcelQueryUrl}?${params}`, { cache: "no-store" });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let features: any[] = [];
         if (parcelRes.ok) {
@@ -137,7 +152,8 @@ export async function POST(request: Request) {
 
         // Filter to viable zoning if we have enough results
         const viableFeatures = features.filter((f) => {
-          const zoning = (f.attributes?.ZONING ?? "").toUpperCase();
+          const attrs = f.attributes ?? f.properties ?? {};
+          const zoning = (attrs[zoningField] ?? "").toUpperCase();
           return VIABLE_ZONING.some((z) => zoning.includes(z));
         });
         const candidates = viableFeatures.length >= 5 ? viableFeatures : features;
@@ -159,11 +175,12 @@ export async function POST(request: Request) {
             if (!rings?.length) return null;
             const centroid = polygonCentroid(rings);
             const qs = quickScore(centroid, areaSubstations, mw);
+            const attrs = f.attributes ?? f.properties ?? {};
             return {
-              apn: f.attributes?.PIN ?? "",
-              address: f.attributes?.ADDRESS ?? "Unknown Address",
-              acres: f.attributes?.CALCULATEDACREAGE ?? null,
-              zoning: f.attributes?.ZONING ?? null,
+              apn: attrs[apnField] ?? "",
+              address: attrs[addressField] ?? "Unknown Address",
+              acres: attrs[acresField] ?? null,
+              zoning: attrs[zoningField] ?? null,
               centroid,
               quickScore: qs,
             };
@@ -189,7 +206,7 @@ export async function POST(request: Request) {
           top5.map(async (candidate, i): Promise<RankedCandidate> => {
             try {
               const res = await fetch(
-                `${process.env.NEXTAUTH_URL ?? "http://localhost:3000"}/api/parcel/${encodeURIComponent(candidate.apn)}/dc-score?mw=${mw}`,
+                `${process.env.NEXTAUTH_URL ?? "http://localhost:3000"}/api/parcel/${encodeURIComponent(candidate.apn)}/dc-score?mw=${mw}&county=${county.id}`,
                 { cache: "no-store" }
               );
               if (!res.ok) throw new Error("dc-score failed");

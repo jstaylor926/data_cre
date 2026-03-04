@@ -77,7 +77,7 @@ export default function LandingPage() {
             <FeatureCard 
               icon={<MapIcon className="text-pd-teal" />}
               title="Advanced Mapping"
-              description="High-fidelity parcel maps with ownership, zoning, and tax data for Gwinnett County."
+              description="High-fidelity parcel maps with ownership, zoning, and tax data across Georgia counties."
             />
             <FeatureCard 
               icon={<Brain className="text-pd-teal" />}

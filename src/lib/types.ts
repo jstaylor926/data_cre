@@ -222,6 +222,7 @@ export interface ComparisonSite {
   dcScore: DCScore;
   infrastructure: DCInfrastructure | null;
   mwTarget: number;
+  county?: string;
 }
 
 // ─── Phase 3: Site Scout ───────────────────────────────────────────────────────

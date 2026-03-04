@@ -1,18 +1,21 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useAppStore } from "@/store/useAppStore";
 import type { Comp } from "@/lib/types";
 
 export function useComps(apn: string | null) {
+  const activeCountyId = useAppStore((s) => s.activeCountyId);
   const [comps, setComps] = useState<Comp[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchComps = useCallback(async (pin: string) => {
+    const countyId = useAppStore.getState().activeCountyId;
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/parcel/${encodeURIComponent(pin)}/comps`);
+      const res = await fetch(`/api/parcel/${encodeURIComponent(pin)}/comps?county=${countyId}`);
       const data: Comp[] = res.ok ? await res.json() : [];
       setComps(data);
     } catch {
@@ -29,7 +32,7 @@ export function useComps(apn: string | null) {
       return;
     }
     fetchComps(apn);
-  }, [apn, fetchComps]);
+  }, [apn, activeCountyId, fetchComps]);
 
   return { comps, loading, error };
 }

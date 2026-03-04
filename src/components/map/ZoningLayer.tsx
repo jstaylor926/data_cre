@@ -13,7 +13,7 @@ const EMPTY_GEOJSON: GeoJSON.FeatureCollection = {
   features: [],
 };
 
-// Map Gwinnett County zoning codes to colors
+// Map zoning codes to colors (generalized for Georgia counties)
 const COUNTY_ZONING_COLORS: Record<string, string> = {
   // Commercial
   "C1": "#3b82f6",

@@ -69,15 +69,14 @@ export default function WaterTab() {
         </p>
       </div>
 
-      {/* Gwinnett guidance */}
+      {/* County water guidance */}
       <div className="rounded border border-line2 bg-ink3 p-3">
         <div className="mb-1 font-mono text-[8px] uppercase tracking-[0.12em] text-pd-muted">
-          Gwinnett County Water Resources
+          County Water Resources
         </div>
         <p className="font-mono text-[9px] leading-relaxed text-mid">
-          Gwinnett County Department of Water Resources serves most of the county.
-          Lake Lanier and Lake Varner provide primary supply at ~60 MGD treatment capacity.
-          Industrial allocation requests require ~90 day review.
+          Water resource data is county-specific. Contact the local Department of Water Resources
+          for capacity ratings, allocation timelines, and service boundaries.
         </p>
       </div>
     </div>

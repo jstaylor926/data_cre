@@ -3,6 +3,7 @@
 import { useResponsive } from "@/hooks/useResponsive";
 import { useAppStore } from "@/store/useAppStore";
 import SearchBar from "@/components/search/SearchBar";
+import { CountySelector } from "./CountySelector";
 import Link from "next/link";
 import { SettingsModal } from "./SettingsModal";
 import { useState } from "react";
@@ -62,6 +63,13 @@ export function TopBar({ onFlyTo, activeNav = "map", onNavChange }: TopBarProps)
 
       {/* Search */}
       <SearchBar onFlyTo={onFlyTo} />
+
+      {/* County selector */}
+      <CountySelector
+        onCountyChange={(_id, center) => {
+          onFlyTo?.(center[0], center[1]);
+        }}
+      />
 
       {/* Mode toggle — visible if DC feature enabled */}
       {features.enableDCScoring && (

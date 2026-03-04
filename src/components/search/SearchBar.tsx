@@ -20,6 +20,7 @@ interface SearchBarProps {
 }
 
 export default function SearchBar({ onFlyTo }: SearchBarProps) {
+  const activeCountyId = useAppStore((s) => s.activeCountyId);
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(0);
@@ -30,6 +31,13 @@ export default function SearchBar({ onFlyTo }: SearchBarProps) {
   const countyAbortRef = useRef<AbortController | null>(null);
   const { results: mapboxResults, loading: mapboxLoading, search: mapboxSearch, clear: mapboxClear } = useMapboxSearch();
   const selectParcel = useAppStore((s) => s.selectParcel);
+
+  // Clear results when county changes
+  useEffect(() => {
+    setQuery("");
+    setCountyResults([]);
+    mapboxClear();
+  }, [activeCountyId, mapboxClear]);
 
   // Run both searches when query changes
   useEffect(() => {
@@ -50,7 +58,8 @@ export default function SearchBar({ onFlyTo }: SearchBarProps) {
 
     const timer = setTimeout(async () => {
       try {
-        const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`, {
+        const countyId = useAppStore.getState().activeCountyId;
+        const res = await fetch(`/api/search?q=${encodeURIComponent(query)}&county=${countyId}`, {
           signal: controller.signal,
         });
         if (res.ok) {

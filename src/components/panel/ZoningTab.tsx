@@ -40,7 +40,8 @@ export default function ZoningTab() {
     history.push({ role: "user", content: msg });
 
     try {
-      const res = await fetch(`/api/parcel/${encodeURIComponent(selectedAPN)}/zoning-chat`, {
+      const countyId = useAppStore.getState().activeCountyId;
+      const res = await fetch(`/api/parcel/${encodeURIComponent(selectedAPN)}/zoning-chat?county=${countyId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: msg, history: history.slice(0, -1) }),
@@ -172,7 +173,7 @@ export default function ZoningTab() {
           <span className="font-mono text-[8px] uppercase tracking-[0.12em] text-violet">
             Zoning AI
           </span>
-          <span className="font-mono text-[7px] text-pd-muted">· Grounded in Gwinnett UDO</span>
+          <span className="font-mono text-[7px] text-pd-muted">· Grounded in county zoning ordinance</span>
         </div>
 
         {chatHistory.length === 0 && (

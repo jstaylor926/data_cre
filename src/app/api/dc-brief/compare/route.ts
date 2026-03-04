@@ -41,7 +41,12 @@ function buildComparisonPrompt(sites: ComparisonSite[]): string {
     })
     .join("\n\n");
 
-  return `You are a senior data center site selection consultant analyzing ${sites.length} candidate sites in Gwinnett County, Georgia for a potential data center development.
+  // Derive county from the first site's county field, or fall back to generic
+  const countyLabel = sites[0]?.county
+    ? `${sites[0].county} County, Georgia`
+    : "Georgia";
+
+  return `You are a senior data center site selection consultant analyzing ${sites.length} candidate sites in ${countyLabel} for a potential data center development.
 
 CANDIDATE SITES:
 ${siteDescriptions}

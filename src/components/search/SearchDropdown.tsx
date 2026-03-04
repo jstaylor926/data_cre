@@ -132,7 +132,7 @@ export default function SearchDropdown({
 
       <div className="border-t border-line px-3 py-1.5">
         <p className="font-mono text-[8px] uppercase tracking-wider text-pd-muted">
-          Gwinnett County + Mapbox
+          County Records + Mapbox
         </p>
       </div>
     </div>

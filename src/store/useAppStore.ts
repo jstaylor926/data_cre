@@ -21,6 +21,7 @@ import type {
   Organization,
   Project,
 } from "@/lib/types";
+import { DEFAULT_COUNTY_ID } from "@/lib/county-registry";
 
 export interface QuickCardData {
   pin: string;
@@ -40,6 +41,9 @@ export interface FeatureFlags {
 interface AppState {
   // Feature Flags
   features: FeatureFlags;
+
+  // County selection
+  activeCountyId: string;
 
   // Map
   selectedAPN: string | null;
@@ -117,6 +121,7 @@ interface AppState {
   setEntityLoading: (loading: boolean) => void;
   setEntityLookupOpen: (open: boolean) => void;
   setViewport: (lat: number, lng: number, zoom: number) => void;
+  setActiveCounty: (countyId: string) => void;
 
   // Phase 3 Actions
   setAppMode: (mode: AppMode) => void;
@@ -171,6 +176,8 @@ export const useAppStore = create<AppState>()(
         enableFirmIntel: true,
         enableEntityLookup: true,
       },
+      activeCountyId: DEFAULT_COUNTY_ID,
+
       selectedAPN: null,
       selectedParcel: null,
       parcelLoading: false,
@@ -308,6 +315,7 @@ export const useAppStore = create<AppState>()(
       setEntityLoading: (loading) => set({ entityLoading: loading }),
       setEntityLookupOpen: (open) => set({ entityLookupOpen: open }),
       setViewport: (lat, lng, zoom) => set({ viewportLat: lat, viewportLng: lng, viewportZoom: zoom }),
+      setActiveCounty: (activeCountyId) => set({ activeCountyId }),
 
       // Phase 3 Actions
       setAppMode: (appMode) => set({ appMode }),
@@ -389,6 +397,7 @@ export const useAppStore = create<AppState>()(
       // Only persist layer toggles and base map style — not transient UI state
       partialize: (state) => ({
         features: state.features,
+        activeCountyId: state.activeCountyId,
         baseMapStyle: state.baseMapStyle,
         showParcels: state.showParcels,
         showParcelFill: state.showParcelFill,

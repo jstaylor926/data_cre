@@ -1,16 +1,17 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { fetchPropertyByPIN, mapTaxToParcel } from "@/lib/arcgis";
 import { getParcelByAPN } from "@/lib/mock-data";
+import {
+  getCountyOrNull,
+  getCounty,
+  getLayerQueryUrl,
+  DEFAULT_COUNTY_ID,
+  type CountyConfig,
+} from "@/lib/county-registry";
 import type { Comp } from "@/lib/types";
 import { isDevMode } from "@/lib/config";
 
-const BASE_URL =
-  "https://services3.arcgis.com/RfpmnkSAQleRbndX/arcgis/rest/services/Property_and_Tax/FeatureServer";
-
-const PARCELS_LAYER = 0;
-const TAX_TABLE_LAYER = 3;
-
-/** Degrees of lat/lng per mile (approximate for Gwinnett County, ~34°N) */
+/** Degrees of lat/lng per mile (approximate for Georgia, ~34°N) */
 const MILES_TO_DEG_LAT = 1 / 69.0;
 const MILES_TO_DEG_LNG = 1 / 59.0;
 const SEARCH_RADIUS_MILES = 1.0;
@@ -33,7 +34,7 @@ function distanceMiles(
   lat1: number, lng1: number,
   lat2: number, lng2: number
 ): number {
-  const R = 3958.8; // Earth radius in miles
+  const R = 3958.8;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLng = ((lng2 - lng1) * Math.PI) / 180;
   const a =
@@ -44,17 +45,42 @@ function distanceMiles(
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
+/** Extract centroid from Esri JSON geometry (point or polygon) */
+function esriCentroid(geom: { x?: number; y?: number; rings?: number[][][] }): [number, number] | null {
+  if (geom.x !== undefined && geom.y !== undefined) {
+    return [geom.x, geom.y];
+  }
+  if (geom.rings) {
+    const ring = geom.rings[0];
+    if (ring && ring.length > 0) {
+      const lng = ring.reduce((s, p) => s + p[0], 0) / ring.length;
+      const lat = ring.reduce((s, p) => s + p[1], 0) / ring.length;
+      return [lng, lat];
+    }
+  }
+  return null;
+}
+
 export async function GET(
-  _request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ apn: string }> }
 ) {
   const { apn } = await params;
 
+  // Resolve county config
+  const countyId = request.nextUrl.searchParams.get("county");
+  const county: CountyConfig = countyId
+    ? getCountyOrNull(countyId) ?? getCounty(DEFAULT_COUNTY_ID)
+    : getCounty(DEFAULT_COUNTY_ID);
+
+  const { fields } = county;
+  const apnField = fields.apn;
+
   // 1. Get subject parcel data
   let subjectParcel: ReturnType<typeof mapTaxToParcel> | null = null;
   try {
-    const attrs = await fetchPropertyByPIN(apn);
-    if (attrs) subjectParcel = mapTaxToParcel(attrs, apn);
+    const attrs = await fetchPropertyByPIN(apn, county);
+    if (attrs) subjectParcel = mapTaxToParcel(attrs, apn, county);
   } catch {
     // Fall through to mock
   }
@@ -65,7 +91,6 @@ export async function GET(
       if (!mock) {
         return NextResponse.json({ error: "Parcel not found" }, { status: 404 });
       }
-      // Can't do spatial comps without real coordinates — return empty
       return NextResponse.json([]);
     }
     return NextResponse.json({ error: "Parcel not found" }, { status: 404 });
@@ -75,30 +100,25 @@ export async function GET(
   let subLat: number | null = null;
   let subLng: number | null = null;
   try {
-    const geoRes = await fetch(
-      `${BASE_URL}/${PARCELS_LAYER}/query?where=${encodeURIComponent(`PIN='${apn}'`)}&outFields=PIN&returnGeometry=true&outSR=4326&f=json`,
-      { next: { revalidate: 3600 } }
-    );
+    const geoUrl = new URL(getLayerQueryUrl(county, county.parcelLayerId));
+    geoUrl.searchParams.set("where", `${apnField}='${apn.replace(/'/g, "''")}'`);
+    geoUrl.searchParams.set("outFields", apnField);
+    geoUrl.searchParams.set("returnGeometry", "true");
+    geoUrl.searchParams.set("outSR", "4326");
+    geoUrl.searchParams.set("f", "json");
+
+    const geoRes = await fetch(geoUrl.toString(), { next: { revalidate: 3600 } });
     if (geoRes.ok) {
       const geoData = await geoRes.json();
       const feature = geoData.features?.[0];
       if (feature?.geometry) {
-        const geom = feature.geometry;
-        if (geom.x !== undefined && geom.y !== undefined) {
-          subLng = geom.x;
-          subLat = geom.y;
-        } else if (geom.rings) {
-          // Polygon — compute rough centroid from first ring
-          const ring: [number, number][] = geom.rings[0];
-          const lngSum = ring.reduce((s: number, p: [number, number]) => s + p[0], 0);
-          const latSum = ring.reduce((s: number, p: [number, number]) => s + p[1], 0);
-          subLng = lngSum / ring.length;
-          subLat = latSum / ring.length;
+        const centroid = esriCentroid(feature.geometry);
+        if (centroid) {
+          [subLng, subLat] = centroid;
         }
       }
     }
   } catch {
-    // No centroid — can't do spatial query
     return NextResponse.json([]);
   }
 
@@ -110,24 +130,43 @@ export async function GET(
   const south = subLat - SEARCH_RADIUS_MILES * MILES_TO_DEG_LAT;
   const north = subLat + SEARCH_RADIUS_MILES * MILES_TO_DEG_LAT;
 
-  let nearbyFeatures: Array<{ attributes: Record<string, unknown>; geometry: { x?: number; y?: number; rings?: number[][][] } }> = [];
+  // Build outFields for nearby query using county-specific field names
+  const nearbyFields: string[] = [apnField];
+  if (fields.acres) nearbyFields.push(fields.acres);
+  if (fields.assessedTotal) nearbyFields.push(fields.assessedTotal);
+  if (fields.zoning) nearbyFields.push(fields.zoning);
+  if (fields.improvementValue) nearbyFields.push(fields.improvementValue);
+  if (fields.address) {
+    if (county.multiFieldAddress) {
+      nearbyFields.push(...fields.address.split("|"));
+    } else {
+      nearbyFields.push(fields.address);
+    }
+  }
+
+  const spatialLayerId = county.parcelLayerId;
+  const acresField = fields.acres;
+  const acresFilter = acresField ? `${acresField} > 0` : "1=1";
+
+  let nearbyFeatures: Array<{
+    attributes: Record<string, unknown>;
+    geometry?: { x?: number; y?: number; rings?: number[][][] };
+  }> = [];
+
   try {
-    const bboxRes = await fetch(
-      `${BASE_URL}/${TAX_TABLE_LAYER}/query?` +
-        new URLSearchParams({
-          geometry: `${west},${south},${east},${north}`,
-          geometryType: "esriGeometryEnvelope",
-          inSR: "4326",
-          spatialRel: "esriSpatialRelIntersects",
-          where: "LEGALAC > 0",
-          outFields: "PIN,LOCADDR,LOCCITY,LEGALAC,TOTVAL1,ZONING,DWLGVAL1",
-          returnGeometry: "true",
-          outSR: "4326",
-          resultRecordCount: "50",
-          f: "json",
-        }).toString(),
-      { next: { revalidate: 1800 } }
-    );
+    const bboxUrl = new URL(getLayerQueryUrl(county, spatialLayerId));
+    bboxUrl.searchParams.set("geometry", `${west},${south},${east},${north}`);
+    bboxUrl.searchParams.set("geometryType", "esriGeometryEnvelope");
+    bboxUrl.searchParams.set("inSR", "4326");
+    bboxUrl.searchParams.set("spatialRel", "esriSpatialRelIntersects");
+    bboxUrl.searchParams.set("where", acresFilter);
+    bboxUrl.searchParams.set("outFields", nearbyFields.join(","));
+    bboxUrl.searchParams.set("returnGeometry", "true");
+    bboxUrl.searchParams.set("outSR", "4326");
+    bboxUrl.searchParams.set("resultRecordCount", "50");
+    bboxUrl.searchParams.set("f", "json");
+
+    const bboxRes = await fetch(bboxUrl.toString(), { next: { revalidate: 1800 } });
     if (bboxRes.ok) {
       const bboxData = await bboxRes.json();
       nearbyFeatures = bboxData.features ?? [];
@@ -142,57 +181,53 @@ export async function GET(
   const comps: Comp[] = [];
   for (const feat of nearbyFeatures) {
     const a = feat.attributes;
-    const pin = String(a.PIN ?? "");
-    if (pin === apn) continue; // skip subject itself
+    const pin = String(a[apnField] ?? "");
+    if (pin === apn) continue;
 
-    const zoning = a.ZONING ? String(a.ZONING) : null;
+    const zoning = fields.zoning && a[fields.zoning] ? String(a[fields.zoning]) : null;
     if (zoningClass(zoning) !== subjectClass) continue;
 
-    const acres = Number(a.LEGALAC) || null;
+    const acres = fields.acres ? Number(a[fields.acres]) || null : null;
     if (!acres || acres <= 0) continue;
 
-    const assessed = Number(a.TOTVAL1) || null;
+    const assessed = fields.assessedTotal ? Number(a[fields.assessedTotal]) || null : null;
     if (!assessed) continue;
 
-    // Get lat/lng from geometry (tax table returns centroid points)
-    let compLat: number | null = null;
-    let compLng: number | null = null;
-    const geom = feat.geometry;
-    if (geom) {
-      if (geom.x !== undefined && geom.y !== undefined) {
-        compLng = geom.x;
-        compLat = geom.y;
-      } else if (geom.rings) {
-        const ring = geom.rings[0];
-        if (ring && ring.length > 0) {
-          const lngSum = ring.reduce((s: number, p: number[]) => s + p[0], 0);
-          const latSum = ring.reduce((s: number, p: number[]) => s + p[1], 0);
-          compLng = lngSum / ring.length;
-          compLat = latSum / ring.length;
-        }
-      }
-    }
-    if (compLat === null || compLng === null) continue;
+    if (!feat.geometry) continue;
+    const compCentroid = esriCentroid(feat.geometry);
+    if (!compCentroid) continue;
+    const [compLng, compLat] = compCentroid;
 
     const dist = distanceMiles(subLat!, subLng!, compLat, compLng);
     if (dist > SEARCH_RADIUS_MILES) continue;
 
-    const addr = [a.LOCADDR, a.LOCCITY].filter(Boolean).join(", ") || pin;
-    const psf = acres > 0 ? assessed / (acres * 43560) : 0; // assessed $/sq ft
+    // Build address from county-specific fields
+    let addr: string;
+    if (fields.address) {
+      if (county.multiFieldAddress) {
+        const parts = fields.address.split("|").map((field) => a[field]);
+        addr = parts.filter(Boolean).join(", ") || pin;
+      } else {
+        addr = a[fields.address] ? String(a[fields.address]) : pin;
+      }
+    } else {
+      addr = pin;
+    }
+
+    const psf = acres > 0 ? assessed / (acres * 43560) : 0;
 
     comps.push({
       id: pin,
       address: String(addr),
       distance: Math.round(dist * 100) / 100,
       acres,
-      date: "assessed_snapshot", // Transaction history unavailable in county open data feed
-      price: assessed, // Assessed value (not sale price — county data)
+      date: "assessed_snapshot",
+      price: assessed,
       psf: Math.round(psf * 100) / 100,
       coordinates: [compLng, compLat],
     });
   }
 
-  // Sort by distance, limit to 20
   comps.sort((a, b) => a.distance - b.distance);
 
   return NextResponse.json(comps.slice(0, 20), {

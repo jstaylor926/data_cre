@@ -38,7 +38,7 @@ export default function CompsTab() {
       <div className="p-8 text-center">
         <p className="font-mono text-[10px] text-mid">No comparable properties found within 1 mile.</p>
         <p className="mt-1 font-mono text-[9px] text-pd-muted">
-          Try selecting a parcel in a denser area or check that the APN is in Gwinnett County.
+          Try selecting a parcel in a denser area or check that the APN is in the active county.
         </p>
       </div>
     );
@@ -66,7 +66,7 @@ export default function CompsTab() {
       {/* Note about data source */}
       <div className="rounded border border-amber/20 bg-amber-dim px-2.5 py-1.5">
         <p className="font-mono text-[8px] text-amber/80">
-          ⚠ Values shown are county assessed values, not sale prices. Gwinnett County open data does not include transaction history.
+          ⚠ Values shown are county assessed values, not sale prices. County open data does not include transaction history.
         </p>
       </div>
 

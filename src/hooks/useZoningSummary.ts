@@ -6,6 +6,7 @@ import { useAppStore } from "@/store/useAppStore";
 export function useZoningSummary(apn: string | null) {
   const zoningSummary = useAppStore((s) => s.zoningSummary);
   const setZoningSummary = useAppStore((s) => s.setZoningSummary);
+  const activeCountyId = useAppStore((s) => s.activeCountyId);
 
   useEffect(() => {
     if (!apn) return;
@@ -14,7 +15,7 @@ export function useZoningSummary(apn: string | null) {
 
     let cancelled = false;
 
-    fetch(`/api/parcel/${encodeURIComponent(apn)}/zoning`)
+    fetch(`/api/parcel/${encodeURIComponent(apn)}/zoning?county=${activeCountyId}`)
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (!cancelled && data) setZoningSummary(data);
@@ -24,7 +25,7 @@ export function useZoningSummary(apn: string | null) {
     return () => {
       cancelled = true;
     };
-  }, [apn, setZoningSummary]);
+  }, [apn, activeCountyId, setZoningSummary]);
 
   return zoningSummary;
 }

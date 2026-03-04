@@ -32,7 +32,8 @@ export default function HistoryTab() {
       setError(null);
     }, 0);
 
-    fetch(`/api/parcel/${encodeURIComponent(selectedAPN)}/firm-history`)
+    const countyId = useAppStore.getState().activeCountyId;
+    fetch(`/api/parcel/${encodeURIComponent(selectedAPN)}/firm-history?county=${countyId}`)
       .then((res) => {
         if (!res.ok) {
           if (res.status === 403) throw new Error("CRM access required to view history.");

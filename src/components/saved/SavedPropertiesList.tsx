@@ -7,6 +7,7 @@ import { useCollections } from "@/hooks/useCollections";
 import type { Parcel, Collection } from "@/lib/types";
 import SavedPropertyRow from "./SavedPropertyRow";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { useAppStore } from "@/store/useAppStore";
 
 interface SavedPropertiesListProps {
   onSelectParcel?: (apn: string, centroid?: [number, number]) => void;
@@ -55,7 +56,8 @@ export default function SavedPropertiesList({
     if (savedParcels.length === 0) return;
 
     const pins = savedParcels.map((sp) => sp.apn).join(",");
-    fetch(`/api/parcel/batch?pins=${encodeURIComponent(pins)}`)
+    const countyId = useAppStore.getState().activeCountyId;
+    fetch(`/api/parcel/batch?pins=${encodeURIComponent(pins)}&county=${countyId}`)
       .then((res) => (res.ok ? res.json() : {}))
       .then((data) => setParcelData(data))
       .catch(() => {});
