@@ -49,32 +49,37 @@ export async function fetchSubstationsNear(
     f: "json",
   });
 
-  const res = await fetch(`${SUBSTATIONS_URL}?${params}`, { cache: "no-store" });
-  if (!res.ok) return [];
+  try {
+    const res = await fetch(`${SUBSTATIONS_URL}?${params}`, { cache: "no-store" });
+    if (!res.ok) return [];
 
-  const json = await res.json();
-  const features = json?.features ?? [];
+    const json = await res.json();
+    const features = json?.features ?? [];
 
-  return features
-    .map(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (f: any): RawSubstation | null => {
-        const v = Number(f.attributes?.MAX_VOLTAGE ?? 0);
-        if (v < 50) return null; // skip distribution-level
-        const x = f.geometry?.x ?? f.geometry?.rings?.[0]?.[0]?.[0];
-        const y = f.geometry?.y ?? f.geometry?.rings?.[0]?.[0]?.[1];
-        if (!x || !y) return null;
-        return {
-          id: String(f.attributes?.OBJECTID ?? Math.random()),
-          name: f.attributes?.NAME ?? "Unknown Substation",
-          voltage: v,
-          operator: f.attributes?.OPERATOR ?? "Unknown",
-          lng: x,
-          lat: y,
-        };
-      }
-    )
-    .filter(Boolean) as RawSubstation[];
+    return features
+      .map(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (f: any): RawSubstation | null => {
+          const v = Number(f.attributes?.MAX_VOLTAGE ?? 0);
+          if (v < 50) return null; // skip distribution-level
+          const x = f.geometry?.x ?? f.geometry?.rings?.[0]?.[0]?.[0];
+          const y = f.geometry?.y ?? f.geometry?.rings?.[0]?.[0]?.[1];
+          if (!x || !y) return null;
+          return {
+            id: String(f.attributes?.OBJECTID ?? Math.random()),
+            name: f.attributes?.NAME ?? "Unknown Substation",
+            voltage: v,
+            operator: f.attributes?.OPERATOR ?? "Unknown",
+            lng: x,
+            lat: y,
+          };
+        }
+      )
+      .filter(Boolean) as RawSubstation[];
+  } catch (err) {
+    console.error("fetchSubstationsNear failed:", err);
+    return [];
+  }
 }
 
 /**
@@ -101,16 +106,21 @@ export async function fetchNearestTxVoltage(
     f: "json",
   });
 
-  const res = await fetch(`${TX_LINES_URL}?${params}`, { cache: "no-store" });
-  if (!res.ok) return null;
+  try {
+    const res = await fetch(`${TX_LINES_URL}?${params}`, { cache: "no-store" });
+    if (!res.ok) return null;
 
-  const json = await res.json();
-  const features = json?.features ?? [];
-  if (features.length === 0) return null;
+    const json = await res.json();
+    const features = json?.features ?? [];
+    if (features.length === 0) return null;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const voltages = features.map((f: any) => Number(f.attributes?.VOLTAGE ?? 0)).filter((v: number) => v > 0);
-  return voltages.length > 0 ? Math.max(...voltages) : null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const voltages = features.map((f: any) => Number(f.attributes?.VOLTAGE ?? 0)).filter((v: number) => v > 0);
+    return voltages.length > 0 ? Math.max(...voltages) : null;
+  } catch (err) {
+    console.error("fetchNearestTxVoltage failed:", err);
+    return null;
+  }
 }
 
 /**

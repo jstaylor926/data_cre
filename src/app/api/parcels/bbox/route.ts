@@ -10,10 +10,10 @@ import { getCountyOrNull, type CountyConfig } from "@/lib/county-registry";
  */
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const west = parseFloat(searchParams.get("west") || "");
-  const south = parseFloat(searchParams.get("south") || "");
-  const east = parseFloat(searchParams.get("east") || "");
-  const north = parseFloat(searchParams.get("north") || "");
+  const west = Math.round(parseFloat(searchParams.get("west") || "") * 1000000) / 1000000;
+  const south = Math.round(parseFloat(searchParams.get("south") || "") * 1000000) / 1000000;
+  const east = Math.round(parseFloat(searchParams.get("east") || "") * 1000000) / 1000000;
+  const north = Math.round(parseFloat(searchParams.get("north") || "") * 1000000) / 1000000;
 
   if ([west, south, east, north].some(isNaN)) {
     return NextResponse.json(

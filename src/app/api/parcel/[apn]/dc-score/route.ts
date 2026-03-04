@@ -31,90 +31,98 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ apn: string }> }
 ) {
-  const { apn } = await params;
-  const { searchParams } = new URL(request.url);
-  const mw = Math.max(0.1, Math.min(500, Number(searchParams.get("mw") ?? 10)));
-  const countyId = searchParams.get("county");
-  const county = countyId ? getCountyOrNull(countyId) ?? undefined : undefined;
+  try {
+    const { apn } = await params;
+    const { searchParams } = new URL(request.url);
+    const mw = Math.max(0.1, Math.min(500, Number(searchParams.get("mw") ?? 10)));
+    const countyId = searchParams.get("county");
+    const county = countyId ? getCountyOrNull(countyId) ?? undefined : undefined;
 
-  // 1. Get parcel centroid
-  const centroid = await getParcelCentroid(apn, county);
-  if (!centroid) {
-    return NextResponse.json({ error: "Parcel not found" }, { status: 404 });
-  }
-  const [lng, lat] = centroid;
+    // 1. Get parcel centroid
+    const centroid = await getParcelCentroid(apn, county);
+    if (!centroid) {
+      return NextResponse.json({ error: "Parcel not found" }, { status: 404 });
+    }
+    const [lng, lat] = centroid;
 
-  // 2. Fetch infrastructure data in parallel
-  const radius = effectiveRadius(mw);
-  
-  // Create a controller for the FCC timeout
-  const fccController = new AbortController();
-  const timeoutId = setTimeout(() => fccController.abort(), 3000);
+    // 2. Fetch infrastructure data in parallel
+    const radius = effectiveRadius(mw);
+    
+    // Create a controller for the FCC timeout
+    const fccController = new AbortController();
+    const timeoutId = setTimeout(() => fccController.abort(), 3000);
 
-  const [rawSubs, nearestTxVoltage, fema, water, fiberCarriers] = await Promise.all([
-    fetchSubstationsNear(lng, lat, radius),
-    fetchNearestTxVoltage(lng, lat, 5),
-    fetchFemaFloodZone(lng, lat),
-    fetchWaterSystemData(lng, lat),
-    (async () => {
-      try {
-        const fccUrl = `https://broadbandmap.fcc.gov/api/public/map/listAvailability?latitude=${lat}&longitude=${lng}&unit=0&category=Fixed%20Broadband`;
-        const fccRes = await fetch(fccUrl, { 
-          signal: fccController.signal,
-          cache: "no-store" 
-        });
-        clearTimeout(timeoutId);
-        if (fccRes.ok) {
-          const fccData = await fccRes.json();
-          const providers = fccData?.availability ?? [];
-          return [...new Set(
-            providers
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              .filter((p: any) => p.technology_code === 50)
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              .map((p: any) => p.brand_name as string)
-          )] as string[];
+    const [rawSubs, nearestTxVoltage, fema, water, fiberCarriers] = await Promise.all([
+      fetchSubstationsNear(lng, lat, radius),
+      fetchNearestTxVoltage(lng, lat, 5),
+      fetchFemaFloodZone(lng, lat),
+      fetchWaterSystemData(lng, lat),
+      (async () => {
+        try {
+          const fccUrl = `https://broadbandmap.fcc.gov/api/public/map/listAvailability?latitude=${lat}&longitude=${lng}&unit=0&category=Fixed%20Broadband`;
+          const fccRes = await fetch(fccUrl, { 
+            signal: fccController.signal,
+            cache: "no-store" 
+          });
+          clearTimeout(timeoutId);
+          if (fccRes.ok) {
+            const fccData = await fccRes.json();
+            const providers = fccData?.availability ?? [];
+            return [...new Set(
+              providers
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                .filter((p: any) => p.technology_code === 50)
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                .map((p: any) => p.brand_name as string)
+            )] as string[];
+          }
+        } catch (err) {
+          // FCC API unavailable or timed out — return empty
+          console.warn("FCC API fetch skipped or timed out:", err);
         }
-      } catch (err) {
-        // FCC API unavailable or timed out — return empty
-        console.warn("FCC API fetch skipped or timed out:", err);
-      }
-      return [];
-    })()
-  ]);
-  clearTimeout(timeoutId);
+        return [];
+      })()
+    ]);
+    clearTimeout(timeoutId);
 
-  // 3. Enrich substations with distances
-  const substations: Substation[] = rawSubs.map((s) => ({
-    id: s.id,
-    name: s.name,
-    voltage: s.voltage,
-    operator: s.operator,
-    coordinates: [s.lng, s.lat],
-    distance: haversineMiles(lng, lat, s.lng, s.lat),
-  }));
+    // 3. Enrich substations with distances
+    const substations: Substation[] = rawSubs.map((s) => ({
+      id: s.id,
+      name: s.name,
+      voltage: s.voltage,
+      operator: s.operator,
+      coordinates: [s.lng, s.lat],
+      distance: haversineMiles(lng, lat, s.lng, s.lat),
+    }));
 
-  // 4. Compute TIE distance (Atlanta IX)
-  const tieDistance = haversineMiles(lng, lat, TIE_ATLANTA_LNG, TIE_ATLANTA_LAT);
+    // 4. Compute TIE distance (Atlanta IX)
+    const tieDistance = haversineMiles(lng, lat, TIE_ATLANTA_LNG, TIE_ATLANTA_LAT);
 
-  // 5. Build env flags from FEMA data
-  const envFlags = buildEnvFlags(fema.zone, fema.subtype);
+    // 5. Build env flags from FEMA data
+    const envFlags = buildEnvFlags(fema.zone, fema.subtype);
 
-  const infrastructure: DCInfrastructure = {
-    substations,
-    nearestTxVoltage,
-    floodZone: fema.zone,
-    floodZoneSubtype: fema.subtype,
-    envFlags,
-    fiberCarriers,
-    tieDistance,
-    waterCapacity: water.population, // Use population as a proxy for system scale
-    waterSystemName: water.name,
-    waterPopulationServed: water.population,
-    utilityTerritory: substations[0]?.operator ?? null,
-  };
+    const infrastructure: DCInfrastructure = {
+      substations,
+      nearestTxVoltage,
+      floodZone: fema.zone,
+      floodZoneSubtype: fema.subtype,
+      envFlags,
+      fiberCarriers,
+      tieDistance,
+      waterCapacity: water.population, // Use population as a proxy for system scale
+      waterSystemName: water.name,
+      waterPopulationServed: water.population,
+      utilityTerritory: substations[0]?.operator ?? null,
+    };
 
-  return NextResponse.json(infrastructure, {
-    headers: { "Cache-Control": "public, s-maxage=900, stale-while-revalidate=3600" },
-  });
+    return NextResponse.json(infrastructure, {
+      headers: { "Cache-Control": "public, s-maxage=900, stale-while-revalidate=3600" },
+    });
+  } catch (err) {
+    console.error("DC Score API failed:", err);
+    return NextResponse.json(
+      { error: "Internal Server Error", details: err instanceof Error ? err.message : String(err) },
+      { status: 500 }
+    );
+  }
 }
