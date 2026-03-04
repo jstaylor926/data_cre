@@ -95,8 +95,13 @@ export async function fetchParcelsByBBox(
   const data = await res.json();
 
   // MapServer returns Esri JSON — convert to GeoJSON if needed
-  if (!c.supportsGeoJSON && data.features && !data.type) {
+  if (!c.supportsGeoJSON && !data.type) {
     return esriToGeoJSON(data);
+  }
+
+  // Ensure FeatureServer returns at least a valid empty collection if data is malformed
+  if (!data || !data.type) {
+    return { type: "FeatureCollection", features: [] };
   }
 
   return data;
@@ -119,8 +124,11 @@ export async function fetchParcelGeometry(pin: string, county?: CountyConfig): P
   }
 
   const data = await res.json();
-  if (!c.supportsGeoJSON && data.features && !data.type) {
+  if (!c.supportsGeoJSON && !data.type) {
     return esriToGeoJSON(data);
+  }
+  if (!data || !data.type) {
+    return { type: "FeatureCollection", features: [] };
   }
   return data;
 }
@@ -186,8 +194,11 @@ export async function fetchZoningByBBox(
   }
 
   const data = await res.json();
-  if (!c.supportsGeoJSON && data.features && !data.type) {
+  if (!c.supportsGeoJSON && !data.type) {
     return esriToGeoJSON(data);
+  }
+  if (!data || !data.type) {
+    return { type: "FeatureCollection", features: [] };
   }
   return data;
 }
@@ -294,34 +305,44 @@ interface EsriResponse {
  * Handles polygon (rings) and point (x/y) geometries.
  */
 function esriToGeoJSON(esriData: EsriResponse): GeoJSON.FeatureCollection {
-  const features: GeoJSON.Feature[] = (esriData.features || []).map((f) => {
-    let geometry: GeoJSON.Geometry | null = null;
-
-    if (f.geometry) {
-      if (f.geometry.rings) {
-        // Polygon
-        geometry = {
-          type: "Polygon",
-          coordinates: f.geometry.rings,
-        };
-      } else if (f.geometry.x !== undefined && f.geometry.y !== undefined) {
-        // Point
-        geometry = {
-          type: "Point",
-          coordinates: [f.geometry.x, f.geometry.y],
-        };
-      }
-    }
-
-    return {
-      type: "Feature" as const,
-      properties: f.attributes || {},
-      geometry: geometry!,
-    };
-  }).filter((f) => f.geometry !== null);
-
-  return {
+  const collection: GeoJSON.FeatureCollection = {
     type: "FeatureCollection",
-    features,
+    features: [],
   };
+
+  if (!esriData || !esriData.features || !Array.isArray(esriData.features)) {
+    return collection;
+  }
+
+  collection.features = esriData.features
+    .map((f) => {
+      let geometry: GeoJSON.Geometry | null = null;
+
+      if (f.geometry) {
+        if (f.geometry.rings) {
+          // Esri rings [ [[x,y],[x,y]], [[x,y],[x,y]] ] maps to GeoJSON Polygon coordinates
+          geometry = {
+            type: "Polygon",
+            coordinates: f.geometry.rings,
+          };
+        } else if (f.geometry.x !== undefined && f.geometry.y !== undefined) {
+          // Point
+          geometry = {
+            type: "Point",
+            coordinates: [f.geometry.x, f.geometry.y],
+          };
+        }
+      }
+
+      if (!geometry) return null;
+
+      return {
+        type: "Feature" as const,
+        properties: f.attributes || {},
+        geometry: geometry!,
+      };
+    })
+    .filter((f): f is GeoJSON.Feature => f !== null);
+
+  return collection;
 }
