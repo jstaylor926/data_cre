@@ -13,6 +13,7 @@ import ParcelPanel from "@/components/panel/ParcelPanel";
 import ParcelDrawer from "@/components/panel/ParcelDrawer";
 import ComparisonTray from "@/components/comparison/ComparisonTray";
 import HotspotCardStrip from "@/components/map/HotspotCardStrip";
+import ResearchPanel from "@/components/research/ResearchPanel";
 
 interface AppShellProps {
   mapRef?: MutableRefObject<MapHandle | null>;
@@ -23,6 +24,7 @@ export default function AppShell({ mapRef }: AppShellProps) {
   const panelOpen = useAppStore((s) => s.panelOpen);
   const appMode = useAppStore((s) => s.appMode);
   const selectedAPN = useAppStore((s) => s.selectedAPN);
+  const researchActive = useAppStore((s) => s.researchSession.active);
   const { locate } = useGeolocation();
 
   // Fetch DC infrastructure + compute score when a parcel is selected in datacenter mode
@@ -76,6 +78,15 @@ export default function AppShell({ mapRef }: AppShellProps) {
       {/* Parcel detail — desktop panel or mobile drawer */}
       {!isMobile && panelOpen && <ParcelPanel />}
       {isMobile && <ParcelDrawer />}
+
+      {/* Research Mode panel */}
+      {!isMobile && researchActive && (
+        <ResearchPanel
+          onFlyTo={(lng, lat, zoom) => {
+            mapRef?.current?.flyTo(lng, lat, zoom);
+          }}
+        />
+      )}
 
       {/* DC Comparison Tray (bottom-docked) */}
       {appMode === "datacenter" && <ComparisonTray />}

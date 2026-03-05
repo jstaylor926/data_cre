@@ -1,6 +1,6 @@
 "use client";
 
-import { Map, Bookmark, Bell, Settings } from "lucide-react";
+import { Map, Bookmark, Bell, Settings, MessageSquare } from "lucide-react";
 
 interface MobileTabBarProps {
   activeTab?: string;
@@ -9,6 +9,7 @@ interface MobileTabBarProps {
 
 const TABS = [
   { id: "map", label: "Map", icon: Map },
+  { id: "research", label: "Research", icon: MessageSquare },
   { id: "saved", label: "Saved", icon: Bookmark },
   { id: "alerts", label: "Alerts", icon: Bell, dot: true },
   { id: "settings", label: "Settings", icon: Settings },

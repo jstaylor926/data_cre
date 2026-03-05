@@ -20,6 +20,11 @@ import type {
   RankedCandidate,
   Organization,
   Project,
+  ResearchSession,
+  ResearchMessage,
+  ResearchAttachment,
+  ResearchCriteria,
+  ResearchParcelResult,
 } from "@/lib/types";
 import { DEFAULT_COUNTY_ID } from "@/lib/county-registry";
 
@@ -103,6 +108,9 @@ interface AppState {
   projects: Project[];
   activeProject: Project | null;
 
+  // Research Mode
+  researchSession: ResearchSession;
+
   // Actions
   showQuickCard: (data: QuickCardData) => void;
   dismissQuickCard: () => void;
@@ -163,6 +171,17 @@ interface AppState {
   setProjects: (projects: Project[]) => void;
   setActiveProject: (project: Project | null) => void;
   setFeatures: (features: Partial<FeatureFlags>) => void;
+
+  // Research Mode Actions
+  setResearchActive: (active: boolean) => void;
+  addResearchMessage: (msg: ResearchMessage) => void;
+  addResearchAttachment: (att: ResearchAttachment) => void;
+  removeResearchAttachment: (id: string) => void;
+  setResearchCriteria: (criteria: ResearchCriteria | null) => void;
+  setResearchResults: (results: ResearchParcelResult[]) => void;
+  setResearchLoading: (loading: boolean) => void;
+  setResearchError: (error: string | null) => void;
+  resetResearch: () => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -230,6 +249,17 @@ export const useAppStore = create<AppState>()(
         candidates: [],
         activeSubMarket: null,
         summary: "",
+        loading: false,
+        error: null,
+      },
+
+      // Research Mode initial state
+      researchSession: {
+        active: false,
+        messages: [],
+        attachments: [],
+        criteria: null,
+        results: [],
         loading: false,
         error: null,
       },
@@ -384,6 +414,51 @@ export const useAppStore = create<AppState>()(
       addChatMessage: (msg) => set((s) => ({ chatHistory: [...s.chatHistory, msg] })),
       setBriefStatus: (briefStatus) => set({ briefStatus }),
       setBriefOverlayOpen: (isBriefOverlayOpen) => set({ isBriefOverlayOpen }),
+
+      // Research Mode Actions
+      setResearchActive: (active) =>
+        set((s) => ({ researchSession: { ...s.researchSession, active } })),
+      addResearchMessage: (msg) =>
+        set((s) => ({
+          researchSession: {
+            ...s.researchSession,
+            messages: [...s.researchSession.messages, msg],
+          },
+        })),
+      addResearchAttachment: (att) =>
+        set((s) => ({
+          researchSession: {
+            ...s.researchSession,
+            attachments: [...s.researchSession.attachments, att],
+          },
+        })),
+      removeResearchAttachment: (id) =>
+        set((s) => ({
+          researchSession: {
+            ...s.researchSession,
+            attachments: s.researchSession.attachments.filter((a) => a.id !== id),
+          },
+        })),
+      setResearchCriteria: (criteria) =>
+        set((s) => ({ researchSession: { ...s.researchSession, criteria } })),
+      setResearchResults: (results) =>
+        set((s) => ({ researchSession: { ...s.researchSession, results } })),
+      setResearchLoading: (loading) =>
+        set((s) => ({ researchSession: { ...s.researchSession, loading } })),
+      setResearchError: (error) =>
+        set((s) => ({ researchSession: { ...s.researchSession, error, loading: false } })),
+      resetResearch: () =>
+        set({
+          researchSession: {
+            active: false,
+            messages: [],
+            attachments: [],
+            criteria: null,
+            results: [],
+            loading: false,
+            error: null,
+          },
+        }),
 
       // Phase 4 Actions
       setOrganizations: (organizations) => set({ organizations }),

@@ -17,6 +17,7 @@ export interface TopBarProps {
 
 const NAV_ITEMS = [
   { id: "map", label: "Map" },
+  { id: "research", label: "Research" },
   { id: "saved", label: "Saved" },
   { id: "crm", label: "CRM" },
   { id: "alerts", label: "Alerts", dot: true },
@@ -29,6 +30,7 @@ export function TopBar({ onFlyTo, activeNav = "map", onNavChange }: TopBarProps)
   const setDCScore = useAppStore((s) => s.setDCScore);
   const setDCInfrastructure = useAppStore((s) => s.setDCInfrastructure);
   const features = useAppStore((s) => s.features);
+  const researchActive = useAppStore((s) => s.researchSession.active);
   const { status: authStatus, user, openAuthModal, signOut } = useAuth();
   
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -96,12 +98,16 @@ export function TopBar({ onFlyTo, activeNav = "map", onNavChange }: TopBarProps)
       {/* Desktop nav pills */}
       {!isMobile && (
         <div className="ml-auto flex gap-1">
-          {filteredNavItems.map((item) => (
+          {filteredNavItems.map((item) => {
+            const isActive = item.id === "research"
+              ? researchActive
+              : activeNav === item.id && !(item.id === "map" && researchActive);
+            return (
             <button
               key={item.id}
               onClick={() => onNavChange?.(item.id)}
               className={`relative rounded px-2.5 py-1 font-mono text-[9px] uppercase tracking-wider transition-colors ${
-                activeNav === item.id
+                isActive
                   ? isDC
                     ? "border border-orange-400/50 bg-orange-500/10 text-orange-400"
                     : "border border-teal bg-teal-dim text-teal"
@@ -113,7 +119,8 @@ export function TopBar({ onFlyTo, activeNav = "map", onNavChange }: TopBarProps)
                 <span className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 rounded-full bg-red" />
               )}
             </button>
-          ))}
+            );
+          })}
         </div>
       )}
 
