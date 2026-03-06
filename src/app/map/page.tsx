@@ -11,6 +11,7 @@ import { useResponsive } from "@/hooks/useResponsive";
 import { useAppStore } from "@/store/useAppStore";
 import type { MapHandle } from "@/components/map/ParcelMap";
 import { Bell } from "lucide-react";
+import ResearchPanel from "@/components/research/ResearchPanel";
 
 export default function AppDashboard() {
   useParcelClick();
@@ -19,6 +20,8 @@ export default function AppDashboard() {
   const mapRef = useRef<MapHandle>(null);
   const selectParcel = useAppStore((s) => s.selectParcel);
   const enableFirmIntel = useAppStore((s) => s.features.enableFirmIntel);
+  const setResearchActive = useAppStore((s) => s.setResearchActive);
+  const researchActive = useAppStore((s) => s.researchSession.active);
   const resolvedNav = activeNav === "crm" && !enableFirmIntel ? "map" : activeNav;
 
   const handleFlyTo = useCallback((lng: number, lat: number) => {
@@ -37,8 +40,18 @@ export default function AppDashboard() {
   );
 
   const handleNavChange = useCallback((nav: string) => {
+    if (nav === "research") {
+      // Research mode: keep map visible but toggle research panel
+      setResearchActive(true);
+      setActiveNav("map");
+      return;
+    }
+    // Close research panel when navigating away
+    if (researchActive && nav !== "map") {
+      setResearchActive(false);
+    }
     setActiveNav(nav);
-  }, []);
+  }, [setResearchActive, researchActive]);
 
   return (
     <div className="flex h-screen w-screen flex-col bg-ink">
@@ -61,6 +74,18 @@ export default function AppDashboard() {
       {resolvedNav === "saved" && (
         <div className="flex-1 overflow-y-auto">
           <SavedPropertiesList onSelectParcel={handleSelectSavedParcel} />
+        </div>
+      )}
+
+      {resolvedNav === "map" && isMobile && researchActive && (
+        <div className="absolute inset-0 z-40 bg-ink">
+          <ResearchPanel
+            onFlyTo={(lng, lat, zoom) => {
+              setResearchActive(false);
+              setActiveNav("map");
+              setTimeout(() => mapRef.current?.flyTo(lng, lat, zoom), 100);
+            }}
+          />
         </div>
       )}
 

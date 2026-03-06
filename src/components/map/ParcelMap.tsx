@@ -16,6 +16,7 @@ import QuickInfoCard from './QuickInfoCard';
 import InfrastructureLayers from './InfrastructureLayers';
 import ScoutResultPins from '@/components/scout/ScoutResultPins';
 import SubMarketOverlay from '@/components/scout/SubMarketOverlay';
+import ResearchResultPins from '@/components/research/ResearchResultPins';
 import HotspotMarkers from './HotspotMarkers';
 import {
   MAP_DEFAULT_CENTER,
@@ -345,6 +346,9 @@ export default function ParcelMap({ mapRef }: ParcelMapProps) {
           />
         )}
         {appMode === "datacenter" && <ScoutResultPins />}
+
+        {/* Research mode result pins */}
+        <ResearchResultPins />
       </Map>
     </div>
   );

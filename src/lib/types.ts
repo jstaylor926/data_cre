@@ -281,3 +281,60 @@ export interface ScoutSession {
   loading: boolean;
   error: string | null;
 }
+
+// ─── Research Mode ──────────────────────────────────────────────────────────
+
+/** A file uploaded by the user to shape their research */
+export interface ResearchAttachment {
+  id: string;
+  name: string;
+  type: string;           // MIME type
+  size: number;           // bytes
+  extractedText?: string; // parsed content sent to AI
+}
+
+/** A single message in the research conversation */
+export interface ResearchMessage {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  attachments?: ResearchAttachment[];
+  /** Parcel results surfaced inline with this message */
+  parcelResults?: ResearchParcelResult[];
+  timestamp: number;
+}
+
+/** A parcel match surfaced by research */
+export interface ResearchParcelResult {
+  apn: string;
+  address: string;
+  acres: number | null;
+  zoning: string | null;
+  assessed_total: number | null;
+  coordinates: [number, number]; // [lng, lat]
+  matchReason: string;           // AI explanation of why this matches
+  matchScore: number;            // 0–100
+}
+
+/** Criteria extracted from the conversation to drive searches */
+export interface ResearchCriteria {
+  propertyType?: string;        // "industrial", "retail", "office", "multifamily", "land"
+  minAcres?: number;
+  maxAcres?: number;
+  zoningCodes?: string[];
+  maxPrice?: number;
+  locationHint?: string;        // "near I-85", "downtown Lawrenceville"
+  useCase?: string;             // free-text: "last-mile distribution", "mixed-use"
+  keywords?: string[];          // from uploaded docs
+}
+
+/** Overall research session state */
+export interface ResearchSession {
+  active: boolean;
+  messages: ResearchMessage[];
+  attachments: ResearchAttachment[];
+  criteria: ResearchCriteria | null;
+  results: ResearchParcelResult[];
+  loading: boolean;
+  error: string | null;
+}
